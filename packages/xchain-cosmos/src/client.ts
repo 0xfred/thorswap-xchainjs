@@ -12,9 +12,9 @@ import {
   TxsPage,
   XChainClient,
   XChainClientParams,
-} from '@xchainjs/xchain-client'
-import * as xchainCrypto from '@xchainjs/xchain-crypto'
-import { Asset, assetToString, baseAmount } from '@xchainjs/xchain-util'
+} from '@thorswap/xchain-client'
+import * as xchainCrypto from '@thorswap/xchain-crypto'
+import { Asset, assetToString, baseAmount } from '@thorswap/xchain-util'
 import { PrivKey } from 'cosmos-client'
 
 import { CosmosSDKClient } from './cosmos/sdk-client'

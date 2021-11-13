@@ -1,4 +1,4 @@
-import { Address, FeeRate, Network } from '@xchainjs/xchain-client'
+import { Address, FeeRate, Network } from '@thorswap/xchain-client'
 
 export type NormalTxParams = { addressTo: Address; amount: number; feeRate: FeeRate }
 export type VaultTxParams = NormalTxParams & { memo: string }

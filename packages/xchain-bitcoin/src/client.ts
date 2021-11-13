@@ -13,9 +13,9 @@ import {
   TxsPage,
   UTXOClient,
   XChainClientParams,
-} from '@xchainjs/xchain-client'
-import { getSeed } from '@xchainjs/xchain-crypto'
-import { AssetBTC, Chain, assetAmount, assetToBase } from '@xchainjs/xchain-util'
+} from '@thorswap/xchain-client'
+import { getSeed } from '@thorswap/xchain-crypto'
+import { AssetBTC, Chain, assetAmount, assetToBase } from '@thorswap/xchain-util'
 import * as Bitcoin from 'bitcoinjs-lib'
 
 import { BTC_DECIMAL } from './const'

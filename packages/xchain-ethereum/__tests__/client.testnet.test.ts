@@ -1,6 +1,6 @@
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { FeeOption, Network } from '@xchainjs/xchain-client'
-import { AssetETH, Chain, ETHChain, assetFromString, assetToString, baseAmount } from '@xchainjs/xchain-util'
+import { FeeOption, Network } from '@thorswap/xchain-client'
+import { AssetETH, Chain, ETHChain, assetFromString, assetToString, baseAmount } from '@thorswap/xchain-util'
 import { BigNumber, Wallet, providers } from 'ethers'
 import nock from 'nock'
 

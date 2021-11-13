@@ -16,7 +16,7 @@ import {
   XChainClient,
   XChainClientParams,
   singleFee,
-} from '@xchainjs/xchain-client'
+} from '@thorswap/xchain-client'
 import {
   Asset,
   AssetBNB,
@@ -28,7 +28,7 @@ import {
   assetToString,
   baseAmount,
   baseToAsset,
-} from '@xchainjs/xchain-util'
+} from '@thorswap/xchain-util'
 import axios from 'axios'
 
 import {

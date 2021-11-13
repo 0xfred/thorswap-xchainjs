@@ -10,8 +10,8 @@ import {
   TxParams,
   calcFees,
   standardFeeRates,
-} from '@xchainjs/xchain-client'
-import { AssetBTC, BaseAmount, assetAmount, assetToBase, baseAmount } from '@xchainjs/xchain-util'
+} from '@thorswap/xchain-client'
+import { AssetBTC, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap/xchain-util'
 import * as Bitcoin from 'bitcoinjs-lib'
 import accumulative from 'coinselect/accumulative'
 

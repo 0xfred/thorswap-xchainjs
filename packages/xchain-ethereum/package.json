@@ -1,5 +1,5 @@
 {
-  "name": "@xchainjs/xchain-ethereum",
+  "name": "@thorswap/xchain-ethereum",
   "version": "0.22.5",
   "description": "Ethereum client for XChainJS",
   "keywords": [
@@ -34,16 +34,16 @@
     "access": "public"
   },
   "devDependencies": {
-    "@xchainjs/xchain-client": "^0.10.3",
-    "@xchainjs/xchain-crypto": "^0.2.6",
-    "@xchainjs/xchain-util": "^0.3.1",
+    "@thorswap/xchain-client": "^0.10.3",
+    "@thorswap/xchain-crypto": "^0.2.6",
+    "@thorswap/xchain-util": "^0.3.1",
     "axios": "^0.21.3",
     "ethers": "^5.4.6"
   },
   "peerDependencies": {
-    "@xchainjs/xchain-client": "^0.10.3",
-    "@xchainjs/xchain-crypto": "^0.2.6",
-    "@xchainjs/xchain-util": "^0.3.1",
+    "@thorswap/xchain-client": "^0.10.3",
+    "@thorswap/xchain-crypto": "^0.2.6",
+    "@thorswap/xchain-util": "^0.3.1",
     "axios": "^0.21.3",
     "ethers": "^5.4.6"
   }

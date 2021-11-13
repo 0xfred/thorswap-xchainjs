@@ -13,9 +13,9 @@ import {
   TxsPage,
   UTXOClient,
   XChainClientParams,
-} from '@xchainjs/xchain-client'
-import { getSeed } from '@xchainjs/xchain-crypto'
-import { Chain } from '@xchainjs/xchain-util'
+} from '@thorswap/xchain-client'
+import { getSeed } from '@thorswap/xchain-crypto'
+import { Chain } from '@thorswap/xchain-util'
 
 import { getAccount, getSuggestedFee, getTransaction, getTransactions } from './haskoin-api'
 import { broadcastTx } from './node-api'

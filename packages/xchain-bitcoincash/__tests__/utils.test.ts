@@ -1,4 +1,4 @@
-import { Network } from '@xchainjs/xchain-client'
+import { Network } from '@thorswap/xchain-client'
 import * as bchaddr from 'bchaddrjs'
 
 import * as utils from '../src/utils'

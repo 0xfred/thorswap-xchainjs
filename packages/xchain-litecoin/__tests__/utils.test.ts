@@ -1,4 +1,4 @@
-import { Network } from '@xchainjs/xchain-client'
+import { Network } from '@thorswap/xchain-client'
 import * as Litecoin from 'bitcoinjs-lib'
 
 import mockSochainApi from '../__mocks__/sochain'
