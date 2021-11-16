@@ -15,10 +15,10 @@ import {
   TxsPage,
   XChainClient,
   XChainClientParams,
-} from '@thorswap/xchain-client'
-import { CosmosSDKClient, RPCTxResult } from '@thorswap/xchain-cosmos'
-import * as xchainCrypto from '@thorswap/xchain-crypto'
-import { Asset, AssetRuneNative, assetFromString, baseAmount } from '@thorswap/xchain-util'
+} from '@thorswap-lib/xchain-client'
+import { CosmosSDKClient, RPCTxResult } from '@thorswap-lib/xchain-cosmos'
+import * as xchainCrypto from '@thorswap-lib/xchain-crypto'
+import { Asset, AssetRuneNative, assetFromString, baseAmount } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 import { AccAddress, PrivKey } from 'cosmos-client'
 import { StdTx } from 'cosmos-client/x/auth'

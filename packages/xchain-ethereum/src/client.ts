@@ -16,8 +16,8 @@ import {
   XChainClient,
   XChainClientParams,
   standardFeeRates,
-} from '@thorswap/xchain-client'
-import { Asset, AssetETH, BaseAmount, Chain, assetToString, baseAmount, delay } from '@thorswap/xchain-util'
+} from '@thorswap-lib/xchain-client'
+import { Asset, AssetETH, BaseAmount, Chain, assetToString, baseAmount, delay } from '@thorswap-lib/xchain-util'
 import { BigNumber, BigNumberish, Wallet, ethers } from 'ethers'
 import { HDNode, parseUnits, toUtf8Bytes } from 'ethers/lib/utils'
 

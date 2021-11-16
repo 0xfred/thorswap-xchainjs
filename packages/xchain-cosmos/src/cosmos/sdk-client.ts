@@ -1,5 +1,5 @@
-import { TxHistoryParams } from '@thorswap/xchain-client'
-import * as xchainCrypto from '@thorswap/xchain-crypto'
+import { TxHistoryParams } from '@thorswap-lib/xchain-client'
+import * as xchainCrypto from '@thorswap-lib/xchain-crypto'
 import axios from 'axios'
 import * as BIP32 from 'bip32'
 import { AccAddress, CosmosSDK, Msg, PrivKey, PrivKeySecp256k1 } from 'cosmos-client'

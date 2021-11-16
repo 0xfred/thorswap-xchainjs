@@ -34,5 +34,5 @@ export default {
       browser: true,
     }),
   ],
-  external: ['readable-stream', 'buffer', 'stream', 'string_decoder', '@thorswap/xchain-client', 'axios'],
+  external: ['readable-stream', 'buffer', 'stream', 'string_decoder', '@thorswap-lib/xchain-client', 'axios'],
 }

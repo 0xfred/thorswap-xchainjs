@@ -1,5 +1,5 @@
-import { Network } from '@thorswap/xchain-client'
-import { AssetRuneNative, assetAmount, assetToBase } from '@thorswap/xchain-util'
+import { Network } from '@thorswap-lib/xchain-client'
+import { AssetRuneNative, assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
 
 import {
   getAsset,

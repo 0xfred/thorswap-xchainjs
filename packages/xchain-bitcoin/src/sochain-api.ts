@@ -1,5 +1,5 @@
-import { Network } from '@thorswap/xchain-client'
-import { BaseAmount, assetAmount, assetToBase } from '@thorswap/xchain-util'
+import { Network } from '@thorswap-lib/xchain-client'
+import { BaseAmount, assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 
 import { BTC_DECIMAL } from './const'

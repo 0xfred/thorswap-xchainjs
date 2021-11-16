@@ -1,7 +1,7 @@
 import { Global } from '@polkadot/rpc-provider/mock/types'
 import { Constructor } from '@polkadot/types/types'
-import { Network } from '@thorswap/xchain-client'
-import { baseAmount } from '@thorswap/xchain-util'
+import { Network } from '@thorswap-lib/xchain-client'
+import { baseAmount } from '@thorswap-lib/xchain-util'
 
 import { assertAccountsBalance, assertTxData, assertTxHistory } from '../__mocks__/subscan'
 import { Scope, mockWs } from '../__mocks__/ws'

@@ -1,5 +1,5 @@
-import { FeeType, Fees, Network, Tx, TxType, singleFee } from '@thorswap/xchain-client'
-import { AssetBNB, assetAmount, assetFromString, assetToBase, baseAmount } from '@thorswap/xchain-util'
+import { FeeType, Fees, Network, Tx, TxType, singleFee } from '@thorswap-lib/xchain-client'
+import { AssetBNB, assetAmount, assetFromString, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
 
 import { Account, DexFees, Fee, TransferFee, Tx as BinanceTx, TxType as BinanceTxType } from './types/binance'
 import { Transfer, TransferEvent } from './types/binance-ws'

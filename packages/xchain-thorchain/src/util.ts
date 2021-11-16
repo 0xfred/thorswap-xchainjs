@@ -1,5 +1,5 @@
-import { Address, Balance, FeeType, Fees, Network, TxHash, TxType, singleFee } from '@thorswap/xchain-client'
-import { CosmosSDKClient, TxLog } from '@thorswap/xchain-cosmos'
+import { Address, Balance, FeeType, Fees, Network, TxHash, TxType, singleFee } from '@thorswap-lib/xchain-client'
+import { CosmosSDKClient, TxLog } from '@thorswap-lib/xchain-cosmos'
 import {
   Asset,
   AssetRuneNative,
@@ -8,7 +8,7 @@ import {
   assetFromString,
   assetToString,
   baseAmount,
-} from '@thorswap/xchain-util'
+} from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 import { AccAddress, Msg, codec } from 'cosmos-client'
 import { StdTxFee } from 'cosmos-client/api'

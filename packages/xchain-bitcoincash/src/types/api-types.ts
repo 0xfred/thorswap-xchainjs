@@ -1,4 +1,4 @@
-import { Network, TxHash } from '@thorswap/xchain-client'
+import { Network, TxHash } from '@thorswap-lib/xchain-client'
 
 export type AddressParams = {
   haskoinUrl: string

@@ -17,9 +17,9 @@ import {
   XChainClient,
   XChainClientParams,
   singleFee,
-} from '@thorswap/xchain-client'
-import * as xchainCrypto from '@thorswap/xchain-crypto'
-import { Asset, assetAmount, assetToBase, assetToString, baseAmount } from '@thorswap/xchain-util'
+} from '@thorswap-lib/xchain-client'
+import * as xchainCrypto from '@thorswap-lib/xchain-crypto'
+import { Asset, assetAmount, assetToBase, assetToString, baseAmount } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 
 import { Account, AssetDOT, Extrinsic, SubscanResponse, Transfer, TransfersResult } from './types'

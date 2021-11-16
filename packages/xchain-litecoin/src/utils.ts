@@ -10,8 +10,8 @@ import {
   TxParams,
   calcFees,
   standardFeeRates,
-} from '@thorswap/xchain-client'
-import { AssetLTC, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap/xchain-util'
+} from '@thorswap-lib/xchain-client'
+import { AssetLTC, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
 import * as Litecoin from 'bitcoinjs-lib'
 import coininfo from 'coininfo'
 import accumulative from 'coinselect/accumulative'

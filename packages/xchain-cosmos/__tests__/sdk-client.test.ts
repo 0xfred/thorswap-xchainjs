@@ -1,4 +1,4 @@
-import { TxHistoryResponse, TxResponse } from '@thorswap/xchain-cosmos'
+import { TxHistoryResponse, TxResponse } from '@thorswap-lib/xchain-cosmos'
 import { codec } from 'cosmos-client'
 import { BaseAccount, BroadcastTxCommitResult, Coin } from 'cosmos-client/api'
 import { MsgMultiSend, MsgSend } from 'cosmos-client/x/bank'

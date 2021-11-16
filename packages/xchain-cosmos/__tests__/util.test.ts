@@ -1,4 +1,4 @@
-import { baseAmount } from '@thorswap/xchain-util'
+import { baseAmount } from '@thorswap-lib/xchain-util'
 import { Msg } from 'cosmos-client'
 import { StdTxFee } from 'cosmos-client/api'
 import { StdTx } from 'cosmos-client/x/auth'

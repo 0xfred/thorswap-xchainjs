@@ -1,5 +1,5 @@
-import { Network } from '@thorswap/xchain-client'
-import { baseAmount } from '@thorswap/xchain-util'
+import { Network } from '@thorswap-lib/xchain-client'
+import { baseAmount } from '@thorswap-lib/xchain-util'
 
 import { getDefaultFees } from '../src/util'
 

@@ -1,5 +1,5 @@
 {
-  "name": "@thorswap/xchain-thorchain",
+  "name": "@thorswap-lib/xchain-thorchain",
   "version": "0.19.3",
   "description": "Custom Thorchain client and utilities used by XChainJS clients",
   "keywords": [
@@ -33,10 +33,10 @@
   },
   "devDependencies": {
     "@types/big.js": "^6.0.0",
-    "@thorswap/xchain-client": "^0.10.1",
-    "@thorswap/xchain-cosmos": "^0.13.7",
-    "@thorswap/xchain-crypto": "^0.2.4",
-    "@thorswap/xchain-util": "^0.3.0",
+    "@thorswap-lib/xchain-client": "^0.10.1",
+    "@thorswap-lib/xchain-cosmos": "^0.13.7",
+    "@thorswap-lib/xchain-crypto": "^0.2.4",
+    "@thorswap-lib/xchain-util": "^0.3.0",
     "axios": "^0.21.0",
     "cosmos-client": "0.39.2",
     "nock": "^13.0.5"
@@ -45,10 +45,10 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@thorswap/xchain-client": "^0.10.1",
-    "@thorswap/xchain-cosmos": "^0.13.8",
-    "@thorswap/xchain-crypto": "^0.2.4",
-    "@thorswap/xchain-util": "^0.3.0",
+    "@thorswap-lib/xchain-client": "^0.10.1",
+    "@thorswap-lib/xchain-cosmos": "^0.13.8",
+    "@thorswap-lib/xchain-crypto": "^0.2.4",
+    "@thorswap-lib/xchain-util": "^0.3.0",
     "axios": "^0.21.0",
     "cosmos-client": "0.39.2"
   }

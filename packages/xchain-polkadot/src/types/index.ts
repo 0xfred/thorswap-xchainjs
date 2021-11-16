@@ -1,4 +1,4 @@
-import { Asset, Chain } from '@thorswap/xchain-util'
+import { Asset, Chain } from '@thorswap-lib/xchain-util'
 
 export const AssetDOT: Asset = { chain: Chain.Polkadot, symbol: 'DOT', ticker: 'DOT' }
 

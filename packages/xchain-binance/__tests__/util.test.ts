@@ -1,5 +1,5 @@
-import { FeeType } from '@thorswap/xchain-client'
-import { baseAmount } from '@thorswap/xchain-util'
+import { FeeType } from '@thorswap-lib/xchain-client'
+import { baseAmount } from '@thorswap-lib/xchain-util'
 
 import { DexFees, Fee, TransferFee, Tx as BinanceTx } from '../src/types/binance'
 import { Transfer, TransferEvent } from '../src/types/binance-ws'

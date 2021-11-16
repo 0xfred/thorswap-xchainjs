@@ -41,7 +41,7 @@ export default {
     'buffer',
     'stream',
     'string_decoder',
-    '@thorswap/xchain-client',
+    '@thorswap-lib/xchain-client',
     'axios',
   ],
 }

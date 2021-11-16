@@ -1,5 +1,5 @@
-import { Network, TxsPage } from '@thorswap/xchain-client'
-import { BaseAmount, baseAmount } from '@thorswap/xchain-util'
+import { Network, TxsPage } from '@thorswap-lib/xchain-client'
+import { BaseAmount, baseAmount } from '@thorswap-lib/xchain-util'
 import { BaseAccount, BroadcastTxCommitResult, Coin } from 'cosmos-client/api'
 import nock from 'nock'
 

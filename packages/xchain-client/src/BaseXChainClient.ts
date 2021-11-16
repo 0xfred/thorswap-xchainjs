@@ -1,5 +1,5 @@
-import { validatePhrase } from '@thorswap/xchain-crypto'
-import { Asset, Chain } from '@thorswap/xchain-util'
+import { validatePhrase } from '@thorswap-lib/xchain-crypto'
+import { Asset, Chain } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 
 import {

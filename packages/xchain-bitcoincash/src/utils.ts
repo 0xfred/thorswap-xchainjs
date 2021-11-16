@@ -13,8 +13,8 @@ import {
   TxType,
   calcFees,
   standardFeeRates,
-} from '@thorswap/xchain-client'
-import { AssetBCH, BaseAmount, baseAmount } from '@thorswap/xchain-util'
+} from '@thorswap-lib/xchain-client'
+import { AssetBCH, BaseAmount, baseAmount } from '@thorswap-lib/xchain-util'
 import * as bchaddr from 'bchaddrjs'
 import coininfo from 'coininfo'
 import accumulative from 'coinselect/accumulative'
