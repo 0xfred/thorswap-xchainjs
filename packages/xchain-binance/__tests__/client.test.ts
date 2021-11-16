@@ -1,5 +1,5 @@
-import { FeeType, Network } from '@xchainjs/xchain-client'
-import { Asset, AssetBNB, BNBChain, baseAmount } from '@xchainjs/xchain-util'
+import { FeeType, Network } from '@thorswap-lib/xchain-client'
+import { Asset, AssetBNB, BNBChain, baseAmount } from '@thorswap-lib/xchain-util'
 import nock from 'nock'
 
 import { Client as BinanceClient } from '../src/client'

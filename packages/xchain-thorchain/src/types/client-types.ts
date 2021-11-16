@@ -1,5 +1,5 @@
-import { Network, Tx } from '@xchainjs/xchain-client'
-import { Asset, BaseAmount } from '@xchainjs/xchain-util'
+import { Network, Tx } from '@thorswap-lib/xchain-client'
+import { Asset, BaseAmount } from '@thorswap-lib/xchain-util'
 
 export type NodeUrl = {
   node: string

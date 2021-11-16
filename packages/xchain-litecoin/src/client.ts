@@ -13,9 +13,9 @@ import {
   TxsPage,
   UTXOClient,
   XChainClientParams,
-} from '@xchainjs/xchain-client'
-import { getSeed } from '@xchainjs/xchain-crypto'
-import { AssetLTC, Chain, assetAmount, assetToBase } from '@xchainjs/xchain-util'
+} from '@thorswap-lib/xchain-client'
+import { getSeed } from '@thorswap-lib/xchain-crypto'
+import { AssetLTC, Chain, assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
 import * as Litecoin from 'bitcoinjs-lib'
 
 import * as sochain from './sochain-api'

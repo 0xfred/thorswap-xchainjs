@@ -1,4 +1,4 @@
-import { Network } from '@xchainjs/xchain-client'
+import { Network } from '@thorswap-lib/xchain-client'
 import axios from 'axios'
 
 import { BroadcastTxParams } from './types/common'

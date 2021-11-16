@@ -1,4 +1,4 @@
-import { Network } from '@xchainjs/xchain-client'
+import { Network } from '@thorswap-lib/xchain-client'
 
 export type Witness = {
   value: number

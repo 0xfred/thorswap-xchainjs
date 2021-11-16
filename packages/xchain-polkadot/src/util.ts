@@ -1,5 +1,5 @@
-import { FeeType, Fees, Network, singleFee } from '@xchainjs/xchain-client'
-import { assetAmount, assetToBase } from '@xchainjs/xchain-util'
+import { FeeType, Fees, Network, singleFee } from '@thorswap-lib/xchain-client'
+import { assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
 
 /**
  * Check Subscan API response

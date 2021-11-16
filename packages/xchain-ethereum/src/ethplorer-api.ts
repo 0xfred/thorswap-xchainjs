@@ -1,4 +1,4 @@
-import { TxType } from '@xchainjs/xchain-client'
+import { TxType } from '@thorswap-lib/xchain-client'
 import axios from 'axios'
 
 import { AddressInfo, TransactionInfo, TransactionOperation } from './types'

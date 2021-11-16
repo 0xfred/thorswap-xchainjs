@@ -1,6 +1,6 @@
-import { Network, TxsPage } from '@xchainjs/xchain-client'
-import { CosmosSDKClient, RPCResponse, RPCTxSearchResult, TxResponse } from '@xchainjs/xchain-cosmos'
-import { AssetRuneNative, BaseAmount, assetAmount, assetToBase, baseAmount } from '@xchainjs/xchain-util'
+import { Network, TxsPage } from '@thorswap-lib/xchain-client'
+import { CosmosSDKClient, RPCResponse, RPCTxSearchResult, TxResponse } from '@thorswap-lib/xchain-cosmos'
+import { AssetRuneNative, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
 import { BaseAccount, BroadcastTxCommitResult, Coin } from 'cosmos-client/api'
 import nock from 'nock'
 

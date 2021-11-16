@@ -1,5 +1,5 @@
-import { Network } from '@xchainjs/xchain-client'
-import { AssetETH, ETHChain, assetToString, baseAmount } from '@xchainjs/xchain-util'
+import { Network } from '@thorswap-lib/xchain-client'
+import { AssetETH, ETHChain, assetToString, baseAmount } from '@thorswap-lib/xchain-util'
 import { ethers } from 'ethers'
 import nock from 'nock'
 
