@@ -58,5 +58,8 @@
     "foundry-primitives": "^0.2.1",
     "hdkey": "^2.0.1",
     "uuid": "^8.3.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
