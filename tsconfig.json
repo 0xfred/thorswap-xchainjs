@@ -4,7 +4,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@xchainjs/*": ["packages/*"]
+      "@thorswap-lib/*": ["packages/*"]
     },
     "jsx": "react",
     "types": ["jest", "node"],

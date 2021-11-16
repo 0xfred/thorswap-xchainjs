@@ -1,4 +1,4 @@
-import { Address, FeeRate, Network, TxParams } from '@xchainjs/xchain-client'
+import { Address, FeeRate, Network, TxParams } from '@thorswap-lib/xchain-client'
 
 import { UTXO } from './common'
 

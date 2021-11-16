@@ -1,5 +1,5 @@
-import { Network } from '@xchainjs/xchain-client'
-import { AssetBTC, baseAmount } from '@xchainjs/xchain-util'
+import { Network } from '@thorswap-lib/xchain-client'
+import { AssetBTC, baseAmount } from '@thorswap-lib/xchain-util'
 
 import mockSochainApi from '../__mocks__/sochain'
 import { Client } from '../src/client'

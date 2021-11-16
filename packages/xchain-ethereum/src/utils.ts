@@ -1,4 +1,4 @@
-import { Balance, FeeType, Fees, Network, Tx, TxType } from '@xchainjs/xchain-client'
+import { Balance, FeeType, Fees, Network, Tx, TxType } from '@thorswap-lib/xchain-client'
 import {
   Asset,
   AssetETH,
@@ -9,7 +9,7 @@ import {
   assetToBase,
   assetToString,
   baseAmount,
-} from '@xchainjs/xchain-util'
+} from '@thorswap-lib/xchain-util'
 import { BigNumber, ethers, providers } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 

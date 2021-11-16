@@ -1,5 +1,5 @@
-import { Network } from '@xchainjs/xchain-client'
-import { BaseAmount, assetAmount, assetToBase } from '@xchainjs/xchain-util'
+import { Network } from '@thorswap-lib/xchain-client'
+import { BaseAmount, assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 
 import {

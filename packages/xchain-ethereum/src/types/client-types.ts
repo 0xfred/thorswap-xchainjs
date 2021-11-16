@@ -1,5 +1,5 @@
-import { FeeOption, Fees, Network } from '@xchainjs/xchain-client'
-import { BaseAmount } from '@xchainjs/xchain-util'
+import { FeeOption, Fees, Network } from '@thorswap-lib/xchain-client'
+import { BaseAmount } from '@thorswap-lib/xchain-util'
 import { BigNumber, ethers } from 'ethers'
 
 export type Address = string
