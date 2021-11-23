@@ -1,4 +1,4 @@
-# `@xchainjs/xchain-binance`
+# `@thorswap-lib/xchain-binance`
 
 Binance Module for XChainJS Clients
 
@@ -11,13 +11,13 @@ Binance Module for XChainJS Clients
 ## Installation
 
 ```
-yarn add @xchainjs/xchain-binance
+yarn add @thorswap-lib/xchain-binance
 ```
 
-Following peer dependencies have to be installed into your project. These are not included in `@xchainjs/xchain-binance`.
+Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-binance`.
 
 ```
-yarn add @binance-chain/javascript-sdk @xchainjs/xchain-client @xchainjs/xchain-crypto @xchainjs/xchain-util
+yarn add @binance-chain/javascript-sdk @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util
 ```
 
 ## Service Providers

@@ -86,8 +86,8 @@ We are working to resolve the issue in the next few days."
 
 ### Breaking change
 
-- Latest @xchainjs/xchain-client@0.8.0
-- Latest @xchainjs/xchain-util@0.2.7
+- Latest @thorswap-lib/xchain-client@0.8.0
+- Latest @thorswap-lib/xchain-util@0.2.7
 
 # v.0.12.2 (2021-04-19)
 
@@ -106,7 +106,7 @@ We are working to resolve the issue in the next few days."
 ### Breaking change
 
 - replace `find`, `findIndex`
-- Update @xchainjs/xchain-client package to 0.7.0
+- Update @thorswap-lib/xchain-client package to 0.7.0
 
 # v.0.11.1 (2021-02-26)
 
@@ -118,7 +118,7 @@ We are working to resolve the issue in the next few days."
 
 ### Breaking change
 
-- Update @xchainjs/xchain-client package to 0.6.0
+- Update @thorswap-lib/xchain-client package to 0.6.0
 
 # v.0.10.1 (2021-02-22)
 
@@ -130,7 +130,7 @@ We are working to resolve the issue in the next few days."
 
 ### Breaking change
 
-- Update @xchainjs/xchain-client package to 0.5.0
+- Update @thorswap-lib/xchain-client package to 0.5.0
 - Make `feeRate` optional in `transfer()`, default is `fast`
 
 ### Update
@@ -145,8 +145,8 @@ We are working to resolve the issue in the next few days."
 
 ### Breaking change
 
-- Update @xchainjs/xchain-client package to 0.4.0
-- Update @xchainjs/xchain-crypto package to 0.2.3
+- Update @thorswap-lib/xchain-client package to 0.4.0
+- Update @thorswap-lib/xchain-crypto package to 0.2.3
 - Change `blockchair` to `sochain`
 - Update `getSuggestedFee`
 
@@ -219,7 +219,7 @@ We are working to resolve the issue in the next few days."
 
 ### Breaking change
 
-- Update @xchainjs/xchain-crypto package to 0.2.0, deprecating old keystores
+- Update @thorswap-lib/xchain-crypto package to 0.2.0, deprecating old keystores
 
 # v.0.4.4 (2020-12-11)
 

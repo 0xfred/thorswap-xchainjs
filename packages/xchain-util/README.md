@@ -1,4 +1,4 @@
-# `@xchainjs/xchain-util`
+# `@thorswap-lib/xchain-util`
 
 Utitity helpers for XChain clients
 
@@ -22,13 +22,13 @@ import bn, {
   formatBN,
   formatBNCurrency,
   fixedBN
-} from '@xchainjs/xchain-util'
+} from '@thorswap-lib/xchain-util'
 ```
 
 **Async**
 
 ```
-import delay from '@xchainjs/xchain-util'
+import delay from '@thorswap-lib/xchain-util'
 ```
 
 **Asset Helpers**
@@ -44,16 +44,16 @@ import {
   formatAssetAmount,
   formatBaseAsAssetAmount,
   formatAssetAmountCurrency,
-} from '@xchainjs/xchain-util'
+} from '@thorswap-lib/xchain-util'
 ```
 
 ## Installation
 
 ```
-yarn add @xchainjs/xchain-util
+yarn add @thorswap-lib/xchain-util
 ```
 
-The following peer dependencies have to be installed into your project. These are not included in `@xchainjs/xchain-util`.
+The following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-util`.
 
 ```
 yarn add bignumber.js

@@ -63,8 +63,8 @@
 
 ### Breaking change
 
-- Latest @xchainjs/xchain-client@0.8.0
-- Latest @xchainjs/xchain-util@0.2.7
+- Latest @thorswap-lib/xchain-client@0.8.0
+- Latest @thorswap-lib/xchain-util@0.2.7
 
 # v.0.8.0 (2021-04-12)
 
@@ -89,7 +89,7 @@
 ### Breaking change
 
 - replace `find`, `findIndex`
-- Update @xchainjs/xchain-client package to 0.7.0
+- Update @thorswap-lib/xchain-client package to 0.7.0
 
 # v.0.6.0 (2021-02-26)
 
@@ -105,13 +105,13 @@
 
 ### Breaking change
 
-- Update @xchainjs/xchain-client package to 0.6.0
+- Update @thorswap-lib/xchain-client package to 0.6.0
 
 # v.0.4.0 (2021-02-19)
 
 ### Breaking change
 
-- Update @xchainjs/xchain-client package to 0.5.0
+- Update @thorswap-lib/xchain-client package to 0.5.0
 
 # v.0.3.0 (2021-02-18)
 
@@ -131,8 +131,8 @@
 
 ### Breaking change
 
-- Update @xchainjs/xchain-client package to 0.4.0
-- Update @xchainjs/xchain-crypto package to 0.2.3
+- Update @thorswap-lib/xchain-client package to 0.4.0
+- Update @thorswap-lib/xchain-crypto package to 0.2.3
 - Update parameters of haskcoin APIs ...
 
 ### Update
