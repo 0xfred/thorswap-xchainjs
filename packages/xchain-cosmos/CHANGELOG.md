@@ -40,32 +40,32 @@
 
 ### Breaking change
 
-- Latest @xchainjs/xchain-client@0.8.0
-- Latest @xchainjs/xchain-util@0.2.7
+- Latest @thorswap-lib/xchain-client@0.8.0
+- Latest @thorswap-lib/xchain-util@0.2.7
 
 # v.0.11.0 (2021-03-02)
 
 ### Breaking change
 
 - replace `find`, `findIndex`
-- Update @xchainjs/xchain-client package to 0.7.0
+- Update @thorswap-lib/xchain-client package to 0.7.0
 
 # v.0.10.0 (2021-02-24)
 
 ### Breaking change
 
-- Update @xchainjs/xchain-client package to 0.6.0
+- Update @thorswap-lib/xchain-client package to 0.6.0
 - Update `getBalance`
 
 # v.0.9.0 (2021-02-19)
 
 ### Breaking change
 
-- Update @xchainjs/xchain-client package to 0.5.0
+- Update @thorswap-lib/xchain-client package to 0.5.0
 
 ### Update
 
-- Update @xchainjs/xchain-client package to 0.5.0
+- Update @thorswap-lib/xchain-client package to 0.5.0
 - Add `Service Providers` section in README.md
 
 ### Fix
@@ -80,9 +80,9 @@
 
 ### Breaking change
 
-- Update @xchainjs/xchain-client package to 0.4.0
-- Update @xchainjs/xchain-crypto package to 0.2.3
-- Update @xchainjs/xchain-util package to 0.2.2
+- Update @thorswap-lib/xchain-client package to 0.4.0
+- Update @thorswap-lib/xchain-crypto package to 0.2.3
+- Update @thorswap-lib/xchain-util package to 0.2.2
 
 # v.0.8.0 (2021-02-03)
 
@@ -136,10 +136,10 @@
 
 ### Update
 
-- Update to latest `@xchainjs/*` packages and other dependencies
+- Update to latest `@thorswap-lib/*` packages and other dependencies
 
 # v.0.4.0 (2020-11-20)
 
 ### Breaking change
 
-- Update @xchainjs/xchain-crypto package to 0.2.0, deprecating old keystores
+- Update @thorswap-lib/xchain-crypto package to 0.2.0, deprecating old keystores

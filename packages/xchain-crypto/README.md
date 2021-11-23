@@ -34,10 +34,10 @@ const meta = 'xchain-keystore'
 
 ## Installation
 
-- Install `@xchainjs/xchain-crypto` from `npm`
+- Install `@thorswap-lib/xchain-crypto` from `npm`
 
 ```bash
-yarn add @xchainjs/xchain-crypto
+yarn add @thorswap-lib/xchain-crypto
 ```
 
 ## Usage

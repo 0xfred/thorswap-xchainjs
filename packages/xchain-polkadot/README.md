@@ -1,11 +1,11 @@
-# `@xchainjs/xchain-polkadot`
+# `@thorswap-lib/xchain-polkadot`
 
 Polkadot Module for XChainJS Clients
 
 ## Installation
 
 ```
-yarn add @xchainjs/xchain-polkadot
+yarn add @thorswap-lib/xchain-polkadot
 ```
 
 ## Polkadot Client Testing
@@ -15,10 +15,10 @@ yarn install
 yarn test
 ```
 
-Following peer dependencies have to be installed into your project. These are not included in `@xchainjs/xchain-polkadot`.
+Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-polkadot`.
 
 ```
-yarn add axios @polkadot/api @polkadot/util @xchainjs/xchain-client @xchainjs/xchain-crypto @xchainjs/xchain-util
+yarn add axios @polkadot/api @polkadot/util @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util
 ```
 
 ## Service Providers

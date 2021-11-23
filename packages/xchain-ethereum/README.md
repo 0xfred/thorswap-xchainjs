@@ -1,4 +1,4 @@
-# `@xchainjs/xchain-ethereum`
+# `@thorswap-lib/xchain-ethereum`
 
 ## Modules
 
@@ -7,13 +7,13 @@
 ## Installation
 
 ```
-yarn add @xchainjs/xchain-ethereum
+yarn add @thorswap-lib/xchain-ethereum
 ```
 
-Following peer dependencies have to be installed into your project. These are not included in `@xchainjs/xchain-ethereum`.
+Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-ethereum`.
 
 ```
-yarn add @xchainjs/xchain-client @xchainjs/xchain-crypto @xchainjs/xchain-util axios ethers
+yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios ethers
 ```
 
 ## Service Providers
