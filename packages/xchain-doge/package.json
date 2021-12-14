@@ -1,10 +1,10 @@
 {
-  "name": "@thorswap-lib/xchain-ethereum",
-  "version": "0.22.5",
-  "description": "Ethereum client for XChainJS",
+  "name": "@thorswap-lib/xchain-doge",
+  "version": "0.0.1",
+  "description": "Custom Doge client and utilities used by Thorswap clients",
   "keywords": [
-    "XChain",
-    "Ethereum"
+    "Xchain",
+    "Doge"
   ],
   "author": "XChainJS",
   "homepage": "https://github.com/thorswap/thorswap-xchainjs",
@@ -25,26 +25,36 @@
   },
   "scripts": {
     "clean": "rimraf lib/**",
-    "build": "yarn clean && rollup -c rollup.config.ts",
+    "build": "yarn clean && rollup -c",
     "test": "jest",
-    "lint": "eslint \"{src,__tests__, __mocks__}/**/*.ts\" --fix --max-warnings 0",
-    "prepublishOnly": "yarn build"
-  },
-  "publishConfig": {
-    "access": "public"
+    "lint": "eslint \"{src,__tests__}/**/*.ts\" --fix --max-warnings 0",
+    "prepublishOnly": "yarn build",
+    "postversion": "git push --follow-tags"
   },
   "devDependencies": {
+    "@types/bitcoinjs-lib": "^5.0.0",
+    "@types/wif": "^2.0.2",
     "@thorswap-lib/xchain-client": "^0.10.3",
     "@thorswap-lib/xchain-crypto": "^0.2.6",
     "@thorswap-lib/xchain-util": "^0.3.1",
-    "axios": "^0.21.3",
-    "ethers": "^5.4.6"
+    "axios": "^0.21.1",
+    "axios-mock-adapter": "^1.20.0",
+    "bitcoinjs-lib": "^5.2.0",
+    "coininfo": "^5.1.0",
+    "coinselect": "3.1.12",
+    "wif": "^2.0.6"
   },
   "peerDependencies": {
     "@thorswap-lib/xchain-client": "^0.10.3",
     "@thorswap-lib/xchain-crypto": "^0.2.6",
     "@thorswap-lib/xchain-util": "^0.3.1",
-    "axios": "^0.21.3",
-    "ethers": "^5.4.6"
+    "axios": "^0.21.1",
+    "bitcoinjs-lib": "^5.2.0",
+    "coininfo": "^5.1.0",
+    "coinselect": "3.1.12",
+    "wif": "^2.0.6"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

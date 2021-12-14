@@ -253,6 +253,14 @@ export const AssetRuneERC20Testnet: Asset = {
 }
 
 /**
+ * Base "chain" asset on dogecoin main net.
+ *
+ * Based on definition in Thorchain `common`
+ * @see https://gitlab.com/thorchain/thornode/-/blob/781-add-doge-chain/common/asset.go#L12-24
+ */
+export const AssetDoge: Asset = { chain: Chain.Doge, symbol: 'DOGE', ticker: 'DOGE' }
+
+/**
  * Helper to check whether asset is valid
  *
  * @param {Asset} asset
