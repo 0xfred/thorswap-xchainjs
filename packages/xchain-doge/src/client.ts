@@ -2,7 +2,7 @@ import {
   Address,
   Balance,
   Fee,
-  FeeOption,
+  // FeeOption,
   FeeRate,
   Network,
   Tx,
@@ -34,8 +34,8 @@ export type DogecoinClientParams = XChainClientParams & {
  */
 class Client extends UTXOClient {
   private sochainUrl = ''
-  private nodeUrl = ''
-  private nodeAuth?: NodeAuth
+  public nodeUrl = ''
+  public nodeAuth?: NodeAuth
 
   /**
    * Constructor
@@ -62,6 +62,7 @@ class Client extends UTXOClient {
     this.nodeUrl =
       nodeUrl ??
       (() => {
+        // TODO: CHECK THIS
         switch (network) {
           case Network.Mainnet:
             return 'https://doge.thorchain.info'
@@ -298,7 +299,7 @@ class Client extends UTXOClient {
    */
   async transfer(params: TxParams & { feeRate?: FeeRate }): Promise<TxHash> {
     const fromAddressIndex = params?.walletIndex || 0
-    const feeRate = params.feeRate || (await this.getFeeRates())[FeeOption.Fast]
+    const feeRate = params.feeRate || (await this.getSuggestedFeeRate())
     const { psbt } = await Utils.buildTx({
       ...params,
       feeRate,
@@ -314,8 +315,14 @@ class Client extends UTXOClient {
     return await Utils.broadcastTx({
       network: this.network,
       txHex,
-      nodeUrl: this.nodeUrl,
-      auth: this.nodeAuth,
+      nodeUrl: sochain.getSendTxUrl({
+        network: this.network,
+        sochainUrl: this.sochainUrl,
+        address: this.getAddress(fromAddressIndex),
+      }),
+      // TODO: Check this before production
+      // nodeUrl: this.nodeUrl,
+      // auth: this.nodeAuth,
     })
   }
 }

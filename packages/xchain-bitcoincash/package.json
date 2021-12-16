@@ -33,15 +33,16 @@
     "postversion": "git push --follow-tags"
   },
   "dependencies": {
+    "undefined": "https://github.com/cryptocoinjs/coininfo.git",
     "uniqid": "^5.4.0"
   },
   "devDependencies": {
     "@psf/bitcoincashjs-lib": "^4.0.2",
-    "@types/bchaddrjs": "0.4.0",
-    "@types/uniqid": "^5.3.1",
     "@thorswap-lib/xchain-client": "^0.10.3",
     "@thorswap-lib/xchain-crypto": "^0.2.6",
     "@thorswap-lib/xchain-util": "^0.3.1",
+    "@types/bchaddrjs": "0.4.0",
+    "@types/uniqid": "^5.3.1",
     "axios": "^0.21.1",
     "axios-mock-adapter": "^1.20.0",
     "bchaddrjs": "^0.5.2",

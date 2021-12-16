@@ -14,7 +14,7 @@ import {
 } from './types/sochain-api-types'
 import { DOGE_DECIMAL } from './utils'
 
-const DEFAULT_SUGGESTED_TRANSACTION_FEE = 1
+const DEFAULT_SUGGESTED_TRANSACTION_FEE = 100000
 
 const toSochainNetwork = (network: Network): string => {
   switch (network) {
@@ -23,6 +23,10 @@ const toSochainNetwork = (network: Network): string => {
     case Network.Testnet:
       return 'DOGETEST'
   }
+}
+
+export const getSendTxUrl = ({ sochainUrl, network }: AddressParams) => {
+  return `${sochainUrl}/send_tx/${toSochainNetwork(network)}`
 }
 
 /**
@@ -127,11 +131,9 @@ export const getUnspentTxs = async ({
  */
 export const getSuggestedTxFee = async (): Promise<number> => {
   //Note: sochain does not provide fee rate related data
-  //So use Bitgo API for fee estimation
-  //Refer: https://app.bitgo.com/docs/#operation/v2.tx.getfeeestimate
   try {
-    const response = await axios.get('https://app.bitgo.com/api/v2/ltc/tx/fee')
-    return response.data.feePerKb / 1000 // feePerKb to feePerByte
+    const response = await axios.get('https://api.blockcypher.com/v1/doge/main')
+    return response.data.low_fee_per_kb / 1000 // feePerKb to feePerByte
   } catch (error) {
     return DEFAULT_SUGGESTED_TRANSACTION_FEE
   }

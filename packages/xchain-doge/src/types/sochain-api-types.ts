@@ -32,7 +32,7 @@ export interface Transaction {
   blockhash: string
   confirmations: number
   time: number
-
+  tx_hex: string
   inputs: TxIO[]
   outputs: TxIO[]
 }

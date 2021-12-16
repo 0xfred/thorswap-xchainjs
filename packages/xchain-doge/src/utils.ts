@@ -30,8 +30,8 @@ const TX_INPUT_PUBKEYHASH = 107
 const TX_OUTPUT_BASE = 8 + 1 //9
 const TX_OUTPUT_PUBKEYHASH = 25
 
-function inputBytes(input: UTXO): number {
-  return TX_INPUT_BASE + (input.witnessUtxo.script ? input.witnessUtxo.script.length : TX_INPUT_PUBKEYHASH)
+function inputBytes(): number {
+  return TX_INPUT_BASE + TX_INPUT_PUBKEYHASH
 }
 
 /**
@@ -54,10 +54,11 @@ export const compileMemo = (memo: string): Buffer => {
  * @returns {number} The fee amount.
  */
 export function getFee(inputs: UTXO[], feeRate: FeeRate, data: Buffer | null = null): number {
+  // TODO: Check this
   let sum =
     TX_EMPTY_SIZE +
-    inputs.reduce(function (a, x) {
-      return a + inputBytes(x)
+    inputs.reduce(function (a) {
+      return a + inputBytes()
     }, 0) +
     inputs.length + // +1 byte for each input signature
     TX_OUTPUT_BASE +
@@ -94,8 +95,16 @@ export const dogeNetwork = (network: Network): Dogecoin.Network => {
   switch (network) {
     case Network.Mainnet:
       return coininfo.dogecoin.main.toBitcoinJS()
-    case Network.Testnet:
-      return coininfo.dogecoin.test.toBitcoinJS()
+    case Network.Testnet: {
+      // Latest coininfo on NPM doesn't contain dogetest config information
+      const bip32 = {
+        private: 0x04358394,
+        public: 0x043587cf,
+      }
+      const test = coininfo.dogecoin.test
+      test.versions.bip32 = bip32
+      return test.toBitcoinJS()
+    }
   }
 }
 
@@ -142,20 +151,22 @@ export const validateAddress = (address: Address, network: Network): boolean => 
  * @returns {UTXO[]} The UTXOs of the given address.
  */
 export const scanUTXOs = async (params: AddressParams): Promise<UTXO[]> => {
-  const utxos: DogeAddressUTXO[] = await sochain.getUnspentTxs(params)
-
-  return utxos.map(
-    (utxo) =>
-      ({
-        hash: utxo.txid,
-        index: utxo.output_no,
+  const unspent: DogeAddressUTXO[] = await sochain.getUnspentTxs(params)
+  const utxos: UTXO[] = []
+  for (const utxo of unspent) {
+    utxos.push({
+      hash: utxo.txid,
+      index: utxo.output_no,
+      value: assetToBase(assetAmount(utxo.value, DOGE_DECIMAL)).amount().toNumber(),
+      witnessUtxo: {
         value: assetToBase(assetAmount(utxo.value, DOGE_DECIMAL)).amount().toNumber(),
-        witnessUtxo: {
-          value: assetToBase(assetAmount(utxo.value, DOGE_DECIMAL)).amount().toNumber(),
-          script: Buffer.from(utxo.script_hex, 'hex'),
-        },
-      } as UTXO),
-  )
+        script: Buffer.from(utxo.script_hex, 'hex'),
+      },
+      txHex: (await sochain.getTx({ hash: utxo.txid, ...params })).tx_hex,
+    })
+  }
+
+  return utxos
 }
 
 /**
@@ -202,19 +213,23 @@ export const buildTx = async ({
   if (!inputs || !outputs) throw new Error('Balance insufficient for transaction')
 
   const psbt = new Dogecoin.Psbt({ network: dogeNetwork(network) }) // Network-specific
+  // TODO: Doge recommended fees is greater than the recommended by Bitcoinjs-lib, so we need to increase the maximum fee rate
+  psbt.setMaximumFeeRate(650000000)
   //Inputs
   inputs.forEach((utxo: UTXO) =>
     psbt.addInput({
       hash: utxo.hash,
       index: utxo.index,
-      witnessUtxo: utxo.witnessUtxo,
+      // TODO: Dogecoin doesn't support witness
+      // witnessUtxo: utxo.witnessUtxo,
+      nonWitnessUtxo: Buffer.from(utxo.txHex, 'hex'),
     }),
   )
 
   // Outputs
   outputs.forEach((output: Dogecoin.PsbtTxOutput) => {
     if (!output.address) {
-      //an empty address means this is the  change ddress
+      //an empty address means this is the  change address
       output.address = sender
     }
     if (!output.script) {
@@ -238,7 +253,9 @@ export const buildTx = async ({
  * @returns {TxHash} The transaction hash.
  */
 export const broadcastTx = async (params: BroadcastTxParams): Promise<TxHash> => {
-  return await nodeApi.broadcastTx(params)
+  return await nodeApi.broadcastTxToSochain(params)
+  // TODO: Check this before prod
+  // return await nodeApi.broadcastTx(params)
 }
 
 /**
@@ -279,21 +296,4 @@ export const getDefaultFeesWithRates = (): FeesWithRates => {
 export const getDefaultFees = (): Fees => {
   const { fees } = getDefaultFeesWithRates()
   return fees
-}
-
-/**
- * Get address prefix based on the network.
- *
- * @param {Network} network
- * @returns {string} The address prefix based on the network.
- *
- **/
-export const getPrefix = (network: Network) => {
-  throw new Error('Invalid method')
-  switch (network) {
-    case Network.Mainnet:
-      return 'ltc1'
-    case Network.Testnet:
-      return 'tltc1'
-  }
 }
