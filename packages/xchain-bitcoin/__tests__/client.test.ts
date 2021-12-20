@@ -297,7 +297,7 @@ describe('BitcoinClient Test', () => {
     expect(btcClient.getExplorerUrl()).toEqual('https://blockstream.info/testnet')
   })
 
-  it('should retrun valid explorer address url', () => {
+  it('should return valid explorer address url', () => {
     btcClient.setNetwork('mainnet' as Network)
     expect(btcClient.getExplorerAddressUrl('testAddressHere')).toEqual(
       'https://blockstream.info/address/testAddressHere',
@@ -308,7 +308,7 @@ describe('BitcoinClient Test', () => {
     )
   })
 
-  it('should retrun valid explorer tx url', () => {
+  it('should return valid explorer tx url', () => {
     btcClient.setNetwork('mainnet' as Network)
     expect(btcClient.getExplorerTxUrl('testTxHere')).toEqual('https://blockstream.info/tx/testTxHere')
     btcClient.setNetwork('testnet' as Network)
