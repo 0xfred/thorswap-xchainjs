@@ -70,8 +70,7 @@ export type DogeAddressDTO = {
 export type DogeGetBalanceDTO = {
   network: string
   address: string
-  confirmed_balance: string
-  unconfirmed_balance: string
+  balance: string
 }
 
 export type DogeUnspentTxsDTO = {
