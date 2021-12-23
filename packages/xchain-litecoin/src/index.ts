@@ -8,5 +8,6 @@ export {
   LTC_DECIMAL,
   validateAddress,
   calcFee,
+  scanUTXOs,
 } from './utils'
 export { createTxInfo } from './ledger'
