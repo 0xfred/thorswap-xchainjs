@@ -1,3 +1,9 @@
+# v.0.3.2 (2021-12-13)
+
+### Feature
+
+- Add Dogecoin asset
+
 # v.0.3.1 (2021-07-14)
 
 ### Fix

@@ -9754,6 +9754,12 @@ umask@^1.1.0:
   resolved "https://registry.yarnpkg.com/umask/-/umask-1.1.0.tgz#f29cebf01df517912bb58ff9c4e50fde8e33320d"
   integrity sha1-8pzr8B31F5ErtY/5xOUP3o4zMg0=
 
+"undefined@https://github.com/cryptocoinjs/coininfo.git":
+  version "5.2.0"
+  resolved "https://github.com/cryptocoinjs/coininfo.git#4bb73a7c9efe36f7a9eb4122a75e7e7d9c191a56"
+  dependencies:
+    safe-buffer "^5.1.1"
+
 union-value@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/union-value/-/union-value-1.0.1.tgz#0b6fe7b835aecda61c6ea4d4f02c14221e109847"
