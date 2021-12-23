@@ -1,4 +1,4 @@
-# `@xchainjs/xchain-client`
+# `@thorswap-lib/xchain-client`
 
 ## Modules
 
@@ -7,13 +7,13 @@
 ## Installation
 
 ```
-yarn add @xchainjs/xchain-client
+yarn add @thorswap-lib/xchain-client
 ```
 
-Following peer dependencies have to be installed into your project. These are not included in `@xchainjs/xchain-litecoin`.
+Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-litecoin`.
 
 ```
-yarn add @xchainjs/xchain-client @xchainjs/xchain-crypto @xchainjs/xchain-util axios bitcoinjs-lib coininfo wif
+yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios bitcoinjs-lib coininfo wif
 ```
 
 ## Service Providers

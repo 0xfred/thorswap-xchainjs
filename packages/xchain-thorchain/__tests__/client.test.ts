@@ -174,6 +174,16 @@ describe('Client Test', () => {
     expect(thorClient.getClientUrl().node).toEqual('new testnet client')
   })
 
+  it('returns private key', async () => {
+    const privKey = thorClient.getPrivKey()
+    expect(privKey.toBase64()).toEqual('CHCbyYWorMZVRFtfJzt72DigvZeRNi3jo2c3hGEQ46I=')
+  })
+
+  it('returns public key', async () => {
+    const pubKey = thorClient.getPubKey()
+    expect(pubKey.toBase64()).toEqual('AsL4F+rvFMqDkZYpVVnZa0OBa0EXwscjNrODbBME42vC')
+  })
+
   it('has no balances', async () => {
     mockAccountsBalance(thorClient.getClientUrl().node, testnet_address_path0, {
       height: 0,
@@ -401,7 +411,7 @@ describe('Client Test', () => {
     expect(thorClient.getExplorerUrl()).toEqual('https://viewblock.io/thorchain')
   })
 
-  it('should retrun valid explorer address url', () => {
+  it('should return valid explorer address url', () => {
     expect(thorClient.getExplorerAddressUrl('tthorabc')).toEqual(
       'https://viewblock.io/thorchain/address/tthorabc?network=testnet',
     )
@@ -410,7 +420,7 @@ describe('Client Test', () => {
     expect(thorClient.getExplorerAddressUrl('thorabc')).toEqual('https://viewblock.io/thorchain/address/thorabc')
   })
 
-  it('should retrun valid explorer tx url', () => {
+  it('should return valid explorer tx url', () => {
     expect(thorClient.getExplorerTxUrl('txhash')).toEqual('https://viewblock.io/thorchain/tx/txhash?network=testnet')
 
     thorClient.setNetwork('mainnet' as Network)

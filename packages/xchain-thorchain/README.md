@@ -1,17 +1,17 @@
-# `@xchainjs/xchain-thorchain`
+# `@thorswap-lib/xchain-thorchain`
 
 Thorchain Module for XChainJS Clients
 
 ## Installation
 
 ```
-yarn add @xchainjs/xchain-thorchain
+yarn add @thorswap-lib/xchain-thorchain
 ```
 
-Following peer dependencies have to be installed into your project. These are not included in `@xchainjs/xchain-thorchain`.
+Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-thorchain`.
 
 ```
-yarn add @xchainjs/xchain-client @xchainjs/xchain-crypto @xchainjs/xchain-util @xchainjs/xchain-cosmos axios cosmos-client
+yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util @thorswap-lib/xchain-cosmos axios cosmos-client
 ```
 
 Important note: Make sure to install same version of `cosmos-client` as `xchain-thorchain` is using (currently `cosmos-client@0.39.2` ). In other case things might break.
@@ -41,14 +41,24 @@ Rate limits: No
 
 ```ts
 // import `xchain-thorchain`
-import { Client } from '@xchainjs/xchain-thorchain'
+import { Client } from '@thorswap-lib/xchain-thorchain'
 
 // Create a `Client`
 const client = new Client({ network: Network.Testnet, phrase: 'my secret phrase' })
 
 // get address
 const address = client.getAddress()
-console.log('address:', client.getAddress()) // address: tthor13gym97tmw3axj3hpewdggy2cr288d3qffr8skg
+console.log('address:', address) // address: tthor13gym97tmw3axj3hpewdggy2cr288d3qffr8skg
+
+// get private key
+const privKey = client.getPrivKey()
+console.log('privKey:', privKey.toBase64()) // privKey: {your-private-key} base64 encoded
+console.log('privKey:', privKey.toBuffer()) // privKey: {your-private-key} as `Buffer`
+
+// get public key
+const pubKey = client.getPubKey()
+console.log('pubKey:', pubKey.toBase64()) // pubKey: {your-public-key} base64 encoded
+console.log('pubKey:', pubKey.toBuffer()) // pubKey: {your-public-key} as `Buffer`
 
 // get balances
 const balances = await client.getBalance(address)

@@ -10,7 +10,7 @@
 
 ### Update
 
-- Use latest `@xchainjs/xchain-util@0.3.0`
+- Use latest `@thorswap-lib/xchain-util@0.3.0`
 
 # v.0.10.0 (2021-07-07)
 
@@ -53,7 +53,7 @@
 
 ### Breaking change
 
-- Update @xchainjs/xchain-util package to 0.2.7
+- Update @thorswap-lib/xchain-util package to 0.2.7
 
 # v.0.7.0 (2021-03-02)
 
@@ -71,13 +71,13 @@
 
 ### Breaking change
 
-- Add @xchainjs/xchain-util to `peerDependencies`
+- Add @thorswap-lib/xchain-util to `peerDependencies`
 
 # v.0.4.0 (2020-01-30)
 
 ### Breaking change
 
-- Update @xchainjs/xchain-util package to 0.2.2
+- Update @thorswap-lib/xchain-util package to 0.2.2
 
 ### Breaking change
 
