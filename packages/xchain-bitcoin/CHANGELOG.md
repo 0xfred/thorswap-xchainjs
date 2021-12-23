@@ -1,3 +1,7 @@
+# v.0.15.14 (2021-12-22)
+
+- fix haskoin api URL to 
+
 # v.0.15.13 (2021-11-12)
 
 - updated haskoin api URL

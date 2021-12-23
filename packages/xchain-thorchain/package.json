@@ -7,7 +7,7 @@
     "XChain"
   ],
   "author": "THORChain",
-  "homepage": "https://github.com/xchainjs/xchainjs-lib",
+  "homepage": "https://github.com/thorswap/thorswap-xchainjs",
   "license": "MIT",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:xchainjs/xchainjs-lib.git"
+    "url": "git@github.com:thorswap/thorswap-xchainjs.git"
   },
   "scripts": {
     "clean": "rimraf lib/**",
@@ -32,11 +32,11 @@
     "start:example": "ts-node example/index.ts"
   },
   "devDependencies": {
-    "@types/big.js": "^6.0.0",
     "@thorswap-lib/xchain-client": "^0.10.1",
     "@thorswap-lib/xchain-cosmos": "^0.13.7",
     "@thorswap-lib/xchain-crypto": "^0.2.4",
     "@thorswap-lib/xchain-util": "^0.3.0",
+    "@types/big.js": "^6.0.0",
     "axios": "^0.21.0",
     "cosmos-client": "0.39.2",
     "nock": "^13.0.5"
