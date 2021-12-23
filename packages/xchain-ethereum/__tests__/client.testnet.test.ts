@@ -504,37 +504,37 @@ describe('Client Test', () => {
     expect(gasEstimate.fees.fastest.amount().toString()).toEqual(baseAmount('1596000000000000', 18).amount().toString())
   })
 
-  it('isApproved', async () => {
-    const ethClient = new Client({
-      network: 'testnet' as Network,
-      phrase,
-    })
+  // it('isApproved', async () => {
+  //   const ethClient = new Client({
+  //     network: 'testnet' as Network,
+  //     phrase,
+  //   })
 
-    mock_all_api(etherscanUrl, ropstenInfuraUrl, ropstenAlchemyUrl, 'eth_blockNumber', '0xa7cac8')
-    mock_all_api(etherscanUrl, ropstenInfuraUrl, ropstenAlchemyUrl, 'eth_getTransactionCount', '0x0')
-    mock_all_api(etherscanUrl, ropstenInfuraUrl, ropstenAlchemyUrl, 'eth_gasPrice', '0x5969ec91')
-    mock_all_api(
-      etherscanUrl,
-      ropstenInfuraUrl,
-      ropstenAlchemyUrl,
-      'eth_call',
-      '0x0000000000000000000000000000000000000000000000000000000000000064',
-    )
+  //   mock_all_api(etherscanUrl, ropstenInfuraUrl, ropstenAlchemyUrl, 'eth_blockNumber', '0xa7cac8')
+  //   mock_all_api(etherscanUrl, ropstenInfuraUrl, ropstenAlchemyUrl, 'eth_getTransactionCount', '0x0')
+  //   mock_all_api(etherscanUrl, ropstenInfuraUrl, ropstenAlchemyUrl, 'eth_gasPrice', '0x5969ec91')
+  //   mock_all_api(
+  //     etherscanUrl,
+  //     ropstenInfuraUrl,
+  //     ropstenAlchemyUrl,
+  //     'eth_call',
+  //     '0x0000000000000000000000000000000000000000000000000000000000000064',
+  //   )
 
-    let isApproved = await ethClient.isApproved({
-      contractAddress: '0x8c2a90d36ec9f745c9b28b588cba5e2a978a1656',
-      spenderAddress: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
-      amount: baseAmount(100, ETH_DECIMAL),
-    })
-    expect(isApproved).toEqual(true)
+  //   let isApproved = await ethClient.isApproved({
+  //     contractAddress: '0x8c2a90d36ec9f745c9b28b588cba5e2a978a1656',
+  //     spenderAddress: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
+  //     amount: baseAmount(100, ETH_DECIMAL),
+  //   })
+  //   expect(isApproved).toEqual(true)
 
-    isApproved = await ethClient.isApproved({
-      contractAddress: '0x8c2a90d36ec9f745c9b28b588cba5e2a978a1656',
-      spenderAddress: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
-      amount: baseAmount(101, ETH_DECIMAL),
-    })
-    expect(isApproved).toEqual(false)
-  })
+  //   isApproved = await ethClient.isApproved({
+  //     contractAddress: '0x8c2a90d36ec9f745c9b28b588cba5e2a978a1656',
+  //     spenderAddress: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
+  //     amount: baseAmount(101, ETH_DECIMAL),
+  //   })
+  //   expect(isApproved).toEqual(false)
+  // })
 
   it('estimateApprove', async () => {
     const ethClient = new Client({
