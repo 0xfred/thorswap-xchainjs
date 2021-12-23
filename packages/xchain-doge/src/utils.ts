@@ -158,11 +158,6 @@ export const scanUTXOs = async (params: AddressParams): Promise<UTXO[]> => {
       hash: utxo.txid,
       index: utxo.output_no,
       value: assetToBase(assetAmount(utxo.value, DOGE_DECIMAL)).amount().toNumber(),
-      witnessUtxo: {
-        value: assetToBase(assetAmount(utxo.value, DOGE_DECIMAL)).amount().toNumber(),
-        script: Buffer.from(utxo.script_hex, 'hex'),
-      },
-      txHex: (await sochain.getTx({ hash: utxo.txid, ...params })).tx_hex,
     })
   }
 
@@ -215,16 +210,15 @@ export const buildTx = async ({
   const psbt = new Dogecoin.Psbt({ network: dogeNetwork(network) }) // Network-specific
   // TODO: Doge recommended fees is greater than the recommended by Bitcoinjs-lib, so we need to increase the maximum fee rate
   psbt.setMaximumFeeRate(650000000)
-  //Inputs
-  inputs.forEach((utxo: UTXO) =>
+  const params = { sochainUrl, network, address: sender }
+
+  for (const utxo of inputs) {
     psbt.addInput({
       hash: utxo.hash,
       index: utxo.index,
-      // TODO: Dogecoin doesn't support witness
-      // witnessUtxo: utxo.witnessUtxo,
-      nonWitnessUtxo: Buffer.from(utxo.txHex, 'hex'),
-    }),
-  )
+      nonWitnessUtxo: Buffer.from((await sochain.getTx({ hash: utxo.hash, ...params })).tx_hex, 'hex'),
+    })
+  }
 
   // Outputs
   outputs.forEach((output: Dogecoin.PsbtTxOutput) => {
