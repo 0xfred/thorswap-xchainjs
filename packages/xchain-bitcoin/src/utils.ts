@@ -151,6 +151,7 @@ export const scanUTXOs = async ({
   network,
   address,
   confirmedOnly = true, // default: scan only confirmed UTXOs
+  fetchTxHex,
 }: ScanUTXOParam): Promise<UTXO[]> => {
   switch (network) {
     case Network.Testnet: {
@@ -168,18 +169,27 @@ export const scanUTXOs = async ({
         utxos = await sochain.getUnspentTxs(addressParam)
       }
 
-      return utxos.map(
-        (utxo) =>
-          ({
-            hash: utxo.txid,
-            index: utxo.output_no,
+      const results: UTXO[] = []
+
+      for (const utxo of utxos) {
+        let txHex
+        if (fetchTxHex) {
+          txHex = (await sochain.getTx({ hash: utxo.txid, sochainUrl, network })).tx_hex
+        }
+
+        results.push({
+          hash: utxo.txid,
+          index: utxo.output_no,
+          value: assetToBase(assetAmount(utxo.value, BTC_DECIMAL)).amount().toNumber(),
+          witnessUtxo: {
             value: assetToBase(assetAmount(utxo.value, BTC_DECIMAL)).amount().toNumber(),
-            witnessUtxo: {
-              value: assetToBase(assetAmount(utxo.value, BTC_DECIMAL)).amount().toNumber(),
-              script: Buffer.from(utxo.script_hex, 'hex'),
-            },
-          } as UTXO),
-      )
+            script: Buffer.from(utxo.script_hex, 'hex'),
+          },
+          txHex,
+        })
+      }
+
+      return results
     }
     case Network.Mainnet: {
       let utxos: haskoinApi.UtxoData[] = []
@@ -220,16 +230,18 @@ export const buildTx = async ({
   network,
   sochainUrl,
   spendPendingUTXO = false, // default: prevent spending uncomfirmed UTXOs
+  fetchTxHex = false,
 }: TxParams & {
   feeRate: FeeRate
   sender: Address
   network: Network
   sochainUrl: string
   spendPendingUTXO?: boolean
+  fetchTxHex?: boolean
 }): Promise<{ psbt: Bitcoin.Psbt; utxos: UTXO[] }> => {
   // search only confirmed UTXOs if pending UTXO is not allowed
   const confirmedOnly = !spendPendingUTXO
-  const utxos = await scanUTXOs({ sochainUrl, network, address: sender, confirmedOnly })
+  const utxos = await scanUTXOs({ sochainUrl, network, address: sender, confirmedOnly, fetchTxHex })
 
   if (utxos.length === 0) throw new Error('No utxos to send')
   if (!validateAddress(recipient, network)) throw new Error('Invalid address')

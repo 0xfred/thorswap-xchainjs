@@ -1,6 +1,10 @@
+# v.0.15.15 (2021-12-25)
+
+- fetch utxo hex
+
 # v.0.15.14 (2021-12-22)
 
-- fix haskoin api URL to 
+- fix haskoin api URL to
 
 # v.0.15.13 (2021-11-12)
 
