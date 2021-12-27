@@ -238,7 +238,7 @@ export const buildTx = async ({
   sochainUrl: string
   spendPendingUTXO?: boolean
   fetchTxHex?: boolean
-}): Promise<{ psbt: Bitcoin.Psbt; utxos: UTXO[] }> => {
+}): Promise<{ psbt: Bitcoin.Psbt; utxos: UTXO[]; inputs: UTXO[] }> => {
   // search only confirmed UTXOs if pending UTXO is not allowed
   const confirmedOnly = !spendPendingUTXO
   const utxos = await scanUTXOs({ sochainUrl, network, address: sender, confirmedOnly, fetchTxHex })
@@ -293,7 +293,7 @@ export const buildTx = async ({
     }
   })
 
-  return { psbt, utxos }
+  return { psbt, utxos, inputs }
 }
 
 /**
