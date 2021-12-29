@@ -77,7 +77,9 @@ export const getBalance = async ({ sochainUrl, network, address }: AddressParams
   const url = `${sochainUrl}/get_address_balance/${toSochainNetwork(network)}/${address}`
   const response = await axios.get(url)
   const balanceResponse: SochainResponse<DogeGetBalanceDTO> = response.data
-  const netAmt = balanceResponse.data.balance
+  const confirmed = assetAmount(balanceResponse.data.confirmed_balance, DOGE_DECIMAL)
+  const unconfirmed = assetAmount(balanceResponse.data.unconfirmed_balance, DOGE_DECIMAL)
+  const netAmt = confirmed.amount().plus(unconfirmed.amount())
   const result = assetToBase(assetAmount(netAmt, DOGE_DECIMAL))
   return result
 }
