@@ -1,3 +1,8 @@
+# v.0.19.5 (2021-11-29)
+
+- Add Stagenet option in the client constructor
+- Add `isStagenet` param to `getPrefix` utils method and return `sthor` for stagenet
+
 # v.0.19.4 (2021-11-22)
 
 ## Add

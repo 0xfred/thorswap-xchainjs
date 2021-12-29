@@ -67,6 +67,7 @@ class Client implements ThorchainClient, XChainClient {
   private phrase = ''
   private rootDerivationPaths: RootDerivationPaths
   private cosmosClient: CosmosSDKClient
+  private isStagenet = false
 
   /**
    * Constructor
@@ -87,16 +88,19 @@ class Client implements ThorchainClient, XChainClient {
       [Network.Mainnet]: "44'/931'/0'/0/",
       [Network.Testnet]: "44'/931'/0'/0/",
     },
+    isStagenet = false,
   }: XChainClientParams & ThorchainClientParams) {
     this.network = network
     this.clientUrl = clientUrl || getDefaultClientUrl()
     this.explorerUrls = explorerUrls || getDefaultExplorerUrls()
     this.rootDerivationPaths = rootDerivationPaths
 
+    this.isStagenet = isStagenet
+
     this.cosmosClient = new CosmosSDKClient({
       server: this.getClientUrl().node,
       chainId: getChainId(),
-      prefix: getPrefix(this.network),
+      prefix: getPrefix(this.network, this.isStagenet),
     })
 
     if (phrase) this.setPhrase(phrase)
@@ -126,7 +130,7 @@ class Client implements ThorchainClient, XChainClient {
     }
 
     this.network = network
-    this.cosmosClient.updatePrefix(getPrefix(this.network))
+    this.cosmosClient.updatePrefix(getPrefix(this.network, this.isStagenet))
   }
 
   /**
@@ -315,7 +319,7 @@ class Client implements ThorchainClient, XChainClient {
     const txMinHeight = undefined
     const txMaxHeight = undefined
 
-    registerCodecs(getPrefix(this.network))
+    registerCodecs(getPrefix(this.network, this.isStagenet))
 
     const txIncomingHistory = (
       await this.cosmosClient.searchTxFromRPC({
@@ -466,7 +470,7 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {TxHash} The transaction hash.
    */
   async transfer({ walletIndex = 0, asset = AssetRuneNative, amount, recipient, memo }: TxParams): Promise<TxHash> {
-    registerCodecs(getPrefix(this.network))
+    registerCodecs(getPrefix(this.network, this.isStagenet))
 
     const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
     const fee = await this.getFees()

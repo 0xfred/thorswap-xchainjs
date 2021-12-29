@@ -94,7 +94,11 @@ export const isBroadcastSuccess = (response: unknown): boolean =>
  * @returns {string} The address prefix based on the network.
  *
  **/
-export const getPrefix = (network: Network) => {
+export const getPrefix = (network: Network, isStagenet = false) => {
+  if (isStagenet) {
+    return 'sthor'
+  }
+
   switch (network) {
     case Network.Mainnet:
       return 'thor'
