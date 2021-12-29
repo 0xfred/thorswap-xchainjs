@@ -19,6 +19,7 @@ export type ExplorerUrl = Record<Network, string>
 export type ThorchainClientParams = {
   clientUrl?: ClientUrl
   explorerUrls?: ExplorerUrls
+  isStagenet?: boolean
 }
 
 export type DepositParam = {
