@@ -1,3 +1,21 @@
+# v.0.14.0 (2022-01-06)
+
+### Update
+
+- [CosmosSDKClient] revert Extract `sign` and `broadcast` from `signAndBroadcast`
+- extract public part into `unsignedStdTxGet` to use it in `transfer` and `transferSignedOffline`
+
+### Add
+
+- `TxOfflineParams` types
+- `transferSignedOffline` functions
+
+# v.0.13.9 (2021-11-30)
+
+### Update
+
+- [CosmosSDKClient] Extract `sign` and `broadcast` from `signAndBroadcast`
+
 # v.0.13.8 (2021-10-31)
 
 ### Update

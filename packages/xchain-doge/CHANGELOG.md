@@ -1,3 +1,7 @@
+# v.0.1.1 (2022-01-06)
+
+Update BroadcastTx API url
+
 # v.0.1.0 (2021-12-29)
 
 Fix sochain getBalance method

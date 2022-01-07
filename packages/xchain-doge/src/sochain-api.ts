@@ -26,7 +26,11 @@ const toSochainNetwork = (network: Network): string => {
 }
 
 export const getSendTxUrl = ({ sochainUrl, network }: AddressParams) => {
-  return `${sochainUrl}/send_tx/${toSochainNetwork(network)}`
+  if (network === 'mainnet') {
+    return `https://api.blockcypher.com/v1/doge/main/txs/push`
+  } else {
+    return `${sochainUrl}/send_tx/${toSochainNetwork(network)}`
+  }
 }
 
 /**

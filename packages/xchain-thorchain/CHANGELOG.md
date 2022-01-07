@@ -1,3 +1,9 @@
+# v.0.19.6 (2022-01-06)
+
+## Add
+
+- Provide `transferOffline` method
+
 # v.0.19.5 (2021-11-29)
 
 - Add Stagenet option in the client constructor

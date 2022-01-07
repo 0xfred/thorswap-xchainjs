@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-cosmos",
-  "version": "0.13.8",
+  "version": "0.14.0",
   "description": "Custom Cosmos client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",
@@ -31,7 +31,7 @@
     "prepublishOnly": "yarn build"
   },
   "devDependencies": {
-    "@thorswap-lib/xchain-client": "^0.10.1",
+    "@thorswap-lib/xchain-client": "0.10.3",
     "@thorswap-lib/xchain-crypto": "^0.2.4",
     "@thorswap-lib/xchain-util": "^0.3.0",
     "axios": "^0.21.0",
@@ -42,7 +42,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@thorswap-lib/xchain-client": "^0.10.1",
+    "@thorswap-lib/xchain-client": "^0.10.3",
     "@thorswap-lib/xchain-crypto": "^0.2.4",
     "@thorswap-lib/xchain-util": "^0.3.0",
     "axios": "^0.21.0",
