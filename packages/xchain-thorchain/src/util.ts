@@ -85,7 +85,11 @@ export const isBroadcastSuccess = (response: unknown): boolean =>
   typeof response === 'object' &&
   response !== null &&
   'logs' in response &&
-  (response as Record<string, unknown>).logs !== undefined
+  'raw_log' in response &&
+  (response as Record<string, unknown>).logs !== undefined &&
+  (response as Record<string, unknown>).logs !== null &&
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  !(response as any).raw_log.includes('failed')
 
 /**
  * Get address prefix based on the network.
@@ -112,7 +116,7 @@ export const getPrefix = (network: Network, isStagenet = false) => {
  *
  * @returns {string} The chain id based on the network.
  */
-export const getChainId = () => 'thorchain'
+export const getChainId = (isStagenet = false) => (isStagenet ? 'thorchain-stagenet' : 'thorchain')
 
 /**
  * Register Codecs based on the prefix.
@@ -269,7 +273,20 @@ export const getBalance = async ({
  *
  * @returns {ClientUrl} The client url (both mainnet and testnet) for thorchain.
  */
-export const getDefaultClientUrl = (): ClientUrl => {
+export const getDefaultClientUrl = (isStagenet = false): ClientUrl => {
+  if (isStagenet) {
+    return {
+      [Network.Testnet]: {
+        node: 'https://testnet.thornode.thorchain.info',
+        rpc: 'https://testnet.rpc.thorchain.info',
+      },
+      [Network.Mainnet]: {
+        node: 'https://stagenet-thornode.ninerealms.com',
+        rpc: 'https://stagenet-rpc.ninerealms.com',
+      },
+    }
+  }
+
   return {
     [Network.Testnet]: {
       node: 'https://testnet.thornode.thorchain.info',
@@ -333,12 +350,19 @@ export const getExplorerAddressUrl = ({
   urls,
   network,
   address,
+  isStagenet = false,
 }: {
   urls: ExplorerUrls
   network: Network
   address: Address
+  isStagenet?: boolean
 }): string => {
   const url = `${urls.address[network]}/${address}`
+
+  if (isStagenet) {
+    return `${url}?network=stagenet`
+  }
+
   switch (network) {
     case Network.Mainnet:
       return url
@@ -359,12 +383,19 @@ export const getExplorerTxUrl = ({
   urls,
   network,
   txID,
+  isStagenet = false,
 }: {
   urls: ExplorerUrls
   network: Network
   txID: TxHash
+  isStagenet?: boolean
 }): string => {
   const url = `${urls.tx[network]}/${txID}`
+
+  if (isStagenet) {
+    return `${url}?network=stagenet`
+  }
+
   switch (network) {
     case Network.Mainnet:
       return url

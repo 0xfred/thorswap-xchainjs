@@ -91,7 +91,7 @@ class Client implements ThorchainClient, XChainClient {
     isStagenet = false,
   }: XChainClientParams & ThorchainClientParams) {
     this.network = network
-    this.clientUrl = clientUrl || getDefaultClientUrl()
+    this.clientUrl = clientUrl || getDefaultClientUrl(isStagenet)
     this.explorerUrls = explorerUrls || getDefaultExplorerUrls()
     this.rootDerivationPaths = rootDerivationPaths
 
@@ -99,7 +99,7 @@ class Client implements ThorchainClient, XChainClient {
 
     this.cosmosClient = new CosmosSDKClient({
       server: this.getClientUrl().node,
-      chainId: getChainId(),
+      chainId: getChainId(isStagenet),
       prefix: getPrefix(this.network, this.isStagenet),
     })
 
@@ -177,6 +177,10 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {string} The explorer url for thorchain based on the current network.
    */
   getExplorerUrl(): string {
+    if (this.isStagenet) {
+      return `${this.explorerUrls.root[this.network]}?network=stagenet`
+    }
+
     return this.explorerUrls.root[this.network]
   }
 
@@ -195,7 +199,12 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {string} The explorer url for the given address.
    */
   getExplorerAddressUrl(address: Address): string {
-    return getExplorerAddressUrl({ urls: this.explorerUrls, network: this.network, address })
+    return getExplorerAddressUrl({
+      urls: this.explorerUrls,
+      network: this.network,
+      address,
+      isStagenet: this.isStagenet,
+    })
   }
 
   /**
@@ -205,7 +214,7 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {string} The explorer url for the given transaction id.
    */
   getExplorerTxUrl(txID: string): string {
-    return getExplorerTxUrl({ urls: this.explorerUrls, network: this.network, txID })
+    return getExplorerTxUrl({ urls: this.explorerUrls, network: this.network, txID, isStagenet: this.isStagenet })
   }
 
   /**
