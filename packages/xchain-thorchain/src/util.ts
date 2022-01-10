@@ -89,7 +89,7 @@ export const isBroadcastSuccess = (response: unknown): boolean =>
   (response as Record<string, unknown>).logs !== undefined &&
   (response as Record<string, unknown>).logs !== null &&
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  !(response as any).raw_log.includes('failed')
+  !(response as any)?.raw_log.includes('failed')
 
 /**
  * Get address prefix based on the network.
