@@ -1,3 +1,11 @@
+# v.0.19.7 (2022-01-08)
+
+## Fix
+
+- update getChainId() for `thorchain-stagenet` chainId
+- getExplorerUrl methods for stagenet
+- `isBroadcastSuccess` method in the utils.ts
+
 # v.0.19.6 (2022-01-06)
 
 ## Add
