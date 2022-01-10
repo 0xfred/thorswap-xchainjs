@@ -85,11 +85,10 @@ export const isBroadcastSuccess = (response: unknown): boolean =>
   typeof response === 'object' &&
   response !== null &&
   'logs' in response &&
-  'raw_log' in response &&
   (response as Record<string, unknown>).logs !== undefined &&
   (response as Record<string, unknown>).logs !== null &&
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  !(response as any)?.raw_log.includes('failed')
+  !(response as any)?.raw_log?.includes('failed')
 
 /**
  * Get address prefix based on the network.
@@ -212,13 +211,13 @@ export const getTxType = (txData: string, encoding: 'base64' | 'hex'): string =>
  *
  * @throws {"Invalid client url"} Thrown if the client url is an invalid one.
  */
-export const buildDepositTx = async (msgNativeTx: MsgNativeTx, nodeUrl: string): Promise<StdTx> => {
+export const buildDepositTx = async (msgNativeTx: MsgNativeTx, nodeUrl: string, isStagenet = false): Promise<StdTx> => {
   const response: ThorchainDepositResponse = (
     await axios.post(`${nodeUrl}/thorchain/deposit`, {
       coins: msgNativeTx.coins,
       memo: msgNativeTx.memo,
       base_req: {
-        chain_id: getChainId(),
+        chain_id: getChainId(isStagenet),
         from: msgNativeTx.signer,
       },
     })

@@ -465,7 +465,7 @@ class Client implements ThorchainClient, XChainClient {
       signer,
     })
 
-    const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node)
+    const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node, this.isStagenet)
     const privateKey = this.getPrivKey(walletIndex)
     const accAddress = AccAddress.fromBech32(signer)
 
