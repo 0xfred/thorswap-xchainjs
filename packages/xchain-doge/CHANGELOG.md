@@ -1,3 +1,8 @@
+# v.0.1.2 (2022-01-17)
+
+- Add blockcypherApiKey param for constructor and `getSendTxUrl`
+- Update `getSuggestedTxFee` to get high fee rate from blockcypher fee oracle
+
 # v.0.1.1 (2022-01-06)
 
 Update BroadcastTx API url
