@@ -1,3 +1,8 @@
+# v.0.1.3 (2022-01-17)
+
+- Change blockcypher api to blockchair
+- rename `blockcypherApiKey` -> `apiKey`
+
 # v.0.1.2 (2022-01-17)
 
 - Add blockcypherApiKey param for constructor and `getSendTxUrl`

@@ -26,12 +26,22 @@ const toSochainNetwork = (network: Network): string => {
 }
 
 export const getSendTxUrl = ({ sochainUrl, network, token = null }: AddressParams) => {
+  // if (network === 'mainnet') {
+  //   if (token) {
+  //     return `https://api.blockcypher.com/v1/doge/main/txs/push?token=${token}`
+  //   }
+
+  //   return `https://api.blockcypher.com/v1/doge/main/txs/push`
+  // } else {
+  //   return `${sochainUrl}/send_tx/${toSochainNetwork(network)}`
+  // }
+
   if (network === 'mainnet') {
     if (token) {
-      return `https://api.blockcypher.com/v1/doge/main/txs/push?token=${token}`
+      return `https://api.blockchair.com/dogecoin/push/transaction?key=${token}`
     }
 
-    return `https://api.blockcypher.com/v1/doge/main/txs/push`
+    return `https://api.blockchair.com/dogecoin/push/transaction`
   } else {
     return `${sochainUrl}/send_tx/${toSochainNetwork(network)}`
   }
