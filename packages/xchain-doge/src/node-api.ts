@@ -69,3 +69,13 @@ export const broadcastTxToBlockCypher = async ({ txHex, nodeUrl }: BroadcastTxPa
 
   return response.tx.hash
 }
+
+export const broadcastTxToBlockChair = async ({ txHex, nodeUrl }: BroadcastTxParams): Promise<string> => {
+  const response = (
+    await axios.post(nodeUrl, {
+      data: txHex,
+    })
+  ).data
+
+  return response.transaction_hash
+}
