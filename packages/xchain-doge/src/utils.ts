@@ -248,7 +248,7 @@ export const buildTx = async ({
  */
 export const broadcastTx = async (params: BroadcastTxParams): Promise<TxHash> => {
   if (params.network === 'mainnet') {
-    return await nodeApi.broadcastTxToBlockCypher(params)
+    return await nodeApi.broadcastTxToBlockChair(params)
   } else {
     return await nodeApi.broadcastTxToSochain(params)
   }

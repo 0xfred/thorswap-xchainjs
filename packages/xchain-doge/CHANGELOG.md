@@ -1,3 +1,7 @@
+# v.0.1.4 (2022-01-17)
+
+- Update `broadcastTxToBlockChair`
+
 # v.0.1.3 (2022-01-17)
 
 - Change blockcypher api to blockchair
