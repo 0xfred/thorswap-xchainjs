@@ -77,5 +77,5 @@ export const broadcastTxToBlockChair = async ({ txHex, nodeUrl }: BroadcastTxPar
     })
   ).data
 
-  return response.transaction_hash
+  return response.data.transaction_hash
 }

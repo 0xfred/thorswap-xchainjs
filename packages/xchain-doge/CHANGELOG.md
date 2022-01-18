@@ -1,3 +1,7 @@
+# v.0.1.5 (2022-01-17)
+
+- fix `broadcastTxToBlockChair` to get `transaction_hash`
+
 # v.0.1.4 (2022-01-17)
 
 - Update `broadcastTxToBlockChair`
