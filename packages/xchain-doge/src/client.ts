@@ -27,6 +27,7 @@ export type DogecoinClientParams = XChainClientParams & {
   sochainUrl?: string
   nodeUrl?: string
   nodeAuth?: NodeAuth | null
+  blockcypherApiKey?: string | null
 }
 
 /**
@@ -36,6 +37,7 @@ class Client extends UTXOClient {
   private sochainUrl = ''
   public nodeUrl = ''
   public nodeAuth?: NodeAuth
+  private blockcypherApiKey: string | null = null
 
   /**
    * Constructor
@@ -57,6 +59,7 @@ class Client extends UTXOClient {
       [Network.Mainnet]: `m/44'/3'/0'/0/`,
       [Network.Testnet]: `m/44'/1'/0'/0/`,
     },
+    blockcypherApiKey = null,
   }: DogecoinClientParams) {
     super(Chain.Doge, { network, rootDerivationPaths, phrase })
     this.nodeUrl =
@@ -70,6 +73,9 @@ class Client extends UTXOClient {
             return 'https://testnet.doge.thorchain.info'
         }
       })()
+
+    // set blockcypherApiKey
+    this.blockcypherApiKey = blockcypherApiKey
 
     this.nodeAuth =
       // Leave possibility to send requests without auth info for user
@@ -319,6 +325,7 @@ class Client extends UTXOClient {
         network: this.network,
         sochainUrl: this.sochainUrl,
         address: this.getAddress(fromAddressIndex),
+        token: this.blockcypherApiKey,
       }),
       // TODO: Check this before production
       // nodeUrl: this.nodeUrl,
