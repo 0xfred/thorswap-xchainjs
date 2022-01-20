@@ -1,3 +1,7 @@
+# v.0.15.15 (2022-01-20)
+
+- fix getUTXO from sochain first and fallback to haskoin if fails.
+
 # v.0.15.14 (2021-12-22)
 
 - fix haskoin api URL to 

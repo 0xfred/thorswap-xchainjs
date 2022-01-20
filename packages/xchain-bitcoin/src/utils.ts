@@ -152,57 +152,60 @@ export const scanUTXOs = async ({
   address,
   confirmedOnly = true, // default: scan only confirmed UTXOs
 }: ScanUTXOParam): Promise<UTXO[]> => {
-  switch (network) {
-    case Network.Testnet: {
-      let utxos: BtcAddressUTXO[] = []
+  // STEP #1 - scan utxo from sochain api
 
-      const addressParam: AddressParams = {
-        sochainUrl,
-        network,
-        address,
-      }
+  try {
+    let utxos: BtcAddressUTXO[] = []
 
-      if (confirmedOnly) {
-        utxos = await sochain.getConfirmedUnspentTxs(addressParam)
-      } else {
-        utxos = await sochain.getUnspentTxs(addressParam)
-      }
+    const addressParam: AddressParams = {
+      sochainUrl,
+      network,
+      address,
+    }
 
-      return utxos.map(
-        (utxo) =>
-          ({
-            hash: utxo.txid,
-            index: utxo.output_no,
+    if (confirmedOnly) {
+      utxos = await sochain.getConfirmedUnspentTxs(addressParam)
+    } else {
+      utxos = await sochain.getUnspentTxs(addressParam)
+    }
+
+    return utxos.map(
+      (utxo) =>
+        ({
+          hash: utxo.txid,
+          index: utxo.output_no,
+          value: assetToBase(assetAmount(utxo.value, BTC_DECIMAL)).amount().toNumber(),
+          witnessUtxo: {
             value: assetToBase(assetAmount(utxo.value, BTC_DECIMAL)).amount().toNumber(),
-            witnessUtxo: {
-              value: assetToBase(assetAmount(utxo.value, BTC_DECIMAL)).amount().toNumber(),
-              script: Buffer.from(utxo.script_hex, 'hex'),
-            },
-          } as UTXO),
-      )
+            script: Buffer.from(utxo.script_hex, 'hex'),
+          },
+        } as UTXO),
+    )
+  } catch (error) {
+    console.log('sochain api error', error)
+
+    // STEP #2 - if sochain api fails, scan utxo from haskoin api
+
+    let utxos: haskoinApi.UtxoData[] = []
+
+    if (confirmedOnly) {
+      utxos = await haskoinApi.getConfirmedUnspentTxs(address)
+    } else {
+      utxos = await haskoinApi.getUnspentTxs(address)
     }
-    case Network.Mainnet: {
-      let utxos: haskoinApi.UtxoData[] = []
 
-      if (confirmedOnly) {
-        utxos = await haskoinApi.getConfirmedUnspentTxs(address)
-      } else {
-        utxos = await haskoinApi.getUnspentTxs(address)
-      }
-
-      return utxos.map(
-        (utxo) =>
-          ({
-            hash: utxo.txid,
-            index: utxo.index,
+    return utxos.map(
+      (utxo) =>
+        ({
+          hash: utxo.txid,
+          index: utxo.index,
+          value: baseAmount(utxo.value, BTC_DECIMAL).amount().toNumber(),
+          witnessUtxo: {
             value: baseAmount(utxo.value, BTC_DECIMAL).amount().toNumber(),
-            witnessUtxo: {
-              value: baseAmount(utxo.value, BTC_DECIMAL).amount().toNumber(),
-              script: Buffer.from(utxo.pkscript, 'hex'),
-            },
-          } as UTXO),
-      )
-    }
+            script: Buffer.from(utxo.pkscript, 'hex'),
+          },
+        } as UTXO),
+    )
   }
 }
 /**
