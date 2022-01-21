@@ -1,0 +1,53 @@
+{
+  "name": "@thorswap-lib/xchain-terra",
+  "version": "0.1.0",
+  "description": "Custom Terra client and utilities used by XChainJS clients",
+  "keywords": [
+    "THORChain",
+    "XChain"
+  ],
+  "author": "THORChain",
+  "homepage": "https://github.com/thorswap-lib/xchainjs-lib",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:thorswap-lib/xchainjs-lib.git"
+  },
+  "scripts": {
+    "clean": "rimraf lib/**",
+    "build": "yarn clean && rollup -c",
+    "test": "jest",
+    "e2e": "jest --config jest.config.e2e.js",
+    "lint": "eslint \"{src,__tests__}/**/*.ts\" --fix --max-warnings 0",
+    "prepublishOnly": "yarn build",
+    "start:example": "ts-node example/index.ts"
+  },
+  "devDependencies": {
+    "@types/big.js": "^6.0.0",
+    "@thorswap-lib/xchain-client": "^0.11.1",
+    "@thorswap-lib/xchain-util": "0.4.0",
+    "axios": "^0.21.4",
+    "@terra-money/terra.js": "^3.0.2",
+    "nock": "^13.0.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@thorswap-lib/xchain-client": "^0.11.1",
+    "@thorswap-lib/xchain-util": "^0.3.2",
+    "@terra-money/terra.js": "^3.0.2",
+    "axios": "^0.21.4"
+  },
+  "dependencies": {}
+}

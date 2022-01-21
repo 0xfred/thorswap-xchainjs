@@ -86,6 +86,7 @@ class Client implements ThorchainClient, XChainClient {
     explorerUrls,
     rootDerivationPaths = {
       [Network.Mainnet]: "44'/931'/0'/0/",
+      [Network.Stagenet]: "44'/931'/0'/0/",
       [Network.Testnet]: "44'/931'/0'/0/",
     },
     isStagenet = false,
@@ -99,8 +100,8 @@ class Client implements ThorchainClient, XChainClient {
 
     this.cosmosClient = new CosmosSDKClient({
       server: this.getClientUrl().node,
-      chainId: getChainId(isStagenet),
-      prefix: getPrefix(this.network, this.isStagenet),
+      chainId: getChainId(this.network),
+      prefix: getPrefix(this.network),
     })
 
     if (phrase) this.setPhrase(phrase)

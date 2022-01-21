@@ -1,12 +1,13 @@
 export * from './types'
 export * from './client'
+export * from './const'
 export {
   broadcastTx,
   getDefaultFees,
   getDefaultFeesWithRates,
-  DOGE_DECIMAL,
   validateAddress,
   calcFee,
   scanUTXOs,
+  getPrefix,
 } from './utils'
 export { createTxInfo } from './ledger'

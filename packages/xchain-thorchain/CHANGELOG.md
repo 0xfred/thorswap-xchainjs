@@ -1,3 +1,16 @@
+# v0.20.1 (2022-01-11)
+
+## Fix
+
+- upgrade axios dependency to latest
+- Get chain ID from THORNode before posting to deposit handler.
+
+# v.0.20.0 (2021-12-29)
+
+## Breaking change
+
+- Add stagenet environment handling for `Network` and `BaseXChainClient` to client
+
 # v.0.19.7 (2022-01-08)
 
 ## Fix

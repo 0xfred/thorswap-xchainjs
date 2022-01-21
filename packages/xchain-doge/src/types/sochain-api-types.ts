@@ -5,7 +5,6 @@ export type AddressParams = {
   network: Network
   address: string
   startingFromTxId?: string
-  token?: string | null
 }
 
 export type TxHashParams = {

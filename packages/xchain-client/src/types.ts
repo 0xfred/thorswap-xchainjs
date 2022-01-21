@@ -4,6 +4,7 @@ export type Address = string
 
 export enum Network {
   Mainnet = 'mainnet',
+  Stagenet = 'stagenet',
   Testnet = 'testnet',
 }
 
@@ -22,11 +23,13 @@ export type TxHash = string
 export type TxTo = {
   to: Address // address
   amount: BaseAmount // amount
+  asset?: Asset // asset
 }
 
 export type TxFrom = {
   from: Address | TxHash // address or tx id
   amount: BaseAmount // amount
+  asset?: Asset // asset
 }
 
 export type Tx = {

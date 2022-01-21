@@ -1,7 +1,6 @@
 import {
   Address,
   Balance,
-  FeeOption,
   FeeRate,
   Fees,
   FeesWithRates,
@@ -11,18 +10,16 @@ import {
   calcFees,
   standardFeeRates,
 } from '@thorswap-lib/xchain-client'
-import { AssetDoge, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
+import { AssetDOGE, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
 import * as Dogecoin from 'bitcoinjs-lib'
 import coininfo from 'coininfo'
 import accumulative from 'coinselect/accumulative'
 
-import { MIN_TX_FEE } from './const'
+import { DOGE_DECIMAL, MIN_TX_FEE } from './const'
 import * as nodeApi from './node-api'
 import * as sochain from './sochain-api'
 import { BroadcastTxParams, UTXO } from './types/common'
 import { AddressParams, DogeAddressUTXO } from './types/sochain-api-types'
-
-export const DOGE_DECIMAL = 8
 
 const TX_EMPTY_SIZE = 4 + 1 + 1 + 4 //10
 const TX_INPUT_BASE = 32 + 4 + 1 + 4 // 41
@@ -89,11 +86,13 @@ export function arrayAverage(array: number[]): number {
  * Get Dogecoin network to be used with bitcoinjs.
  *
  * @param {Network} network
- * @returns {Dogecoin.Network} The Doge network.
+ * @returns {Dogecoin.networks.Network} The Doge network.
  */
-export const dogeNetwork = (network: Network): Dogecoin.Network => {
+export const dogeNetwork = (network: Network): Dogecoin.networks.Network => {
   switch (network) {
     case Network.Mainnet:
+      return coininfo.dogecoin.main.toBitcoinJS()
+    case Network.Stagenet:
       return coininfo.dogecoin.main.toBitcoinJS()
     case Network.Testnet: {
       // Latest coininfo on NPM doesn't contain dogetest config information
@@ -119,7 +118,7 @@ export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
     const balance = await sochain.getBalance(params)
     return [
       {
-        asset: AssetDoge,
+        asset: AssetDOGE,
         amount: balance,
       },
     ]
@@ -208,8 +207,9 @@ export const buildTx = async ({
   if (!inputs || !outputs) throw new Error('Balance insufficient for transaction')
 
   const psbt = new Dogecoin.Psbt({ network: dogeNetwork(network) }) // Network-specific
-  // TODO: Doge recommended fees is greater than the recommended by Bitcoinjs-lib, so we need to increase the maximum fee rate
-  psbt.setMaximumFeeRate(650000000)
+  // TODO: Doge recommended fees is greater than the recommended by Bitcoinjs-lib (for BTC),
+  //       so we need to increase the maximum fee rate. Currently, the fast rate fee is near ~650000sats/byte
+  psbt.setMaximumFeeRate(650000)
   const params = { sochainUrl, network, address: sender }
 
   for (const utxo of inputs) {
@@ -247,13 +247,11 @@ export const buildTx = async ({
  * @returns {TxHash} The transaction hash.
  */
 export const broadcastTx = async (params: BroadcastTxParams): Promise<TxHash> => {
-  if (params.network === 'mainnet') {
-    return await nodeApi.broadcastTxToBlockChair(params)
-  } else {
+  if (params.network === 'testnet') {
     return await nodeApi.broadcastTxToSochain(params)
+  } else {
+    return await nodeApi.broadcastTxToBlockCypher(params)
   }
-  // TODO: Check this before prod
-  // return await nodeApi.broadcastTx(params)
 }
 
 /**
@@ -276,8 +274,7 @@ export const calcFee = (feeRate: FeeRate, memo?: string): BaseAmount => {
  */
 export const getDefaultFeesWithRates = (): FeesWithRates => {
   const rates = {
-    ...standardFeeRates(20),
-    [FeeOption.Fastest]: 50,
+    ...standardFeeRates(MIN_TX_FEE),
   }
 
   return {
@@ -294,4 +291,21 @@ export const getDefaultFeesWithRates = (): FeesWithRates => {
 export const getDefaultFees = (): Fees => {
   const { fees } = getDefaultFeesWithRates()
   return fees
+}
+
+/**
+ * Get address prefix based on the network.
+ *
+ * @param {Network} network
+ * @returns {string} The address prefix based on the network.
+ *
+ **/
+export const getPrefix = (network: Network) => {
+  switch (network) {
+    case Network.Mainnet:
+    case Network.Stagenet:
+      return ''
+    case Network.Testnet:
+      return 'n'
+  }
 }
