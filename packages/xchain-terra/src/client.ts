@@ -14,8 +14,8 @@ import {
   TxsPage,
   XChainClient,
   XChainClientParams,
-} from '@xchainjs/xchain-client'
-import { Asset, Chain, baseAmount } from '@xchainjs/xchain-util'
+} from '@thorswap-lib/xchain-client'
+import { Asset, Chain, baseAmount } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 
 const DEFAULT_CONFIG = {

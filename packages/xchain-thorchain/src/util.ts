@@ -289,20 +289,7 @@ export const getBalance = async ({
  *
  * @returns {ClientUrl} The client url (both mainnet and testnet) for thorchain.
  */
-export const getDefaultClientUrl = (isStagenet = false): ClientUrl => {
-  if (isStagenet) {
-    return {
-      [Network.Testnet]: {
-        node: 'https://testnet.thornode.thorchain.info',
-        rpc: 'https://testnet.rpc.thorchain.info',
-      },
-      [Network.Mainnet]: {
-        node: 'https://stagenet-thornode.ninerealms.com',
-        rpc: 'https://stagenet-rpc.ninerealms.com',
-      },
-    }
-  }
-
+export const getDefaultClientUrl = (): ClientUrl => {
   return {
     [Network.Testnet]: {
       node: 'https://testnet.thornode.thorchain.info',

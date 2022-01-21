@@ -67,7 +67,6 @@ class Client implements ThorchainClient, XChainClient {
   private phrase = ''
   private rootDerivationPaths: RootDerivationPaths
   private cosmosClient: CosmosSDKClient
-  private isStagenet = false
 
   /**
    * Constructor
@@ -89,14 +88,11 @@ class Client implements ThorchainClient, XChainClient {
       [Network.Stagenet]: "44'/931'/0'/0/",
       [Network.Testnet]: "44'/931'/0'/0/",
     },
-    isStagenet = false,
   }: XChainClientParams & ThorchainClientParams) {
     this.network = network
-    this.clientUrl = clientUrl || getDefaultClientUrl(isStagenet)
+    this.clientUrl = clientUrl || getDefaultClientUrl()
     this.explorerUrls = explorerUrls || getDefaultExplorerUrls()
     this.rootDerivationPaths = rootDerivationPaths
-
-    this.isStagenet = isStagenet
 
     this.cosmosClient = new CosmosSDKClient({
       server: this.getClientUrl().node,
@@ -131,7 +127,7 @@ class Client implements ThorchainClient, XChainClient {
     }
 
     this.network = network
-    this.cosmosClient.updatePrefix(getPrefix(this.network, this.isStagenet))
+    this.cosmosClient.updatePrefix(getPrefix(this.network))
   }
 
   /**
@@ -178,10 +174,6 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {string} The explorer url for thorchain based on the current network.
    */
   getExplorerUrl(): string {
-    if (this.isStagenet) {
-      return `${this.explorerUrls.root[this.network]}?network=stagenet`
-    }
-
     return this.explorerUrls.root[this.network]
   }
 
@@ -204,7 +196,6 @@ class Client implements ThorchainClient, XChainClient {
       urls: this.explorerUrls,
       network: this.network,
       address,
-      isStagenet: this.isStagenet,
     })
   }
 
@@ -215,7 +206,7 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {string} The explorer url for the given transaction id.
    */
   getExplorerTxUrl(txID: string): string {
-    return getExplorerTxUrl({ urls: this.explorerUrls, network: this.network, txID, isStagenet: this.isStagenet })
+    return getExplorerTxUrl({ urls: this.explorerUrls, network: this.network, txID })
   }
 
   /**
@@ -329,7 +320,7 @@ class Client implements ThorchainClient, XChainClient {
     const txMinHeight = undefined
     const txMaxHeight = undefined
 
-    registerCodecs(getPrefix(this.network, this.isStagenet))
+    registerCodecs(getPrefix(this.network))
 
     const txIncomingHistory = (
       await this.cosmosClient.searchTxFromRPC({
@@ -466,7 +457,7 @@ class Client implements ThorchainClient, XChainClient {
       signer,
     })
 
-    const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node, this.isStagenet)
+    const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node)
     const privateKey = this.getPrivKey(walletIndex)
     const accAddress = AccAddress.fromBech32(signer)
 
@@ -480,7 +471,7 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {TxHash} The transaction hash.
    */
   async transfer({ walletIndex = 0, asset = AssetRuneNative, amount, recipient, memo }: TxParams): Promise<TxHash> {
-    registerCodecs(getPrefix(this.network, this.isStagenet))
+    registerCodecs(getPrefix(this.network))
 
     const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
     const fee = await this.getFees()

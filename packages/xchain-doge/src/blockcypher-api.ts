@@ -1,4 +1,4 @@
-import { Network } from '@xchainjs/xchain-client/lib'
+import { Network } from '@thorswap-lib/xchain-client/lib'
 import axios from 'axios'
 
 const DEFAULT_SUGGESTED_TRANSACTION_FEE = 150000

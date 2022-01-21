@@ -9,7 +9,6 @@
     "jsx": "react",
     "types": ["jest", "node"],
 
-
     "outDir": "lib",
     "module": "esnext",
     "target": "es5",
@@ -31,6 +30,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "useUnknownInCatchVariables": false
   }
 }

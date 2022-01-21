@@ -1,5 +1,5 @@
-import { /*Balance,*/ Network, Tx } from '@xchainjs/xchain-client'
-import { Chain } from '@xchainjs/xchain-util'
+import { /*Balance,*/ Network, Tx } from '@thorswap-lib/xchain-client'
+import { Chain } from '@thorswap-lib/xchain-util'
 //import { Chain, baseAmount, baseToAsset } from '@xchainjs/xchain-util'
 
 import { Client } from '../src'
