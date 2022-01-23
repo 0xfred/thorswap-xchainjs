@@ -1,5 +1,16 @@
+/* eslint-disable ordered-imports/ordered-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AccAddress, Coin, Coins, LCDClient, MnemonicKey, MsgMultiSend, MsgSend, TxInfo } from '@terra-money/terra.js'
+import {
+  AccAddress,
+  Coin,
+  Coins,
+  Fee,
+  LCDClient,
+  MnemonicKey,
+  MsgMultiSend,
+  MsgSend,
+  TxInfo,
+} from '@terra-money/terra.js'
 import {
   Balance,
   BaseXChainClient,
@@ -15,36 +26,33 @@ import {
   XChainClient,
   XChainClientParams,
 } from '@thorswap-lib/xchain-client'
-import { Asset, Chain, baseAmount } from '@thorswap-lib/xchain-util'
+import { Asset, AssetLUNA, Chain, baseAmount } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
+import { Denom } from './const'
+import { isLunaAsset, isUSTAsset } from './utils'
 
 const DEFAULT_CONFIG = {
   [Network.Mainnet]: {
     explorerURL: 'https://finder.terra.money/mainnet',
-    explorerAddressURL: 'https://finder.terra.money/mainnet/address/',
-    explorerTxURL: 'https://finder.terra.money/mainnet/tx/',
+    explorerAddressURL: 'https://finder.terra.money/mainnet/address',
+    explorerTxURL: 'https://finder.terra.money/mainnet/tx',
     cosmosAPIURL: 'https://fcd.terra.dev',
     ChainID: 'columbus-5',
   },
   [Network.Stagenet]: {
     explorerURL: 'https://finder.terra.money/mainnet',
-    explorerAddressURL: 'https://finder.terra.money/mainnet/address/',
-    explorerTxURL: 'https://finder.terra.money/mainnet/tx/',
+    explorerAddressURL: 'https://finder.terra.money/mainnet/address',
+    explorerTxURL: 'https://finder.terra.money/mainnet/tx',
     cosmosAPIURL: 'https://fcd.terra.dev',
     ChainID: 'columbus-5',
   },
   [Network.Testnet]: {
     explorerURL: 'https://finder.terra.money/testnet',
-    explorerAddressURL: 'https://finder.terra.money/testnet/address/',
-    explorerTxURL: 'https://finder.terra.money/testnet/tx/',
+    explorerAddressURL: 'https://finder.terra.money/testnet/address',
+    explorerTxURL: 'https://finder.terra.money/testnet/tx',
     cosmosAPIURL: 'https://bombay-fcd.terra.dev',
     ChainID: 'bombay-12',
   },
-}
-const ASSET_LUNA: Asset = {
-  chain: Chain.Terra,
-  symbol: 'LUNA',
-  ticker: 'LUNA',
 }
 export type SearchTxParams = {
   messageAction?: string
@@ -80,10 +88,59 @@ class Client extends BaseXChainClient implements XChainClient {
     })
   }
 
-  getFees(): Promise<Fees> {
-    // TODO
-    throw new Error('Method not implemented.')
+  async getFees(): Promise<Fees> {
+    // this function is not supported for terra/luna chain
+    throw new Error('Not supported.')
   }
+
+  async getTerraFees(denom: Denom = 'uluna'): Promise<Coin> {
+    const gasPrices = (await axios(DEFAULT_CONFIG[this.network].cosmosAPIURL + '/v1/txs/gas_prices')).data
+    const gasPricesCoins = new Coins(gasPrices)
+
+    const coin = gasPricesCoins.get(denom)
+
+    if (!coin) throw new Error('Invalid Denomination')
+    return coin
+  }
+
+  async calculateTxFees({
+    walletIndex = 0,
+    asset = AssetLUNA,
+    amount,
+    recipient,
+    rates,
+  }: TxParams & { rates: Coin }): Promise<Fee> {
+    const mnemonicKey = new MnemonicKey({ mnemonic: this.phrase, index: walletIndex })
+    const wallet = this.lcdClient.wallet(mnemonicKey)
+
+    let amountToSend: Coins.Input = {}
+
+    if (isLunaAsset(asset)) {
+      amountToSend = {
+        uluna: `${amount.amount().toFixed()}`,
+      }
+      //TODO we have to make sure that UST is supported by Thorchain
+    } else if (isUSTAsset(asset)) {
+      amountToSend = {
+        uusd: `${amount.amount().toFixed()}`,
+      }
+    } else {
+      throw new Error('Only LUNA or UST transfers are currently supported on terra')
+    }
+    const send = new MsgSend(wallet.key.accAddress, recipient, amountToSend)
+
+    const gasPriceCoins = new Coins([rates])
+
+    // Create tx
+    // This also estimates the initial fees
+    const tx = await wallet.createTx({
+      msgs: [send],
+      gasPrices: gasPriceCoins,
+    })
+    // Extract estimated fee
+    return tx.auth_info.fee
+  }
+
   getAddress(walletIndex = 0): string {
     const mnemonicKey = new MnemonicKey({ mnemonic: this.phrase, index: walletIndex })
     return mnemonicKey.accAddress
@@ -92,10 +149,10 @@ class Client extends BaseXChainClient implements XChainClient {
     return DEFAULT_CONFIG[this.network].explorerURL
   }
   getExplorerAddressUrl(address: string): string {
-    return DEFAULT_CONFIG[this.network].explorerAddressURL + address?.toLowerCase()
+    return DEFAULT_CONFIG[this.network].explorerAddressURL + '/' + address?.toLowerCase()
   }
   getExplorerTxUrl(txID: string): string {
-    return DEFAULT_CONFIG[this.network].explorerAddressURL + txID?.toLowerCase()
+    return DEFAULT_CONFIG[this.network].explorerAddressURL + '/' + txID?.toLowerCase()
   }
   validateAddress(address: string): boolean {
     return AccAddress.validate(address)
@@ -150,22 +207,26 @@ class Client extends BaseXChainClient implements XChainClient {
     return this.convertTxInfoToTx(txInfo)
   }
 
-  async transfer({ walletIndex = 0, asset = ASSET_LUNA, amount, recipient, memo }: TxParams): Promise<string> {
+  async transfer({
+    walletIndex = 0,
+    asset = AssetLUNA,
+    amount,
+    recipient,
+    memo,
+    fee,
+  }: TxParams & { fee?: Fee }): Promise<string> {
     if (!this.validateAddress(recipient)) throw new Error(`${recipient} is not a valid terra address`)
-
-    // TODO use fee?
-    // const fee = await this.getFees()
 
     const mnemonicKey = new MnemonicKey({ mnemonic: this.phrase, index: walletIndex })
     const wallet = this.lcdClient.wallet(mnemonicKey)
 
     let amountToSend: Coins.Input = {}
 
-    if (asset.chain === Chain.Terra && asset.symbol === 'LUNA' && asset.ticker === 'LUNA') {
+    if (isLunaAsset(asset)) {
       amountToSend = {
         uluna: `${amount.amount().toFixed()}`,
       }
-    } else if (asset.chain === Chain.Terra && asset.symbol === 'UST' && asset.ticker === 'UST') {
+    } else if (isUSTAsset(asset)) {
       amountToSend = {
         uusd: `${amount.amount().toFixed()}`,
       }
@@ -173,20 +234,13 @@ class Client extends BaseXChainClient implements XChainClient {
       throw new Error('Only LUNA or UST transfers are currently supported on terra')
     }
     const send = new MsgSend(wallet.key.accAddress, recipient, amountToSend)
-    console.log(send.toJSON())
-    const tx = await wallet.createAndSignTx({ msgs: [send], memo })
-    console.log(JSON.stringify(tx.toData(), null, 2))
+    const tx = await wallet.createAndSignTx({ msgs: [send], memo, fee })
     const result = await this.lcdClient.tx.broadcast(tx)
-    console.log(result.txhash)
     return result.txhash
   }
   private getTerraNativeAsset(denom: string): Asset | undefined {
     if (denom.includes('luna')) {
-      return {
-        chain: Chain.Terra,
-        symbol: 'LUNA',
-        ticker: 'LUNA',
-      }
+      return AssetLUNA
     } else {
       // native coins other than luna, UST, KRT, etc
       // NOTE: https://docs.terra.money/Reference/Terra-core/Overview.html#currency-denominations
@@ -197,7 +251,6 @@ class Client extends BaseXChainClient implements XChainClient {
         ticker: standardDenom,
       }
     }
-    return undefined
   }
   private coinsToBalances(coins: Coins): Balance[] {
     return coins.toArray().map((c: Coin) => {
@@ -212,7 +265,6 @@ class Client extends BaseXChainClient implements XChainClient {
     let to: TxTo[] = []
     // console.log(tx)
     tx.tx.value.msg.forEach((msg: any) => {
-      console.log(msg)
       if (msg.type === 'bank/MsgSend') {
         const xfers = this.convertMsgSend(MsgSend.fromAmino(msg))
         from = from.concat(xfers.from)
