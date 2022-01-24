@@ -15,16 +15,13 @@
     "test": "jest --passWithNoTests"
   },
   "devDependencies": {
+    "@thorswap-lib/xchain-util": "^0.3.1",
     "@thorswap-lib/xchain-crypto": "^0.2.6",
-    "@thorswap-lib/xchain-util": "^0.4.0",
     "axios": "^0.21.4"
   },
   "peerDependencies": {
+    "@thorswap-lib/xchain-util": "^0.3.1",
     "@thorswap-lib/xchain-crypto": "^0.2.6",
-    "@thorswap-lib/xchain-util": "^0.4.0",
     "axios": "^0.21.4"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

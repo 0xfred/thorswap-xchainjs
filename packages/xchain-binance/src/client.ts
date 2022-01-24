@@ -115,7 +115,6 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
   getNetwork(): Network.Mainnet | Network.Testnet {
     switch (super.getNetwork()) {
       case Network.Mainnet:
-      case Network.Stagenet:
         return Network.Mainnet
       case Network.Testnet:
         return Network.Testnet

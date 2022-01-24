@@ -30,7 +30,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "useUnknownInCatchVariables": false
+    "resolveJsonModule": true
   }
 }

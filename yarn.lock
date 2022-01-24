@@ -2260,7 +2260,17 @@
     long "^4.0.0"
     protobufjs "~6.11.2"
 
-"@thorswap-lib/xchain-util@^0.3.0", "@thorswap-lib/xchain-util@^0.3.1":
+"@thorswap-lib/xchain-client@^0.10.3":
+  version "0.10.3"
+  resolved "https://registry.yarnpkg.com/@thorswap-lib/xchain-client/-/xchain-client-0.10.3.tgz#d6c323014b767b5bd848972428c45b50e0acbfd6"
+  integrity sha512-9SijOQyBnETlmclSBPYnNCJO6cOfiBGHC7z0xrzwSdJ2CLOXJWZoOckruqcdty2DhAgQM4ow3SQo61CxzuEOBg==
+
+"@thorswap-lib/xchain-cosmos@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/@thorswap-lib/xchain-cosmos/-/xchain-cosmos-0.14.0.tgz#0633594588490124c2eca2bb95e749f01b3bf138"
+  integrity sha512-HKOS1iL0iW0yY5xzegewpCqyvyRaQ6xo5WAi/b0HGDUc9BmYTG8eywOmKFm/RxQVI0C5zpV8K2yQU2DUG15Wjg==
+
+"@thorswap-lib/xchain-util@^0.3.0", "@thorswap-lib/xchain-util@^0.3.1", "@thorswap-lib/xchain-util@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@thorswap-lib/xchain-util/-/xchain-util-0.3.2.tgz#f926868954dfb0c1cae7454ac8cd89d01b79b101"
   integrity sha512-TFRzL7AOst4hUi0NIDyoUwbAhtuidJ3z14/BixRb31pBotxzpRmc/FUCzejQ66oUrOfdYPmILgsOwlZgZhb5Tg==
@@ -3023,7 +3033,7 @@ axios@^0.19.0, axios@^0.19.2:
   dependencies:
     follow-redirects "1.5.10"
 
-axios@^0.21.4:
+axios@^0.21.0, axios@^0.21.1, axios@^0.21.3, axios@^0.21.4:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==

@@ -10,7 +10,6 @@ import {
   getExplorerAddressUrl,
   getExplorerTxUrl,
   getExplorerUrl,
-  getPrefix,
   getTxType,
   isBroadcastSuccess,
 } from '../src/util'
@@ -46,14 +45,6 @@ describe('thorchain/util', () => {
 
       it('unknown', () => {
         expect(getTxType('"abc', 'base64')).toEqual('')
-      })
-    })
-
-    describe('getPrefix', () => {
-      it('should return the correct prefix based on network', () => {
-        expect(getPrefix(Network.Mainnet) === 'thor')
-        expect(getPrefix(Network.Stagenet) === 'sthor')
-        expect(getPrefix(Network.Testnet) === 'tthor')
       })
     })
   })

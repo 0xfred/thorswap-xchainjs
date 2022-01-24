@@ -39,13 +39,6 @@ const DEFAULT_CONFIG = {
     cosmosAPIURL: 'https://fcd.terra.dev',
     ChainID: 'columbus-5',
   },
-  [Network.Stagenet]: {
-    explorerURL: 'https://finder.terra.money/mainnet',
-    explorerAddressURL: 'https://finder.terra.money/mainnet/address',
-    explorerTxURL: 'https://finder.terra.money/mainnet/tx',
-    cosmosAPIURL: 'https://fcd.terra.dev',
-    ChainID: 'columbus-5',
-  },
   [Network.Testnet]: {
     explorerURL: 'https://finder.terra.money/testnet',
     explorerAddressURL: 'https://finder.terra.money/testnet/address',
@@ -75,7 +68,6 @@ class Client extends BaseXChainClient implements XChainClient {
     phrase,
     rootDerivationPaths = {
       [Network.Mainnet]: "44'/330'/0'/0/",
-      [Network.Stagenet]: "44'/330'/0'/0/",
       [Network.Testnet]: "44'/330'/0'/0/",
     },
   }: XChainClientParams) {
@@ -253,12 +245,12 @@ class Client extends BaseXChainClient implements XChainClient {
     }
   }
   private coinsToBalances(coins: Coins): Balance[] {
-    return coins.toArray().map((c: Coin) => {
+    return (coins.toArray().map((c: Coin) => {
       return {
         asset: this.getTerraNativeAsset(c.denom),
         amount: baseAmount(c.amount.toFixed(), 6),
       }
-    }) as unknown as Balance[]
+    }) as unknown) as Balance[]
   }
   private convertSearchResultTxToTx(tx: any): Tx {
     let from: TxFrom[] = []

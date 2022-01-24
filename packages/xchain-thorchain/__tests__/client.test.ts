@@ -33,17 +33,6 @@ const mockThorchainDeposit = (url: string, result: ThorchainDepositResponse) => 
   nock(url).post('/thorchain/deposit').reply(200, result)
 }
 
-const mockTendermintNodeInfo = (
-  url: string,
-  result: {
-    default_node_info: {
-      network: string
-    }
-  },
-) => {
-  nock(url).get('/cosmos/base/tendermint/v1beta1/node_info').reply(200, result)
-}
-
 const assertTxsPost = (url: string, memo: undefined | string, result: BroadcastTxCommitResult): void => {
   nock(url)
     .post(`/txs`, (body) => {
@@ -164,9 +153,6 @@ describe('Client Test', () => {
 
     thorClient.setNetwork('mainnet' as Network)
     expect(thorClient.validateAddress(thorClient.getAddress())).toEqual(true)
-
-    thorClient.setNetwork('stagenet' as Network)
-    expect(thorClient.validateAddress(thorClient.getAddress())).toEqual(true)
   })
 
   it('should have right client url', async () => {
@@ -174,10 +160,6 @@ describe('Client Test', () => {
       mainnet: {
         node: 'new mainnet client',
         rpc: 'new mainnet client',
-      },
-      stagenet: {
-        node: 'new stagenet client',
-        rpc: 'new stagenet client',
       },
       testnet: {
         node: 'new testnet client',
@@ -190,9 +172,6 @@ describe('Client Test', () => {
 
     thorClient.setNetwork('testnet' as Network)
     expect(thorClient.getClientUrl().node).toEqual('new testnet client')
-
-    thorClient.setNetwork('stagenet' as Network)
-    expect(thorClient.getClientUrl().node).toEqual('new stagenet client')
   })
 
   it('returns private key', async () => {
@@ -392,11 +371,6 @@ describe('Client Test', () => {
         signatures: [],
         memo: '',
         timeout_height: '0',
-      },
-    })
-    mockTendermintNodeInfo(thorClient.getClientUrl().node, {
-      default_node_info: {
-        network: 'thorchain',
       },
     })
     assertTxsPost(thorClient.getClientUrl().node, '', expected_txsPost_result)

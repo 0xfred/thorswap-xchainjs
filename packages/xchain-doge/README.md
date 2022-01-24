@@ -1,4 +1,4 @@
-# `@thorswap-lib/xchain-doge`
+# `@thorswap-lib/xchain-client`
 
 ## Modules
 
@@ -25,13 +25,15 @@ This package uses the following service providers:
 | Balances                    | Sochain     | https://sochain.com/api#get-balance                                              |
 | Transaction history         | Sochain     | https://sochain.com/api#get-display-data-address, https://sochain.com/api#get-tx |
 | Transaction details by hash | Sochain     | https://sochain.com/api#get-tx                                                   |
-| Transaction fees            | BlockCypher | https://api.blockcypher.com/v1/doge/main                                         |
-| Transaction broadcast       | BlockCypher | https://api.blockcypher.com/v1/doge/main/txs/push                                |
-| Explorer                    | Blockchair  | https://blockchair.com/dogecoin                                                  |
+| Transaction fees            | Bitgo       | https://app.bitgo.com/docs/#operation/v2.tx.getfeeestimate                       |
+| Transaction broadcast       | Bitaps      | https://ltc.bitaps.com/broadcast                                                 |
+| Explorer                    | Blockstream | https://blockstream.info                                                         |
 
 Sochain API rate limits: https://sochain.com/api#rate-limits (300 requests/minute)
 
-BlockCypher API rate limits: https://api.blockcypher.com/v1/doge/main (5 requests/second)
+Bitgo API rate limits: https://app.bitgo.com/docs/#section/Rate-Limiting (10 requests/second)
+
+Bitaps API rate limits: Standard limit 15 requests within 5 seconds for a single IP address.
 
 ## Usage
 

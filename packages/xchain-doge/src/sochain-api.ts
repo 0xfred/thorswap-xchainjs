@@ -2,7 +2,6 @@ import { Network } from '@thorswap-lib/xchain-client'
 import { BaseAmount, assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 
-import { DOGE_DECIMAL } from './const'
 import {
   AddressParams,
   DogeAddressDTO,
@@ -13,6 +12,9 @@ import {
   Transaction,
   TxHashParams,
 } from './types/sochain-api-types'
+import { DOGE_DECIMAL } from './utils'
+
+const DEFAULT_SUGGESTED_TRANSACTION_FEE = 500000
 
 const toSochainNetwork = (network: Network): string => {
   switch (network) {
@@ -23,8 +25,26 @@ const toSochainNetwork = (network: Network): string => {
   }
 }
 
-export const getSendTxUrl = ({ sochainUrl, network }: AddressParams) => {
-  return `${sochainUrl}/send_tx/${toSochainNetwork(network)}`
+export const getSendTxUrl = ({ sochainUrl, network, token = null }: AddressParams) => {
+  // if (network === 'mainnet') {
+  //   if (token) {
+  //     return `https://api.blockcypher.com/v1/doge/main/txs/push?token=${token}`
+  //   }
+
+  //   return `https://api.blockcypher.com/v1/doge/main/txs/push`
+  // } else {
+  //   return `${sochainUrl}/send_tx/${toSochainNetwork(network)}`
+  // }
+
+  if (network === 'mainnet') {
+    if (token) {
+      return `https://api.blockchair.com/dogecoin/push/transaction?key=${token}`
+    }
+
+    return `https://api.blockchair.com/dogecoin/push/transaction`
+  } else {
+    return `${sochainUrl}/send_tx/${toSochainNetwork(network)}`
+  }
 }
 
 /**
@@ -119,5 +139,20 @@ export const getUnspentTxs = async ({
     return txs.concat(nextBatch)
   } else {
     return txs
+  }
+}
+
+/**
+ * Get Litecoin suggested transaction fee.
+ *
+ * @returns {number} The Litecoin suggested transaction fee per bytes in sat.
+ */
+export const getSuggestedTxFee = async (): Promise<number> => {
+  //Note: sochain does not provide fee rate related data
+  try {
+    const response = await axios.get('https://api.blockcypher.com/v1/doge/main')
+    return response.data.high_fee_per_kb / 1000 // feePerKb to feePerByte
+  } catch (error) {
+    return DEFAULT_SUGGESTED_TRANSACTION_FEE
   }
 }

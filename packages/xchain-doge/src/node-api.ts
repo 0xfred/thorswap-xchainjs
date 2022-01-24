@@ -1,7 +1,39 @@
 import axios from 'axios'
 
 import { BroadcastTxParams } from './types/common'
+import { TxBroadcastResponse } from './types/node-api-types'
 
+/**
+ * Broadcast transaction.
+ *
+ * @see https://developer.bitcoin.org/reference/rpc/sendrawtransaction.html
+ *
+ * @returns {string} Transaction ID.
+ */
+export const broadcastTx = async ({ txHex, auth, nodeUrl }: BroadcastTxParams): Promise<string> => {
+  const uniqueId = new Date().getTime().toString() // for unique id
+  const response: TxBroadcastResponse = (
+    await axios.post(
+      nodeUrl,
+      {
+        jsonrpc: '2.0',
+        method: 'sendrawtransaction',
+        params: [txHex],
+        id: uniqueId,
+      },
+      {
+        auth,
+      },
+    )
+  ).data
+  if (response.error) {
+    throw new Error(`failed to broadcast a transaction: ${response.error}`)
+  }
+
+  return response.result
+}
+
+// TODO: Check this before production
 /**
  * Broadcast transaction.
  *
@@ -9,11 +41,17 @@ import { BroadcastTxParams } from './types/common'
  *
  * @returns {string} Transaction ID.
  */
-export const broadcastTxToSochain = async ({ txHex, nodeUrl }: BroadcastTxParams): Promise<string> => {
+export const broadcastTxToSochain = async ({ txHex, auth, nodeUrl }: BroadcastTxParams): Promise<string> => {
   const response = (
-    await axios.post(nodeUrl, {
-      tx_hex: txHex,
-    })
+    await axios.post(
+      nodeUrl,
+      {
+        tx_hex: txHex,
+      },
+      {
+        auth,
+      },
+    )
   ).data
   if (response.error) {
     throw new Error(`failed to broadcast a transaction: ${response.error}`)
@@ -22,22 +60,22 @@ export const broadcastTxToSochain = async ({ txHex, nodeUrl }: BroadcastTxParams
   return response.data.txid
 }
 
-/**
- * Broadcast transaction.
- *
- * @see https://www.blockcypher.com/dev/bitcoin/#push-raw-transaction-endpoint
- *
- * @returns {string} Transaction ID.
- */
 export const broadcastTxToBlockCypher = async ({ txHex, nodeUrl }: BroadcastTxParams): Promise<string> => {
   const response = (
     await axios.post(nodeUrl, {
       tx: txHex,
     })
   ).data
-  if (response.error) {
-    throw new Error(`failed to broadcast a transaction: ${response.error}`)
-  }
 
   return response.tx.hash
+}
+
+export const broadcastTxToBlockChair = async ({ txHex, nodeUrl }: BroadcastTxParams): Promise<string> => {
+  const response = (
+    await axios.post(nodeUrl, {
+      data: txHex,
+    })
+  ).data
+
+  return response.data.transaction_hash
 }
