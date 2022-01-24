@@ -144,7 +144,7 @@ class Client extends BaseXChainClient implements XChainClient {
     return DEFAULT_CONFIG[this.network].explorerAddressURL + '/' + address?.toLowerCase()
   }
   getExplorerTxUrl(txID: string): string {
-    return DEFAULT_CONFIG[this.network].explorerAddressURL + '/' + txID?.toLowerCase()
+    return DEFAULT_CONFIG[this.network].explorerTxURL + '/' + txID?.toLowerCase()
   }
   validateAddress(address: string): boolean {
     return AccAddress.validate(address)
