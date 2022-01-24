@@ -719,6 +719,8 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
     try {
       return await this.estimateGasPricesFromEtherscan()
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       return Promise.reject(new Error(`Failed to estimate gas price: ${error.msg ?? error.toString()}`))
     }
   }

@@ -1,3 +1,13 @@
+# v.0.15.1 (2022-01-10)
+
+- upgrade axios dependency to latest
+
+# v.0.15.0 (2021-12-29)
+
+## Breaking change
+
+- Add stagenet environment handling for `Network` and `BaseXChainClient` changes client to default to mainnet values until stagenet is configured.
+
 # v.0.14.0 (2022-01-06)
 
 ### Update

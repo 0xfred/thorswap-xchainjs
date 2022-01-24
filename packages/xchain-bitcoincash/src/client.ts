@@ -48,8 +48,8 @@ class Client extends UTXOClient {
   constructor({
     network = Network.Testnet,
     haskoinUrl = {
-      [Network.Testnet]: 'https://api.haskoin.com/bch-testnet',
-      [Network.Mainnet]: 'https://api.haskoin.com/bch',
+      [Network.Testnet]: 'https://api.haskoin.com/haskoin-store/bch-testnet',
+      [Network.Mainnet]: 'https://api.haskoin.com/haskoin-store/bch',
     },
     phrase,
     nodeUrl = {

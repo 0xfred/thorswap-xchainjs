@@ -103,13 +103,13 @@ export const btcNetwork = (network: Network): Bitcoin.Network => {
  * @param {Address} address
  * @returns {Balance[]} The balances of the given address.
  */
-export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
+export const getBalance = async (params: AddressParams, haskoinUrl: string): Promise<Balance[]> => {
   switch (params.network) {
     case Network.Mainnet:
       return [
         {
           asset: AssetBTC,
-          amount: await haskoinApi.getBalance(params.address),
+          amount: await haskoinApi.getBalance({ haskoinUrl, address: params.address }),
         },
       ]
     case Network.Testnet:
@@ -222,17 +222,19 @@ export const buildTx = async ({
   sender,
   network,
   sochainUrl,
+  haskoinUrl,
   spendPendingUTXO = false, // default: prevent spending uncomfirmed UTXOs
 }: TxParams & {
   feeRate: FeeRate
   sender: Address
   network: Network
   sochainUrl: string
+  haskoinUrl: string
   spendPendingUTXO?: boolean
 }): Promise<{ psbt: Bitcoin.Psbt; utxos: UTXO[] }> => {
   // search only confirmed UTXOs if pending UTXO is not allowed
   const confirmedOnly = !spendPendingUTXO
-  const utxos = await scanUTXOs({ sochainUrl, network, address: sender, confirmedOnly })
+  const utxos = await scanUTXOs({ sochainUrl, haskoinUrl, network, address: sender, confirmedOnly })
 
   if (utxos.length === 0) throw new Error('No utxos to send')
   if (!validateAddress(recipient, network)) throw new Error('Invalid address')

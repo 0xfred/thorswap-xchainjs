@@ -1,10 +1,21 @@
-# v.0.15.15 (2022-01-20)
+# v.0.17.1 (2022-01-XX)
 
-- fix getUTXO from sochain first and fallback to haskoin if fails.
+## Fix
 
-# v.0.15.14 (2021-12-22)
+- upgrade axios dependency to latest
+# v.0.17.0 (2022-01-05)
 
-- fix haskoin api URL to 
+## Breaking change
+
+- Make `haskoinUrl` configurable (change default haskoin url back to `https://api.haskoin.com/btc`)
+- `haskoinUrl` needs to be passed as parameter into misc. `utils` functions
+
+
+# v.0.16.0 (2021-12-29)
+
+## Breaking change
+
+- Add stagenet environment handling for `Network` and `BaseXChainClient` changes client to default to mainnet values until stagenet is configured.
 
 # v.0.15.13 (2021-11-12)
 

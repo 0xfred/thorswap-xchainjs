@@ -20,11 +20,13 @@ import * as Bitcoin from 'bitcoinjs-lib'
 
 import { BTC_DECIMAL } from './const'
 import * as sochain from './sochain-api'
+import { ClientUrl } from './types/client-types'
 import * as Utils from './utils'
 
 export type BitcoinClientParams = XChainClientParams & {
   sochainUrl?: string
   blockstreamUrl?: string
+  haskoinUrl?: ClientUrl
 }
 
 /**
@@ -33,6 +35,7 @@ export type BitcoinClientParams = XChainClientParams & {
 class Client extends UTXOClient {
   private sochainUrl = ''
   private blockstreamUrl = ''
+  private haskoinUrl: ClientUrl
 
   /**
    * Constructor
@@ -44,6 +47,10 @@ class Client extends UTXOClient {
     network = Network.Testnet,
     sochainUrl = 'https://sochain.com/api/v2',
     blockstreamUrl = 'https://blockstream.info',
+    haskoinUrl = {
+      [Network.Testnet]: 'https://api.haskoin.com/btctest',
+      [Network.Mainnet]: 'https://api.haskoin.com/btc',
+    },
     rootDerivationPaths = {
       [Network.Mainnet]: `84'/0'/0'/0/`, //note this isn't bip44 compliant, but it keeps the wallets generated compatible to pre HD wallets
       [Network.Testnet]: `84'/1'/0'/0/`,
@@ -53,6 +60,7 @@ class Client extends UTXOClient {
     super(Chain.Bitcoin, { network, rootDerivationPaths, phrase })
     this.setSochainUrl(sochainUrl)
     this.setBlockstreamUrl(blockstreamUrl)
+    this.haskoinUrl = haskoinUrl
   }
 
   /**
@@ -180,11 +188,14 @@ class Client extends UTXOClient {
    * @returns {Balance[]} The BTC balance of the address.
    */
   async getBalance(address: Address): Promise<Balance[]> {
-    return Utils.getBalance({
-      sochainUrl: this.sochainUrl,
-      network: this.network,
-      address: address,
-    })
+    return Utils.getBalance(
+      {
+        sochainUrl: this.sochainUrl,
+        network: this.network,
+        address: address,
+      },
+      this.haskoinUrl[this.network],
+    )
   }
 
   /**
@@ -293,6 +304,7 @@ class Client extends UTXOClient {
       feeRate,
       sender: this.getAddress(fromAddressIndex),
       sochainUrl: this.sochainUrl,
+      haskoinUrl: this.haskoinUrl[this.network],
       network: this.network,
       spendPendingUTXO,
     })

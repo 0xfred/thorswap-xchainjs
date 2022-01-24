@@ -1,3 +1,17 @@
+# v.0.4.1 (2022-01-24)
+
+### Add
+
+- `AssetLUNA`
+- `AssetUST`
+
+# v.0.4.0 (2022-01-19)
+
+### Add
+
+- `Chain.Doge`
+- `AssetDOGE`
+- added support for terra
 # v.0.3.2 (2021-12-13)
 
 ### Feature
