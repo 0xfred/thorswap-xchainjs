@@ -18,8 +18,6 @@ const toSochainNetwork = (network: Network): string => {
   switch (network) {
     case Network.Mainnet:
       return 'DOGE'
-    case Network.Stagenet:
-      return 'DOGE'
     case Network.Testnet:
       return 'DOGETEST'
   }

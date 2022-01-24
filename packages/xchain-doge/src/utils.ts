@@ -92,8 +92,6 @@ export const dogeNetwork = (network: Network): Dogecoin.networks.Network => {
   switch (network) {
     case Network.Mainnet:
       return coininfo.dogecoin.main.toBitcoinJS()
-    case Network.Stagenet:
-      return coininfo.dogecoin.main.toBitcoinJS()
     case Network.Testnet: {
       // Latest coininfo on NPM doesn't contain dogetest config information
       const bip32 = {
@@ -104,6 +102,8 @@ export const dogeNetwork = (network: Network): Dogecoin.networks.Network => {
       test.versions.bip32 = bip32
       return test.toBitcoinJS()
     }
+    default:
+      return coininfo.dogecoin.main.toBitcoinJS()
   }
 }
 
@@ -303,8 +303,6 @@ export const getDefaultFees = (): Fees => {
 export const getPrefix = (network: Network) => {
   switch (network) {
     case Network.Mainnet:
-    case Network.Stagenet:
-      return ''
     case Network.Testnet:
       return 'n'
   }
