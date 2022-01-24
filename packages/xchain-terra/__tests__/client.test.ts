@@ -147,9 +147,6 @@ describe('Client Test', () => {
 
     terraClient.setNetwork('mainnet' as Network)
     expect(terraClient.validateAddress(terraClient.getAddress())).toEqual(true)
-
-    terraClient.setNetwork('stagenet' as Network)
-    expect(terraClient.validateAddress(terraClient.getAddress())).toEqual(true)
   })
 
   // it('should have right client url', async () => {
