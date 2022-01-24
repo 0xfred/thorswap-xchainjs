@@ -245,12 +245,12 @@ class Client extends BaseXChainClient implements XChainClient {
     }
   }
   private coinsToBalances(coins: Coins): Balance[] {
-    return (coins.toArray().map((c: Coin) => {
+    return coins.toArray().map((c: Coin) => {
       return {
         asset: this.getTerraNativeAsset(c.denom),
         amount: baseAmount(c.amount.toFixed(), 6),
       }
-    }) as unknown) as Balance[]
+    }) as unknown as Balance[]
   }
   private convertSearchResultTxToTx(tx: any): Tx {
     let from: TxFrom[] = []
