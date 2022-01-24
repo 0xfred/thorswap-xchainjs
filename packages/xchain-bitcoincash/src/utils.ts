@@ -97,7 +97,6 @@ export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
 export const bchNetwork = (network: Network): BCHNetwork => {
   switch (network) {
     case Network.Mainnet:
-    case Network.Stagenet:
       return coininfo.bitcoincash.main.toBitcoinJS()
     case Network.Testnet:
       return coininfo.bitcoincash.test.toBitcoinJS()
@@ -184,7 +183,6 @@ export const parseTransaction = (tx: Transaction): Tx => {
 export const toBCHAddressNetwork = (network: Network): string => {
   switch (network) {
     case Network.Mainnet:
-    case Network.Stagenet:
       return bchaddr.Network.Mainnet
     case Network.Testnet:
       return bchaddr.Network.Testnet

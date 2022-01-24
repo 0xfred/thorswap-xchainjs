@@ -1,15 +1,3 @@
-# v.0.1.6 (2022-01-21)
-
-- Pull in upstream package updates:
-
-## ADD
-
-- Add `getPrefix` to `utils`
-
-## REMOVE
-
-- Remove `nodeUrl` from Client constructor
-
 # v.0.1.5 (2022-01-17)
 
 - fix `broadcastTxToBlockChair` to get `transaction_hash`
@@ -37,3 +25,7 @@ Update BroadcastTx API url
 Fix sochain getBalance method
 
 Details: https://github.com/thorswap/thorswap-xchainjs/issues/18
+
+# v.0.0.1 (2021-12-22)
+
+First release

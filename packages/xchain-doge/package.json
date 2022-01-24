@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-doge",
-  "version": "0.1.6",
+  "version": "0.1.5",
   "description": "Custom Doge client and utilities used by Thorswap clients",
   "keywords": [
     "Xchain",
@@ -32,12 +32,12 @@
     "postversion": "git push --follow-tags"
   },
   "devDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.0",
+    "@thorswap-lib/xchain-client": "^0.10.3",
     "@thorswap-lib/xchain-crypto": "^0.2.6",
-    "@thorswap-lib/xchain-util": "^0.4.0",
+    "@thorswap-lib/xchain-util": "^0.3.2",
     "@types/bitcoinjs-lib": "^5.0.0",
     "@types/wif": "^2.0.2",
-    "axios": "^0.21.4",
+    "axios": "^0.21.1",
     "axios-mock-adapter": "^1.20.0",
     "bitcoinjs-lib": "^5.2.0",
     "coininfo": "5.1.0",
@@ -45,10 +45,10 @@
     "wif": "^2.0.6"
   },
   "peerDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.0",
+    "@thorswap-lib/xchain-client": "^0.10.3",
     "@thorswap-lib/xchain-crypto": "^0.2.6",
-    "@thorswap-lib/xchain-util": "^0.4.0",
-    "axios": "^0.21.4",
+    "@thorswap-lib/xchain-util": "^0.3.2",
+    "axios": "^0.21.1",
     "bitcoinjs-lib": "^5.2.0",
     "coininfo": "5.1.0",
     "coinselect": "3.1.12",

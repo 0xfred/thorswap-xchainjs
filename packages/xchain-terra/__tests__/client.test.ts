@@ -1,4 +1,4 @@
-import { Network } from '@xchainjs/xchain-client'
+import { Network } from '@thorswap-lib/xchain-client'
 
 import { Client } from '../src/client'
 
@@ -146,9 +146,6 @@ describe('Client Test', () => {
     expect(terraClient.validateAddress(terraClient.getAddress())).toEqual(true)
 
     terraClient.setNetwork('mainnet' as Network)
-    expect(terraClient.validateAddress(terraClient.getAddress())).toEqual(true)
-
-    terraClient.setNetwork('stagenet' as Network)
     expect(terraClient.validateAddress(terraClient.getAddress())).toEqual(true)
   })
 

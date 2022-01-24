@@ -2,7 +2,7 @@
 
 ### Update
 
-- Use latest `@xchainjs/xchain-util@0.3.2`
+- Use latest `@thorswap-lib/xchain-util@0.3.2`
 - made walletIndex in BaseXChainClient.getAddress(walletIndex?: number)
 - upgrade axios dependency to latest
 - change TxFrom/TxTo to have optional Asset, to support Terra's multiple native asset types (UST, KRT, LUNA, etc)

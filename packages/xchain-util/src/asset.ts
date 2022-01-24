@@ -268,6 +268,28 @@ export const AssetRuneERC20Testnet: Asset = {
 export const AssetDoge: Asset = { chain: Chain.Doge, symbol: 'DOGE', ticker: 'DOGE' }
 
 /**
+ * Base "chain" asset on terra main net.
+ *
+ * Based on definition in Thorchain `common`
+ * @see https://gitlab.com/thorchain/thornode/-/blob/cosmos-terra-client/common/asset.go#L16
+ */
+export const AssetLUNA: Asset = {
+  chain: Chain.Terra,
+  symbol: 'LUNA',
+  ticker: 'LUNA',
+}
+
+/**
+ * Biggest stablecoin asset on terra main net.
+ *
+ */
+export const AssetUST: Asset = {
+  chain: Chain.Terra,
+  symbol: 'UST',
+  ticker: 'UST',
+}
+
+/**
  * Helper to check whether asset is valid
  *
  * @param {Asset} asset

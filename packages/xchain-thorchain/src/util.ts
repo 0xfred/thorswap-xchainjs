@@ -105,8 +105,6 @@ export const getPrefix = (network: Network, isStagenet = false) => {
   switch (network) {
     case Network.Mainnet:
       return 'thor'
-    case Network.Stagenet:
-      return 'sthor'
     case Network.Testnet:
       return 'tthor'
   }
@@ -115,20 +113,9 @@ export const getPrefix = (network: Network, isStagenet = false) => {
 /**
  * Get the chain id.
  *
- * @param {Network} network
  * @returns {string} The chain id based on the network.
- *
  */
-export const getChainId = (network: Network) => {
-  switch (network) {
-    case Network.Mainnet:
-      return 'thorchain'
-    case Network.Stagenet:
-      return 'thorchain-stagenet'
-    case Network.Testnet:
-      return 'thorchain'
-  }
-}
+export const getChainId = (isStagenet = false) => (isStagenet ? 'thorchain-stagenet' : 'thorchain')
 
 /**
  * Register Codecs based on the prefix.
@@ -224,17 +211,13 @@ export const getTxType = (txData: string, encoding: 'base64' | 'hex'): string =>
  *
  * @throws {"Invalid client url"} Thrown if the client url is an invalid one.
  */
-export const buildDepositTx = async (msgNativeTx: MsgNativeTx, nodeUrl: string): Promise<StdTx> => {
-  const { data } = await axios.get(`${nodeUrl}/cosmos/base/tendermint/v1beta1/node_info`)
-  const chainId = data.default_node_info.network
-  if (!chainId || !(chainId == 'thorchain' || chainId == 'thorchain-stagenet')) throw new Error('invalid network')
-
+export const buildDepositTx = async (msgNativeTx: MsgNativeTx, nodeUrl: string, isStagenet = false): Promise<StdTx> => {
   const response: ThorchainDepositResponse = (
     await axios.post(`${nodeUrl}/thorchain/deposit`, {
       coins: msgNativeTx.coins,
       memo: msgNativeTx.memo,
       base_req: {
-        chain_id: chainId,
+        chain_id: getChainId(isStagenet),
         from: msgNativeTx.signer,
       },
     })
@@ -308,12 +291,8 @@ export const getDefaultClientUrl = (isStagenet = false): ClientUrl => {
       node: 'https://testnet.thornode.thorchain.info',
       rpc: 'https://testnet.rpc.thorchain.info',
     },
-    [Network.Stagenet]: {
-      node: 'https://stagenet-thornode.ninerealms.com',
-      rpc: 'https://stagenet-rpc.ninerealms.com',
-    },
     [Network.Mainnet]: {
-      node: 'https://thornode.ninerealms.com',
+      node: 'https://thornode.thorchain.info',
       rpc: 'https://rpc.thorchain.info',
     },
   }
@@ -329,19 +308,16 @@ const DEFAULT_EXPLORER_URL = 'https://viewblock.io/thorchain'
 export const getDefaultExplorerUrls = (): ExplorerUrls => {
   const root: ExplorerUrl = {
     [Network.Testnet]: `${DEFAULT_EXPLORER_URL}?network=testnet`,
-    [Network.Stagenet]: `${DEFAULT_EXPLORER_URL}?network=stagenet`,
     [Network.Mainnet]: DEFAULT_EXPLORER_URL,
   }
   const txUrl = `${DEFAULT_EXPLORER_URL}/tx`
   const tx: ExplorerUrl = {
     [Network.Testnet]: txUrl,
-    [Network.Stagenet]: txUrl,
     [Network.Mainnet]: txUrl,
   }
   const addressUrl = `${DEFAULT_EXPLORER_URL}/address`
   const address: ExplorerUrl = {
     [Network.Testnet]: addressUrl,
-    [Network.Stagenet]: addressUrl,
     [Network.Mainnet]: addressUrl,
   }
 
@@ -389,8 +365,6 @@ export const getExplorerAddressUrl = ({
   switch (network) {
     case Network.Mainnet:
       return url
-    case Network.Stagenet:
-      return `${url}?network=stagenet`
     case Network.Testnet:
       return `${url}?network=testnet`
   }
@@ -424,8 +398,6 @@ export const getExplorerTxUrl = ({
   switch (network) {
     case Network.Mainnet:
       return url
-    case Network.Stagenet:
-      return `${url}?network=stagenet`
     case Network.Testnet:
       return `${url}?network=testnet`
   }

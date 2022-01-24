@@ -1,4 +1,4 @@
-# `@thorswap-lib/xchain-doge`
+# `@thorswap-lib/xchain-client`
 
 ## Modules
 
@@ -27,7 +27,7 @@ This package uses the following service providers:
 | Transaction details by hash | Sochain     | https://sochain.com/api#get-tx                                                   |
 | Transaction fees            | BlockCypher | https://api.blockcypher.com/v1/doge/main                                         |
 | Transaction broadcast       | BlockCypher | https://api.blockcypher.com/v1/doge/main/txs/push                                |
-| Explorer                    | Blockchair  | https://blockchair.com/dogecoin                                                  |
+| Explorer                    | Blockchair  | https://blockchair.com/dogecoin   
 
 Sochain API rate limits: https://sochain.com/api#rate-limits (300 requests/minute)
 

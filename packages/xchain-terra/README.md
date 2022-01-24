@@ -1,17 +1,17 @@
-# `@xchainjs/xchain-terra`
+# `@thorswap-lib/xchain-terra`
 
 Terra Module for XChainJS Clients
 
 ## Installation
 
 ```
-yarn add @xchainjs/xchain-terra
+yarn add @thorswap-lib/xchain-terra
 ```
 
-Following peer dependencies have to be installed into your project. These are not included in `@xchainjs/xchain-terra`.
+Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-terra`.
 
 ```
-yarn add @xchainjs/xchain-client @xchainjs/xchain-crypto @xchainjs/xchain-util axios @terra-money/terra.js
+yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios @terra-money/terra.js
 ```
 
 ## Terra Client Testing
@@ -25,7 +25,7 @@ yarn test
 
 ```ts
 // import `xchain-thorchain`
-import { Client } from '@xchainjs/xchain-terra'
+import { Client } from '@thorswap-lib/xchain-terra'
 
 // Create a `Client`
 const client = new Client({ network: Network.Testnet, phrase: 'my secret phrase' })

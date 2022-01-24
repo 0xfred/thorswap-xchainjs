@@ -89,7 +89,6 @@ export const arrayAverage = (array: number[]): number => {
 export const btcNetwork = (network: Network): Bitcoin.Network => {
   switch (network) {
     case Network.Mainnet:
-    case Network.Stagenet:
       return Bitcoin.networks.bitcoin
     case Network.Testnet:
       return Bitcoin.networks.testnet
@@ -107,7 +106,6 @@ export const btcNetwork = (network: Network): Bitcoin.Network => {
 export const getBalance = async (params: AddressParams, haskoinUrl: string): Promise<Balance[]> => {
   switch (params.network) {
     case Network.Mainnet:
-    case Network.Stagenet:
       return [
         {
           asset: AssetBTC,
@@ -351,7 +349,6 @@ export const getDefaultFees = (): Fees => {
 export const getPrefix = (network: Network) => {
   switch (network) {
     case Network.Mainnet:
-    case Network.Stagenet:
       return 'bc1'
     case Network.Testnet:
       return 'tb1'

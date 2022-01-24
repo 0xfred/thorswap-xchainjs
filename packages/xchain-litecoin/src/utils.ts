@@ -93,7 +93,6 @@ export function arrayAverage(array: number[]): number {
 export const ltcNetwork = (network: Network): Litecoin.Network => {
   switch (network) {
     case Network.Mainnet:
-    case Network.Stagenet:
       return coininfo.litecoin.main.toBitcoinJS()
     case Network.Testnet:
       return coininfo.litecoin.test.toBitcoinJS()
@@ -292,7 +291,6 @@ export const getDefaultFees = (): Fees => {
 export const getPrefix = (network: Network) => {
   switch (network) {
     case Network.Mainnet:
-    case Network.Stagenet:
       return 'ltc1'
     case Network.Testnet:
       return 'tltc1'
