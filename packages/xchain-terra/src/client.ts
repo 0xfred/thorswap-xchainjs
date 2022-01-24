@@ -71,7 +71,7 @@ class Client extends BaseXChainClient implements XChainClient {
       [Network.Testnet]: "44'/330'/0'/0/",
     },
   }: XChainClientParams) {
-    super(Chain.Litecoin, { network, rootDerivationPaths, phrase })
+    super(Chain.Terra, { network, rootDerivationPaths, phrase })
 
     //TODO add client variables to ctor to override DEFAULT_CONFIG
     this.lcdClient = new LCDClient({
