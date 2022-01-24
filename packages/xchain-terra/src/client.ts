@@ -71,7 +71,7 @@ class Client extends BaseXChainClient implements XChainClient {
       [Network.Testnet]: "44'/330'/0'/0/",
     },
   }: XChainClientParams) {
-    super(Chain.Litecoin, { network, rootDerivationPaths, phrase })
+    super(Chain.Terra, { network, rootDerivationPaths, phrase })
 
     //TODO add client variables to ctor to override DEFAULT_CONFIG
     this.lcdClient = new LCDClient({
@@ -245,12 +245,12 @@ class Client extends BaseXChainClient implements XChainClient {
     }
   }
   private coinsToBalances(coins: Coins): Balance[] {
-    return coins.toArray().map((c: Coin) => {
+    return (coins.toArray().map((c: Coin) => {
       return {
         asset: this.getTerraNativeAsset(c.denom),
         amount: baseAmount(c.amount.toFixed(), 6),
       }
-    }) as unknown as Balance[]
+    }) as unknown) as Balance[]
   }
   private convertSearchResultTxToTx(tx: any): Tx {
     let from: TxFrom[] = []
