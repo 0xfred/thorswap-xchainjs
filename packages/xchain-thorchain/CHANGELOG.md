@@ -1,3 +1,10 @@
+# v.0.20.0 (2022-01-25)
+
+## Feat: Synth Support
+
+- Update `getDenom` and `getDenomWithChain` utils functions to support synth
+- Update `transfer` and `deposit` client functions to support synth
+
 # v.0.19.7 (2022-01-08)
 
 ## Fix

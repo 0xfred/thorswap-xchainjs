@@ -28,6 +28,7 @@ import { TxResult, msgNativeTxFromJson } from './types/messages'
 import {
   DECIMAL,
   DEFAULT_GAS_VALUE,
+  DEPOSIT_GAS_VALUE,
   MAX_TX_COUNT,
   buildDepositTx,
   getBalance,
@@ -447,11 +448,12 @@ class Client implements ThorchainClient, XChainClient {
    * @throws {"failed to broadcast transaction"} Thrown if failed to broadcast transaction.
    */
   async deposit({ walletIndex = 0, asset = AssetRuneNative, amount, memo }: DepositParam): Promise<TxHash> {
-    const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
+    /// Note: comment the balance check for synth integration
+    // const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
 
-    if (assetBalance.length === 0 || assetBalance[0].amount.amount().lt(amount.amount().plus(DEFAULT_GAS_VALUE))) {
-      throw new Error('insufficient funds')
-    }
+    // if (assetBalance.length === 0 || assetBalance[0].amount.amount().lt(amount.amount().plus(DEFAULT_GAS_VALUE))) {
+    //   throw new Error('insufficient funds')
+    // }
 
     const signer = this.getAddress(walletIndex)
     const msgNativeTx = msgNativeTxFromJson({
@@ -468,8 +470,18 @@ class Client implements ThorchainClient, XChainClient {
     const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node, this.isStagenet)
     const privateKey = this.getPrivKey(walletIndex)
     const accAddress = AccAddress.fromBech32(signer)
+    const fee = unsignedStdTx.fee
+    fee.gas = DEPOSIT_GAS_VALUE
 
-    return (await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress))?.txhash ?? ''
+    const response = await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress)
+
+    if (!isBroadcastSuccess(response)) {
+      throw new Error(`failed to broadcast transaction: ${response.txhash}`)
+    }
+
+    return response?.txhash || ''
+
+    // return (await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress))?.txhash ?? ''
   }
 
   /**
@@ -481,14 +493,15 @@ class Client implements ThorchainClient, XChainClient {
   async transfer({ walletIndex = 0, asset = AssetRuneNative, amount, recipient, memo }: TxParams): Promise<TxHash> {
     registerCodecs(getPrefix(this.network, this.isStagenet))
 
-    const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
-    const fee = await this.getFees()
-    if (
-      assetBalance.length === 0 ||
-      assetBalance[0].amount.amount().lt(amount.amount().plus(fee[FeeOption.Average].amount()))
-    ) {
-      throw new Error('insufficient funds')
-    }
+    /// Note: comment the balance check for synth integration
+    // const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
+    // const fee = await this.getFees()
+    // if (
+    //   assetBalance.length === 0 ||
+    //   assetBalance[0].amount.amount().lt(amount.amount().plus(fee[FeeOption.Average].amount()))
+    // ) {
+    //   throw new Error('insufficient funds')
+    // }
 
     const transferResult = await this.cosmosClient.transfer({
       privkey: this.getPrivKey(walletIndex),
