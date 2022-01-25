@@ -30,8 +30,11 @@ export const MAX_TX_COUNT = 100
  * @returns {string} The denomination of the given asset.
  */
 export const getDenom = (asset: Asset): string => {
+  // 'rune' for native RUNE
   if (assetToString(asset) === assetToString(AssetRuneNative)) return 'rune'
-  return asset.symbol
+
+  // 'btc/btc' for synth btc
+  return asset.symbol.toLowerCase()
 }
 
 /**
@@ -41,6 +44,12 @@ export const getDenom = (asset: Asset): string => {
  * @returns {string} The denomination with chainname of the given asset.
  */
 export const getDenomWithChain = (asset: Asset): string => {
+  // for synth
+  if (asset.symbol.toUpperCase() !== 'RUNE') {
+    return asset.symbol.toLowerCase()
+  }
+
+  // for normal rune tx
   return `${Chain.THORChain}.${asset.symbol.toUpperCase()}`
 }
 
