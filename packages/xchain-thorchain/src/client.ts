@@ -16,11 +16,11 @@ import {
   XChainClient,
   XChainClientParams,
 } from '@thorswap-lib/xchain-client'
-import { CosmosSDKClient, RPCTxResult } from '@thorswap-lib/xchain-cosmos'
+import { CosmosSDKClient, RPCTxResult, TxOfflineParams } from '@thorswap-lib/xchain-cosmos'
 import * as xchainCrypto from '@thorswap-lib/xchain-crypto'
 import { Asset, AssetRuneNative, assetFromString, baseAmount } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
-import { AccAddress, PrivKey, PubKey } from 'cosmos-client'
+import { AccAddress, PrivKey, PubKey, codec } from 'cosmos-client'
 import { StdTx } from 'cosmos-client/x/auth'
 
 import { ClientUrl, DepositParam, ExplorerUrls, NodeUrl, ThorchainClientParams, TxData } from './types'
@@ -28,10 +28,13 @@ import { TxResult, msgNativeTxFromJson } from './types/messages'
 import {
   DECIMAL,
   DEFAULT_GAS_VALUE,
+  DEPOSIT_GAS_VALUE,
   MAX_TX_COUNT,
+  THORCHAIN_MAINNET_CHAIN_ID,
+  THORCHAIN_STAGENET_CHAIN_ID,
+  THORCHAIN_TESTNET_CHAIN_ID,
   buildDepositTx,
   getBalance,
-  getChainId,
   getDefaultClientUrl,
   getDefaultExplorerUrls,
   getDefaultFees,
@@ -53,6 +56,7 @@ export interface ThorchainClient {
   getClientUrl(): NodeUrl
   setExplorerUrls(explorerUrls: ExplorerUrls): void
   getCosmosClient(): CosmosSDKClient
+  getChainId(): string
 
   deposit(params: DepositParam): Promise<TxHash>
 }
@@ -67,6 +71,7 @@ class Client implements ThorchainClient, XChainClient {
   private phrase = ''
   private rootDerivationPaths: RootDerivationPaths
   private cosmosClient: CosmosSDKClient
+  private isStagenet = false
 
   /**
    * Constructor
@@ -87,16 +92,19 @@ class Client implements ThorchainClient, XChainClient {
       [Network.Mainnet]: "44'/931'/0'/0/",
       [Network.Testnet]: "44'/931'/0'/0/",
     },
+    isStagenet = false,
   }: XChainClientParams & ThorchainClientParams) {
     this.network = network
-    this.clientUrl = clientUrl || getDefaultClientUrl()
+    this.clientUrl = clientUrl || getDefaultClientUrl(isStagenet)
     this.explorerUrls = explorerUrls || getDefaultExplorerUrls()
     this.rootDerivationPaths = rootDerivationPaths
 
+    this.isStagenet = isStagenet
+
     this.cosmosClient = new CosmosSDKClient({
       server: this.getClientUrl().node,
-      chainId: getChainId(),
-      prefix: getPrefix(this.network),
+      chainId: this.getChainId(),
+      prefix: getPrefix(this.network, this.isStagenet),
     })
 
     if (phrase) this.setPhrase(phrase)
@@ -109,6 +117,20 @@ class Client implements ThorchainClient, XChainClient {
    */
   purgeClient(): void {
     this.phrase = ''
+  }
+
+  /**
+   * get chain id per network
+   */
+  getChainId(): string {
+    if (this.isStagenet) return THORCHAIN_STAGENET_CHAIN_ID
+
+    if (this.network === Network.Mainnet) {
+      return THORCHAIN_MAINNET_CHAIN_ID
+    }
+
+    // testnet
+    return THORCHAIN_TESTNET_CHAIN_ID
   }
 
   /**
@@ -126,7 +148,7 @@ class Client implements ThorchainClient, XChainClient {
     }
 
     this.network = network
-    this.cosmosClient.updatePrefix(getPrefix(this.network))
+    this.cosmosClient.updatePrefix(getPrefix(this.network, this.isStagenet))
   }
 
   /**
@@ -173,6 +195,10 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {string} The explorer url for thorchain based on the current network.
    */
   getExplorerUrl(): string {
+    if (this.isStagenet) {
+      return `${this.explorerUrls.root[this.network]}?network=stagenet`
+    }
+
     return this.explorerUrls.root[this.network]
   }
 
@@ -191,7 +217,12 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {string} The explorer url for the given address.
    */
   getExplorerAddressUrl(address: Address): string {
-    return getExplorerAddressUrl({ urls: this.explorerUrls, network: this.network, address })
+    return getExplorerAddressUrl({
+      urls: this.explorerUrls,
+      network: this.network,
+      address,
+      isStagenet: this.isStagenet,
+    })
   }
 
   /**
@@ -201,7 +232,7 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {string} The explorer url for the given transaction id.
    */
   getExplorerTxUrl(txID: string): string {
-    return getExplorerTxUrl({ urls: this.explorerUrls, network: this.network, txID })
+    return getExplorerTxUrl({ urls: this.explorerUrls, network: this.network, txID, isStagenet: this.isStagenet })
   }
 
   /**
@@ -315,7 +346,7 @@ class Client implements ThorchainClient, XChainClient {
     const txMinHeight = undefined
     const txMaxHeight = undefined
 
-    registerCodecs(getPrefix(this.network))
+    registerCodecs(getPrefix(this.network, this.isStagenet))
 
     const txIncomingHistory = (
       await this.cosmosClient.searchTxFromRPC({
@@ -434,11 +465,12 @@ class Client implements ThorchainClient, XChainClient {
    * @throws {"failed to broadcast transaction"} Thrown if failed to broadcast transaction.
    */
   async deposit({ walletIndex = 0, asset = AssetRuneNative, amount, memo }: DepositParam): Promise<TxHash> {
-    const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
+    /// Note: comment the balance check for synth integration
+    // const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
 
-    if (assetBalance.length === 0 || assetBalance[0].amount.amount().lt(amount.amount().plus(DEFAULT_GAS_VALUE))) {
-      throw new Error('insufficient funds')
-    }
+    // if (assetBalance.length === 0 || assetBalance[0].amount.amount().lt(amount.amount().plus(DEFAULT_GAS_VALUE))) {
+    //   throw new Error('insufficient funds')
+    // }
 
     const signer = this.getAddress(walletIndex)
     const msgNativeTx = msgNativeTxFromJson({
@@ -452,11 +484,21 @@ class Client implements ThorchainClient, XChainClient {
       signer,
     })
 
-    const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node)
+    const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node, this.getChainId())
     const privateKey = this.getPrivKey(walletIndex)
     const accAddress = AccAddress.fromBech32(signer)
+    const fee = unsignedStdTx.fee
+    fee.gas = DEPOSIT_GAS_VALUE
 
-    return (await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress))?.txhash ?? ''
+    const response = await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress)
+
+    if (!isBroadcastSuccess(response)) {
+      throw new Error(`failed to broadcast transaction: ${response.txhash}`)
+    }
+
+    return response?.txhash || ''
+
+    // return (await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress))?.txhash ?? ''
   }
 
   /**
@@ -466,16 +508,17 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {TxHash} The transaction hash.
    */
   async transfer({ walletIndex = 0, asset = AssetRuneNative, amount, recipient, memo }: TxParams): Promise<TxHash> {
-    registerCodecs(getPrefix(this.network))
+    registerCodecs(getPrefix(this.network, this.isStagenet))
 
-    const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
-    const fee = await this.getFees()
-    if (
-      assetBalance.length === 0 ||
-      assetBalance[0].amount.amount().lt(amount.amount().plus(fee[FeeOption.Average].amount()))
-    ) {
-      throw new Error('insufficient funds')
-    }
+    /// Note: comment the balance check for synth integration
+    // const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
+    // const fee = await this.getFees()
+    // if (
+    //   assetBalance.length === 0 ||
+    //   assetBalance[0].amount.amount().lt(amount.amount().plus(fee[FeeOption.Average].amount()))
+    // ) {
+    //   throw new Error('insufficient funds')
+    // }
 
     const transferResult = await this.cosmosClient.transfer({
       privkey: this.getPrivKey(walletIndex),
@@ -495,6 +538,50 @@ class Client implements ThorchainClient, XChainClient {
     }
 
     return transferResult?.txhash || ''
+  }
+
+  /**
+   * Transfer without broadcast balances with MsgSend
+   *
+   * @param {TxOfflineParams} params The transfer offline options.
+   * @returns {StdTx} The signed transaction.
+   */
+  async transferOffline({
+    walletIndex = 0,
+    asset = AssetRuneNative,
+    amount,
+    recipient,
+    memo,
+    from_balance = baseAmount('0', DECIMAL),
+    from_account_number = '0',
+    from_sequence = '0',
+  }: TxOfflineParams): Promise<StdTx> {
+    registerCodecs(getPrefix(this.network))
+
+    const fee = await this.getFees()
+    if (
+      from_balance === baseAmount('0', DECIMAL) ||
+      from_balance.amount().lt(amount.amount().plus(fee[FeeOption.Average].amount()))
+    ) {
+      throw new Error('insufficient funds')
+    }
+
+    const result = await this.cosmosClient.transferSignedOffline({
+      privkey: this.getPrivKey(walletIndex),
+      from: this.getAddress(walletIndex),
+      from_account_number,
+      from_sequence,
+      to: recipient,
+      amount: amount.amount().toString(),
+      asset: getDenom(asset),
+      memo,
+      fee: {
+        amount: [],
+        gas: DEFAULT_GAS_VALUE,
+      },
+    })
+
+    return JSON.parse(codec.toJSONString(result)).value
   }
 
   /**

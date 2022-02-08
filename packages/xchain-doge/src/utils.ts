@@ -247,7 +247,11 @@ export const buildTx = async ({
  * @returns {TxHash} The transaction hash.
  */
 export const broadcastTx = async (params: BroadcastTxParams): Promise<TxHash> => {
-  return await nodeApi.broadcastTxToSochain(params)
+  if (params.network === 'mainnet') {
+    return await nodeApi.broadcastTxToBlockChair(params)
+  } else {
+    return await nodeApi.broadcastTxToSochain(params)
+  }
   // TODO: Check this before prod
   // return await nodeApi.broadcastTx(params)
 }

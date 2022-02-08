@@ -195,14 +195,21 @@ export const AssetBCH: Asset = { chain: Chain.BitcoinCash, symbol: 'BCH', ticker
 export const AssetLTC: Asset = { chain: Chain.Litecoin, symbol: 'LTC', ticker: 'LTC' }
 
 /**
+ * Dogecoin asset
+ * Based on definition in Thorchain
+ * @see https://gitlab.com/thorchain/thornode/-/blob/781-add-doge-chain/common/asset.go#L24
+ */
+export const AssetDOGE: Asset = { chain: Chain.Doge, symbol: 'DOGE', ticker: 'DOGE' }
+
+export const RUNE_TICKER = 'RUNE'
+
+/**
  * Base "chain" asset on ethereum main net.
  *
  * Based on definition in Thorchain `common`
  * @see https://gitlab.com/thorchain/thornode/-/blob/master/common/asset.go#L12-24
  */
 export const AssetETH: Asset = { chain: Chain.Ethereum, symbol: 'ETH', ticker: 'ETH' }
-
-export const RUNE_TICKER = 'RUNE'
 
 /**
  * Base "chain" asset for RUNE-67C on Binance test net.
@@ -259,6 +266,28 @@ export const AssetRuneERC20Testnet: Asset = {
  * @see https://gitlab.com/thorchain/thornode/-/blob/781-add-doge-chain/common/asset.go#L12-24
  */
 export const AssetDoge: Asset = { chain: Chain.Doge, symbol: 'DOGE', ticker: 'DOGE' }
+
+/**
+ * Base "chain" asset on terra main net.
+ *
+ * Based on definition in Thorchain `common`
+ * @see https://gitlab.com/thorchain/thornode/-/blob/cosmos-terra-client/common/asset.go#L16
+ */
+export const AssetLUNA: Asset = {
+  chain: Chain.Terra,
+  symbol: 'LUNA',
+  ticker: 'LUNA',
+}
+
+/**
+ * Biggest stablecoin asset on terra main net.
+ *
+ */
+export const AssetUST: Asset = {
+  chain: Chain.Terra,
+  symbol: 'UST',
+  ticker: 'UST',
+}
 
 /**
  * Helper to check whether asset is valid

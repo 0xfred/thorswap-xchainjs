@@ -10,6 +10,7 @@ export interface Scope {
   done: () => void
 }
 
+// @ts-ignore
 global.WebSocket = WebSocket
 
 function mockWs(wsUrl: string): Scope {

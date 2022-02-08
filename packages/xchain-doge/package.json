@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-doge",
-  "version": "0.0.1",
+  "version": "0.1.5",
   "description": "Custom Doge client and utilities used by Thorswap clients",
   "keywords": [
     "Xchain",

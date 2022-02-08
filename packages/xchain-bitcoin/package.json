@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-bitcoin",
-  "version": "0.15.15",
+  "version": "0.17.2",
   "description": "Custom Bitcoin client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",
@@ -32,22 +32,22 @@
     "postversion": "git push --follow-tags"
   },
   "devDependencies": {
-    "@thorswap-lib/xchain-client": "^0.10.3",
+    "@thorswap-lib/xchain-client": "^0.11.1",
     "@thorswap-lib/xchain-crypto": "^0.2.6",
     "@thorswap-lib/xchain-util": "^0.3.1",
     "@types/bitcoinjs-lib": "^5.0.0",
     "@types/wif": "^2.0.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "axios-mock-adapter": "^1.20.0",
     "bitcoinjs-lib": "^5.2.0",
     "coinselect": "^3.1.12",
     "wif": "^2.0.6"
   },
   "peerDependencies": {
-    "@thorswap-lib/xchain-client": "^0.10.3",
+    "@thorswap-lib/xchain-client": "^0.11.1",
     "@thorswap-lib/xchain-crypto": "^0.2.6",
     "@thorswap-lib/xchain-util": "^0.3.1",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "bitcoinjs-lib": "^5.2.0",
     "coinselect": "^3.1.12",
     "wif": "^2.0.6"

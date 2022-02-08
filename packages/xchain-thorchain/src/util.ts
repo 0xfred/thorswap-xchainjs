@@ -23,6 +23,10 @@ export const DEFAULT_GAS_VALUE = '2000000'
 export const DEPOSIT_GAS_VALUE = '500000000'
 export const MAX_TX_COUNT = 100
 
+export const THORCHAIN_MAINNET_CHAIN_ID = 'thorchain'
+export const THORCHAIN_STAGENET_CHAIN_ID = 'thorchain-stagenet'
+export const THORCHAIN_TESTNET_CHAIN_ID = 'thorchain-v1'
+
 /**
  * Get denomination from Asset
  *
@@ -30,8 +34,11 @@ export const MAX_TX_COUNT = 100
  * @returns {string} The denomination of the given asset.
  */
 export const getDenom = (asset: Asset): string => {
+  // 'rune' for native RUNE
   if (assetToString(asset) === assetToString(AssetRuneNative)) return 'rune'
-  return asset.symbol
+
+  // 'btc/btc' for synth btc
+  return asset.symbol.toLowerCase()
 }
 
 /**
@@ -41,6 +48,12 @@ export const getDenom = (asset: Asset): string => {
  * @returns {string} The denomination with chainname of the given asset.
  */
 export const getDenomWithChain = (asset: Asset): string => {
+  // for synth
+  if (asset.symbol.toUpperCase() !== 'RUNE') {
+    return asset.symbol.toLowerCase()
+  }
+
+  // for normal rune tx
   return `${Chain.THORChain}.${asset.symbol.toUpperCase()}`
 }
 
@@ -85,7 +98,10 @@ export const isBroadcastSuccess = (response: unknown): boolean =>
   typeof response === 'object' &&
   response !== null &&
   'logs' in response &&
-  (response as Record<string, unknown>).logs !== undefined
+  (response as Record<string, unknown>).logs !== undefined &&
+  (response as Record<string, unknown>).logs !== null &&
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  !(response as any)?.raw_log?.includes('failed')
 
 /**
  * Get address prefix based on the network.
@@ -94,7 +110,11 @@ export const isBroadcastSuccess = (response: unknown): boolean =>
  * @returns {string} The address prefix based on the network.
  *
  **/
-export const getPrefix = (network: Network) => {
+export const getPrefix = (network: Network, isStagenet = false) => {
+  if (isStagenet) {
+    return 'sthor'
+  }
+
   switch (network) {
     case Network.Mainnet:
       return 'thor'
@@ -102,13 +122,6 @@ export const getPrefix = (network: Network) => {
       return 'tthor'
   }
 }
-
-/**
- * Get the chain id.
- *
- * @returns {string} The chain id based on the network.
- */
-export const getChainId = () => 'thorchain'
 
 /**
  * Register Codecs based on the prefix.
@@ -204,13 +217,13 @@ export const getTxType = (txData: string, encoding: 'base64' | 'hex'): string =>
  *
  * @throws {"Invalid client url"} Thrown if the client url is an invalid one.
  */
-export const buildDepositTx = async (msgNativeTx: MsgNativeTx, nodeUrl: string): Promise<StdTx> => {
+export const buildDepositTx = async (msgNativeTx: MsgNativeTx, nodeUrl: string, chainId: string): Promise<StdTx> => {
   const response: ThorchainDepositResponse = (
     await axios.post(`${nodeUrl}/thorchain/deposit`, {
       coins: msgNativeTx.coins,
       memo: msgNativeTx.memo,
       base_req: {
-        chain_id: getChainId(),
+        chain_id: chainId,
         from: msgNativeTx.signer,
       },
     })
@@ -265,7 +278,20 @@ export const getBalance = async ({
  *
  * @returns {ClientUrl} The client url (both mainnet and testnet) for thorchain.
  */
-export const getDefaultClientUrl = (): ClientUrl => {
+export const getDefaultClientUrl = (isStagenet = false): ClientUrl => {
+  if (isStagenet) {
+    return {
+      [Network.Testnet]: {
+        node: 'https://testnet.thornode.thorchain.info',
+        rpc: 'https://testnet.rpc.thorchain.info',
+      },
+      [Network.Mainnet]: {
+        node: 'https://stagenet-thornode.ninerealms.com',
+        rpc: 'https://stagenet-rpc.ninerealms.com',
+      },
+    }
+  }
+
   return {
     [Network.Testnet]: {
       node: 'https://testnet.thornode.thorchain.info',
@@ -329,12 +355,19 @@ export const getExplorerAddressUrl = ({
   urls,
   network,
   address,
+  isStagenet = false,
 }: {
   urls: ExplorerUrls
   network: Network
   address: Address
+  isStagenet?: boolean
 }): string => {
   const url = `${urls.address[network]}/${address}`
+
+  if (isStagenet) {
+    return `${url}?network=stagenet`
+  }
+
   switch (network) {
     case Network.Mainnet:
       return url
@@ -355,12 +388,19 @@ export const getExplorerTxUrl = ({
   urls,
   network,
   txID,
+  isStagenet = false,
 }: {
   urls: ExplorerUrls
   network: Network
   txID: TxHash
+  isStagenet?: boolean
 }): string => {
   const url = `${urls.tx[network]}/${txID}`
+
+  if (isStagenet) {
+    return `${url}?network=stagenet`
+  }
+
   switch (network) {
     case Network.Mainnet:
       return url

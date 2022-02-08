@@ -17,7 +17,7 @@ import {
   XChainClientParams,
 } from './types'
 
-const MAINNET_THORNODE_API_BASE = 'https://thornode.thorchain.info/thorchain'
+const MAINNET_THORNODE_API_BASE = 'https://thornode.ninerealms.com/thorchain'
 const TESTNET_THORNODE_API_BASE = 'https://testnet.thornode.thorchain.info/thorchain'
 
 export abstract class BaseXChainClient implements XChainClient {
@@ -137,7 +137,7 @@ export abstract class BaseXChainClient implements XChainClient {
   }
   //individual clients will need to implement these
   abstract getFees(): Promise<Fees>
-  abstract getAddress(walletIndex: number): string
+  abstract getAddress(walletIndex?: number): string
   abstract getExplorerUrl(): string
   abstract getExplorerAddressUrl(address: string): string
   abstract getExplorerTxUrl(txID: string): string

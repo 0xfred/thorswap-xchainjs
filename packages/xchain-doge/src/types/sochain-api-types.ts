@@ -5,6 +5,7 @@ export type AddressParams = {
   network: Network
   address: string
   startingFromTxId?: string
+  token?: string | null
 }
 
 export type TxHashParams = {
@@ -70,7 +71,8 @@ export type DogeAddressDTO = {
 export type DogeGetBalanceDTO = {
   network: string
   address: string
-  balance: string
+  confirmed_balance: string
+  unconfirmed_balance: string
 }
 
 export type DogeUnspentTxsDTO = {

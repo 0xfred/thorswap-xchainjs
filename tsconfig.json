@@ -9,7 +9,6 @@
     "jsx": "react",
     "types": ["jest", "node"],
 
-
     "outDir": "lib",
     "module": "esnext",
     "target": "es5",

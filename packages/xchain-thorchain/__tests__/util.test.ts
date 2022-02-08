@@ -102,7 +102,7 @@ describe('thorchain/util', () => {
 
     describe('isBroadcastSuccess', () => {
       it('validates isBroadcastSuccess', () => {
-        expect(isBroadcastSuccess({ logs: [] })).toBeTruthy()
+        expect(isBroadcastSuccess({ logs: [], raw_log: '' })).toBeTruthy()
       })
       it('invalidates isBroadcastSuccess', () => {
         expect(isBroadcastSuccess({})).toBeFalsy()

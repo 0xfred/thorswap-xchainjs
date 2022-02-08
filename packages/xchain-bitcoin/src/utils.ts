@@ -103,13 +103,13 @@ export const btcNetwork = (network: Network): Bitcoin.Network => {
  * @param {Address} address
  * @returns {Balance[]} The balances of the given address.
  */
-export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
+export const getBalance = async (params: AddressParams, haskoinUrl: string): Promise<Balance[]> => {
   switch (params.network) {
     case Network.Mainnet:
       return [
         {
           asset: AssetBTC,
-          amount: await haskoinApi.getBalance(params.address),
+          amount: await haskoinApi.getBalance({ haskoinUrl, address: params.address }),
         },
       ]
     case Network.Testnet:
@@ -153,66 +153,70 @@ export const scanUTXOs = async ({
   confirmedOnly = true, // default: scan only confirmed UTXOs
   fetchTxHex,
 }: ScanUTXOParam): Promise<UTXO[]> => {
-  switch (network) {
-    case Network.Testnet: {
-      let utxos: BtcAddressUTXO[] = []
+  // STEP #1 - scan utxo from sochain api
 
-      const addressParam: AddressParams = {
-        sochainUrl,
-        network,
-        address,
+  try {
+    let utxos: BtcAddressUTXO[] = []
+
+    const addressParam: AddressParams = {
+      sochainUrl,
+      network,
+      address,
+    }
+
+    if (confirmedOnly) {
+      utxos = await sochain.getConfirmedUnspentTxs(addressParam)
+    } else {
+      utxos = await sochain.getUnspentTxs(addressParam)
+    }
+    
+    const results: UTXO[] = []
+
+    for (const utxo of utxos) {
+      let txHex
+      if (fetchTxHex) {
+        txHex = (await sochain.getTx({ hash: utxo.txid, sochainUrl, network })).tx_hex
       }
 
-      if (confirmedOnly) {
-        utxos = await sochain.getConfirmedUnspentTxs(addressParam)
-      } else {
-        utxos = await sochain.getUnspentTxs(addressParam)
-      }
-
-      const results: UTXO[] = []
-
-      for (const utxo of utxos) {
-        let txHex
-        if (fetchTxHex) {
-          txHex = (await sochain.getTx({ hash: utxo.txid, sochainUrl, network })).tx_hex
-        }
-
-        results.push({
-          hash: utxo.txid,
-          index: utxo.output_no,
+      results.push({
+        hash: utxo.txid,
+        index: utxo.output_no,
+        value: assetToBase(assetAmount(utxo.value, BTC_DECIMAL)).amount().toNumber(),
+        witnessUtxo: {
           value: assetToBase(assetAmount(utxo.value, BTC_DECIMAL)).amount().toNumber(),
+          script: Buffer.from(utxo.script_hex, 'hex'),
+        },
+        txHex,
+      })
+    }
+    
+    return results
+
+  } catch (error) {
+    console.log('sochain api error', error)
+
+    // STEP #2 - if sochain api fails, scan utxo from haskoin api
+
+    let utxos: haskoinApi.UtxoData[] = []
+
+    if (confirmedOnly) {
+      utxos = await haskoinApi.getConfirmedUnspentTxs(address)
+    } else {
+      utxos = await haskoinApi.getUnspentTxs(address)
+    }
+
+    return utxos.map(
+      (utxo) =>
+        ({
+          hash: utxo.txid,
+          index: utxo.index,
+          value: baseAmount(utxo.value, BTC_DECIMAL).amount().toNumber(),
           witnessUtxo: {
-            value: assetToBase(assetAmount(utxo.value, BTC_DECIMAL)).amount().toNumber(),
-            script: Buffer.from(utxo.script_hex, 'hex'),
-          },
-          txHex,
-        })
-      }
-
-      return results
-    }
-    case Network.Mainnet: {
-      let utxos: haskoinApi.UtxoData[] = []
-
-      if (confirmedOnly) {
-        utxos = await haskoinApi.getConfirmedUnspentTxs(address)
-      } else {
-        utxos = await haskoinApi.getUnspentTxs(address)
-      }
-
-      return utxos.map(
-        (utxo) =>
-          ({
-            hash: utxo.txid,
-            index: utxo.index,
             value: baseAmount(utxo.value, BTC_DECIMAL).amount().toNumber(),
-            witnessUtxo: {
-              value: baseAmount(utxo.value, BTC_DECIMAL).amount().toNumber(),
-              script: Buffer.from(utxo.pkscript, 'hex'),
-            },
-          } as UTXO),
-      )
-    }
+            script: Buffer.from(utxo.pkscript, 'hex'),
+          },
+        } as UTXO),
+    )
   }
 }
 /**
@@ -229,6 +233,7 @@ export const buildTx = async ({
   sender,
   network,
   sochainUrl,
+  haskoinUrl,
   spendPendingUTXO = false, // default: prevent spending uncomfirmed UTXOs
   fetchTxHex = false,
 }: TxParams & {
@@ -236,12 +241,13 @@ export const buildTx = async ({
   sender: Address
   network: Network
   sochainUrl: string
+  haskoinUrl: string
   spendPendingUTXO?: boolean
   fetchTxHex?: boolean
 }): Promise<{ psbt: Bitcoin.Psbt; utxos: UTXO[]; inputs: UTXO[] }> => {
   // search only confirmed UTXOs if pending UTXO is not allowed
   const confirmedOnly = !spendPendingUTXO
-  const utxos = await scanUTXOs({ sochainUrl, network, address: sender, confirmedOnly, fetchTxHex })
+  const utxos = await scanUTXOs({ sochainUrl, haskoinUrl, network, address: sender, confirmedOnly, fetchTxHex })
 
   if (utxos.length === 0) throw new Error('No utxos to send')
   if (!validateAddress(recipient, network)) throw new Error('Invalid address')

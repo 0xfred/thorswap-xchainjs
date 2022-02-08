@@ -1,3 +1,38 @@
+# v.0.20.1
+
+## Update chainId for testnet
+
+- Update `getChainId`
+- Update `buildDepositTx` with chainId param
+
+
+
+# v.0.20.0 (2022-01-25)
+
+## Feat: Synth Support
+
+- Update `getDenom` and `getDenomWithChain` utils functions to support synth
+- Update `transfer` and `deposit` client functions to support synth
+
+# v.0.19.7 (2022-01-08)
+
+## Fix
+
+- update getChainId() for `thorchain-stagenet` chainId
+- getExplorerUrl methods for stagenet
+- `isBroadcastSuccess` method in the utils.ts
+
+# v.0.19.6 (2022-01-06)
+
+## Add
+
+- Provide `transferOffline` method
+
+# v.0.19.5 (2021-11-29)
+
+- Add Stagenet option in the client constructor
+- Add `isStagenet` param to `getPrefix` utils method and return `sthor` for stagenet
+
 # v.0.19.4 (2021-11-22)
 
 ## Add
