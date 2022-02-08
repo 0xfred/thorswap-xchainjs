@@ -23,6 +23,10 @@ export const DEFAULT_GAS_VALUE = '2000000'
 export const DEPOSIT_GAS_VALUE = '500000000'
 export const MAX_TX_COUNT = 100
 
+export const THORCHAIN_MAINNET_CHAIN_ID = 'thorchain'
+export const THORCHAIN_STAGENET_CHAIN_ID = 'thorchain-stagenet'
+export const THORCHAIN_TESTNET_CHAIN_ID = 'thorchain-v1'
+
 /**
  * Get denomination from Asset
  *
@@ -120,13 +124,6 @@ export const getPrefix = (network: Network, isStagenet = false) => {
 }
 
 /**
- * Get the chain id.
- *
- * @returns {string} The chain id based on the network.
- */
-export const getChainId = (isStagenet = false) => (isStagenet ? 'thorchain-stagenet' : 'thorchain')
-
-/**
  * Register Codecs based on the prefix.
  *
  * @param {string} prefix
@@ -220,13 +217,13 @@ export const getTxType = (txData: string, encoding: 'base64' | 'hex'): string =>
  *
  * @throws {"Invalid client url"} Thrown if the client url is an invalid one.
  */
-export const buildDepositTx = async (msgNativeTx: MsgNativeTx, nodeUrl: string, isStagenet = false): Promise<StdTx> => {
+export const buildDepositTx = async (msgNativeTx: MsgNativeTx, nodeUrl: string, chainId: string): Promise<StdTx> => {
   const response: ThorchainDepositResponse = (
     await axios.post(`${nodeUrl}/thorchain/deposit`, {
       coins: msgNativeTx.coins,
       memo: msgNativeTx.memo,
       base_req: {
-        chain_id: getChainId(isStagenet),
+        chain_id: chainId,
         from: msgNativeTx.signer,
       },
     })
