@@ -30,9 +30,11 @@ import {
   DEFAULT_GAS_VALUE,
   DEPOSIT_GAS_VALUE,
   MAX_TX_COUNT,
+  THORCHAIN_MAINNET_CHAIN_ID,
+  THORCHAIN_STAGENET_CHAIN_ID,
+  THORCHAIN_TESTNET_CHAIN_ID,
   buildDepositTx,
   getBalance,
-  getChainId,
   getDefaultClientUrl,
   getDefaultExplorerUrls,
   getDefaultFees,
@@ -54,6 +56,7 @@ export interface ThorchainClient {
   getClientUrl(): NodeUrl
   setExplorerUrls(explorerUrls: ExplorerUrls): void
   getCosmosClient(): CosmosSDKClient
+  getChainId(): string
 
   deposit(params: DepositParam): Promise<TxHash>
 }
@@ -100,7 +103,7 @@ class Client implements ThorchainClient, XChainClient {
 
     this.cosmosClient = new CosmosSDKClient({
       server: this.getClientUrl().node,
-      chainId: getChainId(isStagenet),
+      chainId: this.getChainId(),
       prefix: getPrefix(this.network, this.isStagenet),
     })
 
@@ -114,6 +117,20 @@ class Client implements ThorchainClient, XChainClient {
    */
   purgeClient(): void {
     this.phrase = ''
+  }
+
+  /**
+   * get chain id per network
+   */
+  getChainId(): string {
+    if (this.isStagenet) return THORCHAIN_STAGENET_CHAIN_ID
+
+    if (this.network === Network.Mainnet) {
+      return THORCHAIN_MAINNET_CHAIN_ID
+    }
+
+    // testnet
+    return THORCHAIN_TESTNET_CHAIN_ID
   }
 
   /**
@@ -467,7 +484,7 @@ class Client implements ThorchainClient, XChainClient {
       signer,
     })
 
-    const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node, this.isStagenet)
+    const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node, this.getChainId())
     const privateKey = this.getPrivKey(walletIndex)
     const accAddress = AccAddress.fromBech32(signer)
     const fee = unsignedStdTx.fee

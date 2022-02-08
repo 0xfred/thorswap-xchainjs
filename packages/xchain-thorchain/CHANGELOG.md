@@ -1,3 +1,12 @@
+# v.0.20.1
+
+## Update chainId for testnet
+
+- Update `getChainId`
+- Update `buildDepositTx` with chainId param
+
+
+
 # v.0.20.0 (2022-01-25)
 
 ## Feat: Synth Support
