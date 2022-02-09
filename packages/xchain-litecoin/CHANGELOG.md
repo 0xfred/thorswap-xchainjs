@@ -1,3 +1,6 @@
+# v.0.7.3 (2022-02-09)
+
+- export `buildTx` utils
 # v.0.7.2 (2022-02-09)
 
 - fetch txHex UTXO
