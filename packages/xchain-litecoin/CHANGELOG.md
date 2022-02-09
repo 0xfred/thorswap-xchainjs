@@ -1,3 +1,7 @@
+# v.0.7.2 (2022-02-09)
+
+- fetch txHex UTXO
+  
 # v.0.7.1 (2022-01-10)
 
 - upgrade axios dependency to latest
