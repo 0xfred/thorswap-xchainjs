@@ -9,5 +9,6 @@ export {
   validateAddress,
   calcFee,
   scanUTXOs,
+  buildTx,
 } from './utils'
 export { createTxInfo } from './ledger'
