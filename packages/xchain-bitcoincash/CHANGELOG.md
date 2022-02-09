@@ -1,3 +1,7 @@
+# v.0.12.4 (2022-02-09)
+
+- buildTX using bitcoinjs psbt
+  
 # v.0.12.3 (2022-02-09)
 
 - fix haskoin base url
