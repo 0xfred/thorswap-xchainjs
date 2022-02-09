@@ -1,3 +1,7 @@
+# v.0.12.3 (2022-02-09)
+
+- fix haskoin base url
+
 # v.0.12.2 (2022-02-09)
 
 - export `broadcastTx` node api
