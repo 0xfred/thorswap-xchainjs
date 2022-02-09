@@ -5,6 +5,7 @@ export type AddressParams = {
   network: Network
   address: string
   startingFromTxId?: string
+  fetchTxHex?: boolean
 }
 
 export type TxHashParams = {
@@ -32,7 +33,7 @@ export interface Transaction {
   blockhash: string
   confirmations: number
   time: number
-
+  tx_hex: string
   inputs: TxIO[]
   outputs: TxIO[]
 }

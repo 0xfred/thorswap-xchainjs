@@ -1,3 +1,7 @@
+# v.0.1.6 (2022-02-09)
+
+- fetch txHex UTXO
+
 # v.0.1.5 (2022-01-17)
 
 - fix `broadcastTxToBlockChair` to get `transaction_hash`
