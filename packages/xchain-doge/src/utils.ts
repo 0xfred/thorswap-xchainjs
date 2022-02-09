@@ -151,13 +151,22 @@ export const validateAddress = (address: Address, network: Network): boolean => 
  * @returns {UTXO[]} The UTXOs of the given address.
  */
 export const scanUTXOs = async (params: AddressParams): Promise<UTXO[]> => {
+  const { fetchTxHex, sochainUrl, network } = params
+
   const unspent: DogeAddressUTXO[] = await sochain.getUnspentTxs(params)
   const utxos: UTXO[] = []
+
   for (const utxo of unspent) {
+    let txHex
+    if (fetchTxHex) {
+      txHex = (await sochain.getTx({ hash: utxo.txid, sochainUrl, network })).tx_hex
+    }
+
     utxos.push({
       hash: utxo.txid,
       index: utxo.output_no,
       value: assetToBase(assetAmount(utxo.value, DOGE_DECIMAL)).amount().toNumber(),
+      txHex,
     })
   }
 
@@ -178,15 +187,17 @@ export const buildTx = async ({
   sender,
   network,
   sochainUrl,
+  fetchTxHex = false,
 }: TxParams & {
   feeRate: FeeRate
   sender: Address
   network: Network
   sochainUrl: string
-}): Promise<{ psbt: Dogecoin.Psbt; utxos: UTXO[] }> => {
+  fetchTxHex?: boolean
+}): Promise<{ psbt: Dogecoin.Psbt; utxos: UTXO[]; inputs: UTXO[] }> => {
   if (!validateAddress(recipient, network)) throw new Error('Invalid address')
 
-  const utxos = await scanUTXOs({ sochainUrl, network, address: sender })
+  const utxos = await scanUTXOs({ sochainUrl, network, address: sender, fetchTxHex })
   if (utxos.length === 0) throw new Error('No utxos to send')
 
   const feeRateWhole = Number(feeRate.toFixed(0))
@@ -237,7 +248,7 @@ export const buildTx = async ({
     }
   })
 
-  return { psbt, utxos }
+  return { psbt, utxos, inputs }
 }
 
 /**
