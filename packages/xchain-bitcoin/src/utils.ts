@@ -169,7 +169,7 @@ export const scanUTXOs = async ({
     } else {
       utxos = await sochain.getUnspentTxs(addressParam)
     }
-    
+
     const results: UTXO[] = []
 
     for (const utxo of utxos) {
@@ -189,9 +189,8 @@ export const scanUTXOs = async ({
         txHex,
       })
     }
-    
-    return results
 
+    return results
   } catch (error) {
     console.log('sochain api error', error)
 
