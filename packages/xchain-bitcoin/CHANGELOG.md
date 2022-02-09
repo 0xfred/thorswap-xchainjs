@@ -1,4 +1,7 @@
-# v.0.17.2 (2022-02-XX)
+# v.0.17.3 (2022-02-09)
+
+- fetch txHex utxo using haskoin api
+# v.0.17.2 (2022-02-08)
 
 - fetch utxo hex
 

@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-bitcoin",
-  "version": "0.17.2",
+  "version": "0.17.3",
   "description": "Custom Bitcoin client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",

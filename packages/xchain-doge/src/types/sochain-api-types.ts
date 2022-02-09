@@ -6,6 +6,7 @@ export type AddressParams = {
   address: string
   startingFromTxId?: string
   token?: string | null
+  fetchTxHex?: boolean
 }
 
 export type TxHashParams = {

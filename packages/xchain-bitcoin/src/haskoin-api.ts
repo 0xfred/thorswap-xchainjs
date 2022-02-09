@@ -68,3 +68,9 @@ export const getConfirmedUnspentTxs = async (address: string): Promise<UtxoData[
 
   return confirmedUTXOs
 }
+
+export const getRawTx = async (txId: string): Promise<string> => {
+  const { data: response } = await axios.get<string>(`${HASKOIN_API_URL}/transaction/${txId}/raw`)
+
+  return response
+}
