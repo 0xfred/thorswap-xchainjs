@@ -1,3 +1,7 @@
+# v.0.12.2 (2022-02-09)
+
+- export `broadcastTx` node api
+
 # v.0.12.1 (2022-01-10)
 
 - upgrade axios dependency to latest
