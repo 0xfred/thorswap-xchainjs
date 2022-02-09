@@ -16,12 +16,13 @@ import {
 } from '@thorswap-lib/xchain-client'
 import { AssetBCH, BaseAmount, baseAmount } from '@thorswap-lib/xchain-util'
 import * as bchaddr from 'bchaddrjs'
+import * as Bitcoin from 'bitcoinjs-lib'
 import coininfo from 'coininfo'
 import accumulative from 'coinselect/accumulative'
 
 import { getAccount, getRawTransaction, getUnspentTransactions } from './haskoin-api'
 import { AddressParams, Transaction, TransactionInput, TransactionOutput, UTXO } from './types'
-import { Network as BCHNetwork, TransactionBuilder } from './types/bitcoincashjs-types'
+import { TransactionBuilder } from './types/bitcoincashjs-types'
 
 export const BCH_DECIMAL = 8
 export const DEFAULT_SUGGESTED_TRANSACTION_FEE = 1
@@ -94,7 +95,7 @@ export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
  * @param {Network} network
  * @returns {} The BCH network.
  */
-export const bchNetwork = (network: Network): BCHNetwork => {
+export const bchNetwork = (network: Network): Bitcoin.Network => {
   switch (network) {
     case Network.Mainnet:
       return coininfo.bitcoincash.main.toBitcoinJS()
@@ -300,6 +301,91 @@ export const buildTx = async ({
     builder: transactionBuilder,
     utxos: inputs,
   }
+}
+
+/**
+ * Build transcation.
+ *
+ * @param {BuildParams} params The transaction build options.
+ * @returns {Transaction}
+ */
+export const buildTxPsbt = async ({
+  amount,
+  recipient,
+  memo,
+  feeRate,
+  sender,
+  network,
+  haskoinUrl,
+}: TxParams & {
+  feeRate: FeeRate
+  sender: Address
+  network: Network
+  haskoinUrl: string
+}): Promise<{
+  psbt: Bitcoin.Psbt
+  utxos: UTXO[]
+  inputs: UTXO[]
+}> => {
+  const recipientCashAddress = toCashAddress(recipient)
+  if (!validateAddress(recipientCashAddress, network)) throw new Error('Invalid address')
+
+  const utxos = await scanUTXOs(haskoinUrl, sender)
+  if (utxos.length === 0) throw new Error('No utxos to send')
+
+  const feeRateWhole = Number(feeRate.toFixed(0))
+  const compiledMemo = memo ? compileMemo(memo) : null
+
+  const targetOutputs = []
+
+  // output to recipient
+  targetOutputs.push({
+    address: recipient,
+    value: amount.amount().toNumber(),
+  })
+
+  //2. add output memo to targets (optional)
+  if (compiledMemo) {
+    targetOutputs.push({ script: compiledMemo, value: 0 })
+  }
+
+  const { inputs, outputs } = accumulative(utxos, targetOutputs, feeRateWhole)
+
+  // .inputs and .outputs will be undefined if no solution was found
+  if (!inputs || !outputs) throw new Error('Balance insufficient for transaction')
+  const psbt = new Bitcoin.Psbt({ network: bchNetwork(network) }) // Network-specific
+
+  //Inputs
+  inputs.forEach((utxo: UTXO) =>
+    psbt.addInput({
+      hash: utxo.hash,
+      index: utxo.index,
+      witnessUtxo: utxo.witnessUtxo,
+    }),
+  )
+
+  // Outputs
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  outputs.forEach((output: Bitcoin.PsbtTxOutput) => {
+    if (!output.address) {
+      //an empty address means this is the  change ddress
+      output.address = toLegacyAddress(sender)
+    } else if (output.address) {
+      output.address = toLegacyAddress(sender)
+    }
+
+    if (!output.script) {
+      psbt.addOutput(output)
+    } else {
+      //we need to add the compiled memo this way to
+      //avoid dust error tx when accumulating memo output with 0 value
+      if (compiledMemo) {
+        psbt.addOutput({ script: compiledMemo, value: 0 })
+      }
+    }
+  })
+
+  return { psbt, utxos, inputs }
 }
 
 /**
