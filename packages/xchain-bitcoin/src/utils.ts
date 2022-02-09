@@ -204,18 +204,27 @@ export const scanUTXOs = async ({
       utxos = await haskoinApi.getUnspentTxs(address)
     }
 
-    return utxos.map(
-      (utxo) =>
-        ({
-          hash: utxo.txid,
-          index: utxo.index,
+    const results: UTXO[] = []
+
+    for (const utxo of utxos) {
+      let txHex
+      if (fetchTxHex) {
+        txHex = await haskoinApi.getRawTx(utxo.txid)
+      }
+
+      results.push({
+        hash: utxo.txid,
+        index: utxo.index,
+        value: baseAmount(utxo.value, BTC_DECIMAL).amount().toNumber(),
+        witnessUtxo: {
           value: baseAmount(utxo.value, BTC_DECIMAL).amount().toNumber(),
-          witnessUtxo: {
-            value: baseAmount(utxo.value, BTC_DECIMAL).amount().toNumber(),
-            script: Buffer.from(utxo.pkscript, 'hex'),
-          },
-        } as UTXO),
-    )
+          script: Buffer.from(utxo.pkscript, 'hex'),
+        },
+        txHex,
+      } as UTXO)
+    }
+
+    return results
   }
 }
 /**
