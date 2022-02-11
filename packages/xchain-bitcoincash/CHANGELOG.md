@@ -1,3 +1,7 @@
+# v.0.12.5 (2022-02-11)
+
+- fix output address in the `buildTxPsbt`
+  
 # v.0.12.4 (2022-02-09)
 
 - buildTX using bitcoinjs psbt

@@ -371,7 +371,7 @@ export const buildTxPsbt = async ({
       //an empty address means this is the  change ddress
       output.address = toLegacyAddress(sender)
     } else if (output.address) {
-      output.address = toLegacyAddress(sender)
+      output.address = toLegacyAddress(output.address)
     }
 
     if (!output.script) {
