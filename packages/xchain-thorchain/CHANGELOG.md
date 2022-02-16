@@ -1,3 +1,9 @@
+# v.0.20.2
+
+## Update gas rate for MsgSend Tx
+
+- DEFAULT_GAS_VALUE = '500000000'
+
 # v.0.20.1
 
 ## Update chainId for testnet
