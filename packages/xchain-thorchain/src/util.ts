@@ -23,9 +23,9 @@ export const DEFAULT_GAS_VALUE = '500000000'
 export const DEPOSIT_GAS_VALUE = '500000000'
 export const MAX_TX_COUNT = 100
 
-export const THORCHAIN_MAINNET_CHAIN_ID = 'thorchain'
-export const THORCHAIN_STAGENET_CHAIN_ID = 'thorchain-stagenet'
-export const THORCHAIN_TESTNET_CHAIN_ID = 'thorchain-v1'
+export const THORCHAIN_MAINNET_CHAIN_ID = 'thorchain-mainnet-v1'
+export const THORCHAIN_STAGENET_CHAIN_ID = 'thorchain-stagenet-v1'
+export const THORCHAIN_TESTNET_CHAIN_ID = 'thorchain-testnet-v2'
 
 /**
  * Get denomination from Asset
