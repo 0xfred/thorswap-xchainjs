@@ -1,3 +1,7 @@
+# v.0.20.3
+
+- Update chainId for mainnet, stagenet and chaosnet after hardfork
+
 # v.0.20.2
 
 ## Update gas rate for MsgSend Tx
