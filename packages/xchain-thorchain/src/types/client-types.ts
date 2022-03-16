@@ -1,4 +1,4 @@
-import { Network, Tx } from '@thorswap-lib/xchain-client'
+import { Network, Tx, TxParams } from '@thorswap-lib/xchain-client'
 import { Asset, BaseAmount } from '@thorswap-lib/xchain-util'
 
 export type NodeUrl = {
@@ -30,3 +30,37 @@ export type DepositParam = {
 }
 
 export type TxData = Pick<Tx, 'from' | 'to' | 'type'>
+
+export type TxOfflineParams = TxParams & {
+  /**
+   * Balance of Rune to send from
+   */
+  from_rune_balance: BaseAmount
+  /**
+   * Balance of asset to send from
+   * Optional: It can be ignored if asset to send from is RUNE
+   */
+  from_asset_balance?: BaseAmount
+  from_account_number: string
+  from_sequence: string
+}
+
+/**
+ * Response from `thorchain/constants` endpoint
+ */
+export type ThorchainConstantsResponse = {
+  int_64_values: {
+    // We are in fee interested only - ignore all other values
+    NativeTransactionFee: number
+  }
+}
+
+/**
+ * Response of `/cosmos/base/tendermint/v1beta1/node_info`
+ * Note: We are interested in `network` (aka chain id) only
+ */
+export type NodeInfoResponse = {
+  default_node_info: {
+    network: string
+  }
+}

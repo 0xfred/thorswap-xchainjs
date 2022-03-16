@@ -1,3 +1,5 @@
+import { cosmosclient, proto } from '@cosmos-client/core'
+import { codec } from '@cosmos-client/core/cjs/types/codec'
 import { Address, Balance, FeeType, Fees, Network, TxHash, TxType, singleFee } from '@thorswap-lib/xchain-client'
 import { CosmosSDKClient, TxLog } from '@thorswap-lib/xchain-cosmos'
 import {
@@ -9,14 +11,10 @@ import {
   assetToString,
   baseAmount,
 } from '@thorswap-lib/xchain-util'
-import axios from 'axios'
-import { AccAddress, Msg, codec } from 'cosmos-client'
-import { StdTxFee } from 'cosmos-client/api'
-import { StdTx } from 'cosmos-client/x/auth'
-import { MsgMultiSend, MsgSend } from 'cosmos-client/x/bank'
 
 import { ClientUrl, ExplorerUrl, ExplorerUrls, TxData } from './types'
-import { MsgNativeTx, ThorchainDepositResponse } from './types/messages'
+import { MsgNativeTx } from './types/messages'
+import types from './types/proto/MsgDeposit'
 
 export const DECIMAL = 8
 export const DEFAULT_GAS_VALUE = '500000000'
@@ -68,25 +66,25 @@ export const getAsset = (denom: string): Asset | null => {
   return assetFromString(`${Chain.THORChain}.${denom.toUpperCase()}`)
 }
 
-/**
- * Type guard for MsgSend
- *
- * @param {Msg} msg
- * @returns {boolean} `true` or `false`.
- */
-export const isMsgSend = (msg: Msg): msg is MsgSend =>
-  (msg as MsgSend)?.amount !== undefined &&
-  (msg as MsgSend)?.from_address !== undefined &&
-  (msg as MsgSend)?.to_address !== undefined
+// /**
+//  * Type guard for MsgSend
+//  *
+//  * @param {Msg} msg
+//  * @returns {boolean} `true` or `false`.
+//  */
+// export const isMsgSend = (msg: Msg): msg is MsgSend =>
+//   (msg as MsgSend)?.amount !== undefined &&
+//   (msg as MsgSend)?.from_address !== undefined &&
+//   (msg as MsgSend)?.to_address !== undefined
 
-/**
- * Type guard for MsgMultiSend
- *
- * @param {Msg} msg
- * @returns {boolean} `true` or `false`.
- */
-export const isMsgMultiSend = (msg: Msg): msg is MsgMultiSend =>
-  (msg as MsgMultiSend)?.inputs !== undefined && (msg as MsgMultiSend)?.outputs !== undefined
+// /**
+//  * Type guard for MsgMultiSend
+//  *
+//  * @param {Msg} msg
+//  * @returns {boolean} `true` or `false`.
+//  */
+// export const isMsgMultiSend = (msg: Msg): msg is MsgMultiSend =>
+//   (msg as MsgMultiSend)?.inputs !== undefined && (msg as MsgMultiSend)?.outputs !== undefined
 
 /**
  * Response guard for transaction broadcast
@@ -125,21 +123,20 @@ export const getPrefix = (network: Network, isStagenet = false) => {
 
 /**
  * Register Codecs based on the prefix.
- *
- * @param {string} prefix
  */
-export const registerCodecs = (prefix: string): void => {
-  codec.registerCodec('thorchain/MsgSend', MsgSend, MsgSend.fromJSON)
-  codec.registerCodec('thorchain/MsgMultiSend', MsgMultiSend, MsgMultiSend.fromJSON)
+export const registerCodecs = async (): Promise<void> => {
+  // codec.registerCodec('thorchain/MsgSend', MsgSend, MsgSend.fromJSON)
+  // codec.registerCodec('thorchain/MsgMultiSend', MsgMultiSend, MsgMultiSend.fromJSON)
 
-  AccAddress.setBech32Prefix(
-    prefix,
-    prefix + 'pub',
-    prefix + 'valoper',
-    prefix + 'valoperpub',
-    prefix + 'valcons',
-    prefix + 'valconspub',
-  )
+  // AccAddress.setBech32Prefix(
+  //   prefix,
+  //   prefix + 'pub',
+  //   prefix + 'valoper',
+  //   prefix + 'valoperpub',
+  //   prefix + 'valcons',
+  //   prefix + 'valconspub',
+  // )
+  codec.register('/types.MsgDeposit', types.types.MsgDeposit)
 }
 
 /**
@@ -212,36 +209,32 @@ export const getTxType = (txData: string, encoding: 'base64' | 'hex'): string =>
 /**
  * Structure StdTx from MsgNativeTx.
  *
- * @param {string} txId The transaction id.
+ * @param {MsgNativeTx} msgNativeTx Msg of type `MsgNativeTx`.
+ * @param {string} nodeUrl Node url
+ * @param {chainId} ChainId Chain id of the network
+ *
  * @returns {Tx} The transaction details of the given transaction id.
  *
  * @throws {"Invalid client url"} Thrown if the client url is an invalid one.
  */
-export const buildDepositTx = async (msgNativeTx: MsgNativeTx, nodeUrl: string, chainId: string): Promise<StdTx> => {
-  const response: ThorchainDepositResponse = (
-    await axios.post(`${nodeUrl}/thorchain/deposit`, {
-      coins: msgNativeTx.coins,
-      memo: msgNativeTx.memo,
-      base_req: {
-        chain_id: chainId,
-        from: msgNativeTx.signer,
-      },
-    })
-  ).data
+export const buildDepositTx = async ({
+  msgNativeTx,
+  // nodeUrl,
+  chainId,
+}: {
+  msgNativeTx: MsgNativeTx
+  // nodeUrl: string
+  chainId: string
+}): Promise<proto.cosmos.tx.v1beta1.TxBody> => {
+  const networkChainId = chainId
+  if (!networkChainId || chainId !== networkChainId)
+    throw new Error(`Invalid network (asked: ${chainId} / returned: ${networkChainId}`)
 
-  if (!response || !response.value) throw new Error('Invalid client url')
+  const depositMsg = types.types.MsgDeposit.fromObject(msgNativeTx)
 
-  const fee: StdTxFee = response.value?.fee ?? { amount: [] }
-
-  const unsignedStdTx = StdTx.fromJSON({
-    msg: response.value.msg,
-    // override fee
-    fee: { ...fee, gas: DEPOSIT_GAS_VALUE },
-    signatures: [],
-    memo: '',
+  return new proto.cosmos.tx.v1beta1.TxBody({
+    messages: [cosmosclient.codec.packAny(depositMsg)],
   })
-
-  return unsignedStdTx
 }
 
 /**
@@ -408,3 +401,5 @@ export const getExplorerTxUrl = ({
       return `${url}?network=testnet`
   }
 }
+
+export const isAssetRuneNative = (asset: Asset): boolean => assetToString(asset) === assetToString(AssetRuneNative)

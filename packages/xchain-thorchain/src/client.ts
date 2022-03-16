@@ -1,7 +1,8 @@
+import { cosmosclient, proto } from '@cosmos-client/core'
 import {
   Address,
   Balance,
-  FeeOption,
+  FeeType,
   Fees,
   Network,
   RootDerivationPaths,
@@ -15,36 +16,49 @@ import {
   TxsPage,
   XChainClient,
   XChainClientParams,
+  singleFee,
 } from '@thorswap-lib/xchain-client'
-import { CosmosSDKClient, RPCTxResult, TxOfflineParams } from '@thorswap-lib/xchain-cosmos'
+import { CosmosSDKClient, RPCTxResult } from '@thorswap-lib/xchain-cosmos'
 import * as xchainCrypto from '@thorswap-lib/xchain-crypto'
-import { Asset, AssetRuneNative, assetFromString, baseAmount } from '@thorswap-lib/xchain-util'
+import {
+  Asset,
+  AssetRuneNative,
+  BaseAmount,
+  assetFromString,
+  assetToString,
+  baseAmount,
+} from '@thorswap-lib/xchain-util'
 import axios from 'axios'
-import { AccAddress, PrivKey, PubKey, codec } from 'cosmos-client'
-import { StdTx } from 'cosmos-client/x/auth'
 
-import { ClientUrl, DepositParam, ExplorerUrls, NodeUrl, ThorchainClientParams, TxData } from './types'
-import { TxResult, msgNativeTxFromJson } from './types/messages'
+import {
+  ClientUrl,
+  DepositParam,
+  ExplorerUrls,
+  NodeUrl,
+  ThorchainClientParams,
+  ThorchainConstantsResponse,
+  TxData,
+  TxOfflineParams,
+} from './types'
+import { TxResult } from './types/messages'
+import types from './types/proto/MsgDeposit'
 import {
   DECIMAL,
   DEFAULT_GAS_VALUE,
-  DEPOSIT_GAS_VALUE,
   MAX_TX_COUNT,
   THORCHAIN_MAINNET_CHAIN_ID,
   THORCHAIN_STAGENET_CHAIN_ID,
   THORCHAIN_TESTNET_CHAIN_ID,
-  buildDepositTx,
   getBalance,
   getDefaultClientUrl,
   getDefaultExplorerUrls,
   getDefaultFees,
   getDenom,
-  getDenomWithChain,
   getDepositTxDataFromLogs,
   getExplorerAddressUrl,
   getExplorerTxUrl,
   getPrefix,
-  isBroadcastSuccess,
+  isAssetRuneNative,
   registerCodecs,
 } from './util'
 
@@ -274,7 +288,7 @@ class Client implements ThorchainClient, XChainClient {
    * @throws {"Phrase not set"}
    * Throws an error if phrase has not been set before
    * */
-  getPrivKey(index = 0): PrivKey {
+  getPrivKey(index = 0): proto.cosmos.crypto.secp256k1.PrivKey {
     return this.cosmosClient.getPrivKeyFromMnemonic(this.phrase, this.getFullDerivationPath(index))
   }
 
@@ -288,8 +302,8 @@ class Client implements ThorchainClient, XChainClient {
    * @throws {"Phrase not set"}
    * Throws an error if phrase has not been set before
    **/
-  getPubKey(index = 0): PubKey {
-    return this.getPrivKey(index).getPubKey()
+  getPubKey(index = 0): cosmosclient.PubKey {
+    return this.getPrivKey(index).pubKey()
   }
 
   /**
@@ -346,7 +360,7 @@ class Client implements ThorchainClient, XChainClient {
     const txMinHeight = undefined
     const txMaxHeight = undefined
 
-    registerCodecs(getPrefix(this.network, this.isStagenet))
+    registerCodecs()
 
     const txIncomingHistory = (
       await this.cosmosClient.searchTxFromRPC({
@@ -465,18 +479,38 @@ class Client implements ThorchainClient, XChainClient {
    * @throws {"failed to broadcast transaction"} Thrown if failed to broadcast transaction.
    */
   async deposit({ walletIndex = 0, asset = AssetRuneNative, amount, memo }: DepositParam): Promise<TxHash> {
+    const balances = await this.getBalance(this.getAddress(walletIndex))
+    const runeBalance: BaseAmount =
+      balances.filter(({ asset }) => isAssetRuneNative(asset))[0]?.amount ?? baseAmount(0, DECIMAL)
+    const assetBalance: BaseAmount =
+      balances.filter(({ asset: assetInList }) => assetToString(assetInList) === assetToString(asset))[0]?.amount ??
+      baseAmount(0, DECIMAL)
     /// Note: comment the balance check for synth integration
     // const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
 
-    // if (assetBalance.length === 0 || assetBalance[0].amount.amount().lt(amount.amount().plus(DEFAULT_GAS_VALUE))) {
-    //   throw new Error('insufficient funds')
-    // }
+    const { average: fee } = await this.getFees()
 
-    const signer = this.getAddress(walletIndex)
-    const msgNativeTx = msgNativeTxFromJson({
+    if (isAssetRuneNative(asset)) {
+      // amount + fee < runeBalance
+      if (runeBalance.lt(amount.plus(fee))) {
+        throw new Error('insufficient funds')
+      }
+    } else {
+      // amount < assetBalances && runeBalance < fee
+      if (assetBalance.lt(amount) || runeBalance.lt(fee)) {
+        throw new Error('insufficient funds')
+      }
+    }
+
+    const privKey = this.getPrivKey(walletIndex)
+    const from = this.getAddress(walletIndex)
+    const signer = privKey.pubKey()
+    const accAddress = cosmosclient.AccAddress.fromString(from)
+
+    const deposit = types.types.MsgDeposit.fromObject({
       coins: [
         {
-          asset: getDenomWithChain(asset),
+          asset: asset,
           amount: amount.amount().toString(),
         },
       ],
@@ -484,19 +518,33 @@ class Client implements ThorchainClient, XChainClient {
       signer,
     })
 
-    const unsignedStdTx: StdTx = await buildDepositTx(msgNativeTx, this.getClientUrl().node, this.getChainId())
-    const privateKey = this.getPrivKey(walletIndex)
-    const accAddress = AccAddress.fromBech32(signer)
-    const fee = unsignedStdTx.fee
-    fee.gas = DEPOSIT_GAS_VALUE
+    const account = await this.getCosmosClient().getAccount(accAddress)
 
-    const response = await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress)
+    const txBody = new proto.cosmos.tx.v1beta1.TxBody({
+      messages: [cosmosclient.codec.packAny(deposit)],
+      memo,
+    })
 
-    if (!isBroadcastSuccess(response)) {
-      throw new Error(`failed to broadcast transaction: ${response.txhash}`)
-    }
+    const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
+      signer_infos: [
+        {
+          public_key: cosmosclient.codec.packAny(signer),
+          mode_info: {
+            single: {
+              mode: proto.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
+            },
+          },
+          sequence: account.sequence,
+        },
+      ],
+      fee: {
+        amount: null,
+        gas_limit: cosmosclient.Long.fromString('500000000'),
+      },
+    })
 
-    return response?.txhash || ''
+    const txBuilder = new cosmosclient.TxBuilder(this.getCosmosClient().sdk, txBody, authInfo)
+    return (await this.cosmosClient.signAndBroadcast(txBuilder, privKey, account)) || ''
 
     // return (await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress))?.txhash ?? ''
   }
@@ -508,36 +556,41 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {TxHash} The transaction hash.
    */
   async transfer({ walletIndex = 0, asset = AssetRuneNative, amount, recipient, memo }: TxParams): Promise<TxHash> {
-    registerCodecs(getPrefix(this.network, this.isStagenet))
+    const balances = await this.getBalance(this.getAddress(walletIndex))
+    const runeBalance: BaseAmount =
+      balances.filter(({ asset }) => isAssetRuneNative(asset))[0]?.amount ?? baseAmount(0, DECIMAL)
+    const assetBalance: BaseAmount =
+      balances.filter(({ asset: assetInList }) => assetToString(assetInList) === assetToString(asset))[0]?.amount ??
+      baseAmount(0, DECIMAL)
 
-    /// Note: comment the balance check for synth integration
-    // const assetBalance = await this.getBalance(this.getAddress(walletIndex), [asset])
-    // const fee = await this.getFees()
-    // if (
-    //   assetBalance.length === 0 ||
-    //   assetBalance[0].amount.amount().lt(amount.amount().plus(fee[FeeOption.Average].amount()))
-    // ) {
-    //   throw new Error('insufficient funds')
-    // }
+    const fee = (await this.getFees()).average
 
-    const transferResult = await this.cosmosClient.transfer({
+    if (isAssetRuneNative(asset)) {
+      // amount + fee < runeBalance
+      if (runeBalance.lt(amount.plus(fee))) {
+        throw new Error('insufficient funds')
+      }
+    } else {
+      // amount < assetBalances && runeBalance < fee
+      if (assetBalance.lt(amount) || runeBalance.lt(fee)) {
+        throw new Error('insufficient funds')
+      }
+    }
+
+    const hash = await this.cosmosClient.transfer({
       privkey: this.getPrivKey(walletIndex),
       from: this.getAddress(walletIndex),
       to: recipient,
       amount: amount.amount().toString(),
       asset: getDenom(asset),
       memo,
-      fee: {
-        amount: [],
-        gas: DEFAULT_GAS_VALUE,
-      },
     })
 
-    if (!isBroadcastSuccess(transferResult)) {
-      throw new Error(`failed to broadcast transaction: ${transferResult.txhash}`)
+    if (!hash) {
+      throw new Error(`failed to broadcast transaction`)
     }
 
-    return transferResult?.txhash || ''
+    return hash || ''
   }
 
   /**
@@ -552,18 +605,23 @@ class Client implements ThorchainClient, XChainClient {
     amount,
     recipient,
     memo,
-    from_balance = baseAmount('0', DECIMAL),
+    from_rune_balance,
+    from_asset_balance = baseAmount(0, DECIMAL),
     from_account_number = '0',
     from_sequence = '0',
-  }: TxOfflineParams): Promise<StdTx> {
-    registerCodecs(getPrefix(this.network))
+  }: TxOfflineParams): Promise<string> {
+    const fee = (await this.getFees()).average
 
-    const fee = await this.getFees()
-    if (
-      from_balance === baseAmount('0', DECIMAL) ||
-      from_balance.amount().lt(amount.amount().plus(fee[FeeOption.Average].amount()))
-    ) {
-      throw new Error('insufficient funds')
+    if (isAssetRuneNative(asset)) {
+      // amount + fee < runeBalance
+      if (from_rune_balance.lt(amount.plus(fee))) {
+        throw new Error('insufficient funds')
+      }
+    } else {
+      // amount < assetBalances && runeBalance < fee
+      if (from_asset_balance.lt(amount) || from_rune_balance.lt(fee)) {
+        throw new Error('insufficient funds')
+      }
     }
 
     const result = await this.cosmosClient.transferSignedOffline({
@@ -575,13 +633,13 @@ class Client implements ThorchainClient, XChainClient {
       amount: amount.amount().toString(),
       asset: getDenom(asset),
       memo,
-      fee: {
+      fee: new proto.cosmos.tx.v1beta1.Fee({
         amount: [],
-        gas: DEFAULT_GAS_VALUE,
-      },
+        gas_limit: cosmosclient.Long.fromString(DEFAULT_GAS_VALUE),
+      }),
     })
 
-    return JSON.parse(codec.toJSONString(result)).value
+    return result
   }
 
   /**
@@ -590,7 +648,20 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {Fees}
    */
   async getFees(): Promise<Fees> {
-    return getDefaultFees()
+    try {
+      const {
+        data: {
+          int_64_values: { NativeTransactionFee: fee },
+        },
+      } = await axios.get<ThorchainConstantsResponse>(`${this.getClientUrl().node}/thorchain/constants`)
+
+      // validate data
+      if (!fee || isNaN(fee) || fee < 0) throw Error(`Invalid fee: ${fee.toString()}`)
+
+      return singleFee(FeeType.FlatFee, baseAmount(fee))
+    } catch {
+      return getDefaultFees()
+    }
   }
 }
 
