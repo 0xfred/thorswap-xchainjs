@@ -34,8 +34,8 @@
     "@thorswap-lib/xchain-client": "0.11.1",
     "@thorswap-lib/xchain-crypto": "^0.2.4",
     "@thorswap-lib/xchain-util": "^0.3.0",
-    "axios": "^0.21.4",
     "@cosmos-client/core": "^0.44.4",
+    "axios": "^0.25.0",
     "nock": "^13.0.5"
   },
   "publishConfig": {
@@ -45,7 +45,7 @@
     "@thorswap-lib/xchain-client": "^0.11.1",
     "@thorswap-lib/xchain-crypto": "^0.2.4",
     "@thorswap-lib/xchain-util": "^0.3.0",
-    "axios": "^0.21.4",
-    "@cosmos-client/core": "^0.44.4"
+    "@cosmos-client/core": "^0.44.4",
+    "axios": "^0.25.0"
   }
 }

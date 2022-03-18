@@ -1,3 +1,9 @@
+# v0.21.0 (2022-03-18)
+
+## Breaking Changes
+
+- `buildDepositTx` now returns `proto.cosmos.tx.v1beta1.TxBody` from `@cosmos-client/core`
+
 # v.0.20.3
 
 - Update chainId for mainnet, stagenet and chaosnet after hardfork

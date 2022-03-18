@@ -1,5 +1,4 @@
-import { proto } from '@cosmos-client/core'
-import { codec } from '@cosmos-client/core/cjs/types'
+import { cosmosclient, proto } from '@cosmos-client/core'
 import { FeeType, Fees, Tx, TxFrom, TxTo, TxType } from '@thorswap-lib/xchain-client'
 import { Asset, assetToString, baseAmount } from '@thorswap-lib/xchain-util'
 
@@ -59,9 +58,9 @@ export const getAsset = (denom: string): Asset | null => {
 const getCoinAmount = (coins?: proto.cosmos.base.v1beta1.ICoin[]) => {
   return coins
     ? coins
-        .map((coin) => baseAmount(coin.amount || 0, 6))
-        .reduce((acc, cur) => baseAmount(acc.amount().plus(cur.amount()), 6), baseAmount(0, 6))
-    : baseAmount(0, 6)
+        .map((coin) => baseAmount(coin.amount || 0, DECIMAL))
+        .reduce((acc, cur) => baseAmount(acc.amount().plus(cur.amount()), DECIMAL), baseAmount(0, DECIMAL))
+    : baseAmount(0, DECIMAL)
 }
 /**
  * Parse transaction type
@@ -75,9 +74,9 @@ export const getTxsFromHistory = (txs: TxResponse[], mainAsset: Asset): Tx[] => 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let msgs: Array<proto.cosmos.bank.v1beta1.MsgSend | proto.cosmos.bank.v1beta1.MsgMultiSend>
     if ((tx.tx as RawTxResponse).body === undefined) {
-      msgs = codec.packAnyFromCosmosJSON(tx.tx).msg
+      msgs = cosmosclient.codec.packAnyFromCosmosJSON(tx.tx).msg
     } else {
-      msgs = codec.packAnyFromCosmosJSON((tx.tx as RawTxResponse).body.messages)
+      msgs = cosmosclient.codec.packAnyFromCosmosJSON((tx.tx as RawTxResponse).body.messages)
     }
 
     const from: TxFrom[] = []
@@ -128,9 +127,13 @@ export const getTxsFromHistory = (txs: TxResponse[], mainAsset: Asset): Tx[] => 
             if (value.from === input.address) from_index = index
           })
 
+          if (!input.address) {
+            throw Error('Empty output address')
+          }
+
           if (from_index === -1) {
             from.push({
-              from: input.address || '',
+              from: input.address,
               amount,
             })
           } else {
@@ -147,9 +150,13 @@ export const getTxsFromHistory = (txs: TxResponse[], mainAsset: Asset): Tx[] => 
             if (value.to === output.address) to_index = index
           })
 
+          if (!output.address) {
+            throw Error('Empty output address')
+          }
+
           if (to_index === -1) {
             to.push({
-              to: output.address || '',
+              to: output.address,
               amount,
             })
           } else {

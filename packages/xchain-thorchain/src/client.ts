@@ -41,7 +41,6 @@ import {
   TxOfflineParams,
 } from './types'
 import { TxResult } from './types/messages'
-import types from './types/proto/MsgDeposit'
 import {
   DECIMAL,
   DEFAULT_GAS_VALUE,
@@ -49,6 +48,7 @@ import {
   THORCHAIN_MAINNET_CHAIN_ID,
   THORCHAIN_STAGENET_CHAIN_ID,
   THORCHAIN_TESTNET_CHAIN_ID,
+  buildDepositTx,
   getBalance,
   getDefaultClientUrl,
   getDefaultExplorerUrls,
@@ -112,9 +112,7 @@ class Client implements ThorchainClient, XChainClient {
     this.clientUrl = clientUrl || getDefaultClientUrl(isStagenet)
     this.explorerUrls = explorerUrls || getDefaultExplorerUrls()
     this.rootDerivationPaths = rootDerivationPaths
-
     this.isStagenet = isStagenet
-
     this.cosmosClient = new CosmosSDKClient({
       server: this.getClientUrl().node,
       chainId: this.getChainId(),
@@ -479,6 +477,7 @@ class Client implements ThorchainClient, XChainClient {
    * @throws {"failed to broadcast transaction"} Thrown if failed to broadcast transaction.
    */
   async deposit({ walletIndex = 0, asset = AssetRuneNative, amount, memo }: DepositParam): Promise<TxHash> {
+    await registerCodecs()
     const balances = await this.getBalance(this.getAddress(walletIndex))
     const runeBalance: BaseAmount =
       balances.filter(({ asset }) => isAssetRuneNative(asset))[0]?.amount ?? baseAmount(0, DECIMAL)
@@ -507,23 +506,21 @@ class Client implements ThorchainClient, XChainClient {
     const signer = privKey.pubKey()
     const accAddress = cosmosclient.AccAddress.fromString(from)
 
-    const deposit = types.types.MsgDeposit.fromObject({
-      coins: [
-        {
-          asset: asset,
-          amount: amount.amount().toString(),
-        },
-      ],
-      memo,
-      signer,
+    const depositTxBody = await buildDepositTx({
+      msgNativeTx: {
+        memo,
+        signer: accAddress,
+        coins: [
+          {
+            asset: asset,
+            amount: amount.amount().toString(),
+          },
+        ],
+      },
+      chainId: this.getChainId(),
     })
 
     const account = await this.getCosmosClient().getAccount(accAddress)
-
-    const txBody = new proto.cosmos.tx.v1beta1.TxBody({
-      messages: [cosmosclient.codec.packAny(deposit)],
-      memo,
-    })
 
     const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
       signer_infos: [
@@ -543,8 +540,8 @@ class Client implements ThorchainClient, XChainClient {
       },
     })
 
-    const txBuilder = new cosmosclient.TxBuilder(this.getCosmosClient().sdk, txBody, authInfo)
-    return (await this.cosmosClient.signAndBroadcast(txBuilder, privKey, account)) || ''
+    const txBuilder = new cosmosclient.TxBuilder(this.getCosmosClient().sdk, depositTxBody, authInfo)
+    return (await this.getCosmosClient().signAndBroadcast(txBuilder, privKey, account)) || ''
 
     // return (await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress))?.txhash ?? ''
   }
@@ -577,7 +574,7 @@ class Client implements ThorchainClient, XChainClient {
       }
     }
 
-    const hash = await this.cosmosClient.transfer({
+    const hash = await this.getCosmosClient().transfer({
       privkey: this.getPrivKey(walletIndex),
       from: this.getAddress(walletIndex),
       to: recipient,

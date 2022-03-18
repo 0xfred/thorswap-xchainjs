@@ -1,5 +1,5 @@
 import { proto } from '@cosmos-client/core'
-import { StdTx } from '@cosmos-client/core/cjs/openapi/api'
+import { StdTx } from '@cosmos-client/core/esm/openapi'
 import { TxParams } from '@thorswap-lib/xchain-client'
 import { BigSource } from 'big.js'
 

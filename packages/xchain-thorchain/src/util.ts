@@ -1,5 +1,4 @@
 import { cosmosclient, proto } from '@cosmos-client/core'
-import { codec } from '@cosmos-client/core/cjs/types/codec'
 import { Address, Balance, FeeType, Fees, Network, TxHash, TxType, singleFee } from '@thorswap-lib/xchain-client'
 import { CosmosSDKClient, TxLog } from '@thorswap-lib/xchain-cosmos'
 import {
@@ -7,10 +6,13 @@ import {
   AssetRuneNative,
   BaseAmount,
   Chain,
+  assetAmount,
   assetFromString,
+  assetToBase,
   assetToString,
   baseAmount,
 } from '@thorswap-lib/xchain-util'
+import bech32 from 'bech32-buffer'
 
 import { ClientUrl, ExplorerUrl, ExplorerUrls, TxData } from './types'
 import { MsgNativeTx } from './types/messages'
@@ -63,7 +65,7 @@ export const getDenomWithChain = (asset: Asset): string => {
  */
 export const getAsset = (denom: string): Asset | null => {
   if (denom === getDenom(AssetRuneNative)) return AssetRuneNative
-  return assetFromString(`${Chain.THORChain}.${denom.toUpperCase()}`)
+  return assetFromString(denom.toUpperCase())
 }
 
 // /**
@@ -136,7 +138,7 @@ export const registerCodecs = async (): Promise<void> => {
   //   prefix + 'valcons',
   //   prefix + 'valconspub',
   // )
-  codec.register('/types.MsgDeposit', types.types.MsgDeposit)
+  cosmosclient.codec.register('/types.MsgDeposit', types.types.MsgDeposit)
 }
 
 /**
@@ -191,7 +193,7 @@ export const getDepositTxDataFromLogs = (logs: TxLog[], address: Address): TxDat
  * @returns {Fees} The default fee.
  */
 export const getDefaultFees = (): Fees => {
-  const fee = baseAmount(DEFAULT_GAS_VALUE, DECIMAL)
+  const fee = assetToBase(assetAmount(0.02 /* 0.02 RUNE */, DECIMAL))
   return singleFee(FeeType.FlatFee, fee)
 }
 
@@ -219,21 +221,29 @@ export const getTxType = (txData: string, encoding: 'base64' | 'hex'): string =>
  */
 export const buildDepositTx = async ({
   msgNativeTx,
-  // nodeUrl,
   chainId,
 }: {
   msgNativeTx: MsgNativeTx
-  // nodeUrl: string
   chainId: string
 }): Promise<proto.cosmos.tx.v1beta1.TxBody> => {
   const networkChainId = chainId
   if (!networkChainId || chainId !== networkChainId)
     throw new Error(`Invalid network (asked: ${chainId} / returned: ${networkChainId}`)
 
-  const depositMsg = types.types.MsgDeposit.fromObject(msgNativeTx)
+  const signerAddr = msgNativeTx.signer.toString()
+  const signerDecoded = bech32.decode(signerAddr)
+
+  const msgDepositObj = {
+    coins: msgNativeTx.coins,
+    memo: msgNativeTx.memo,
+    signer: signerDecoded.data,
+  }
+
+  const depositMsg = types.types.MsgDeposit.fromObject(msgDepositObj)
 
   return new proto.cosmos.tx.v1beta1.TxBody({
     messages: [cosmosclient.codec.packAny(depositMsg)],
+    memo: msgNativeTx.memo,
   })
 }
 
