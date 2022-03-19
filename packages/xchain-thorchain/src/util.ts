@@ -12,11 +12,12 @@ import {
   assetToString,
   baseAmount,
 } from '@thorswap-lib/xchain-util'
+import axios from 'axios'
 import bech32 from 'bech32-buffer'
 
-import { ClientUrl, ExplorerUrl, ExplorerUrls, TxData } from './types'
+import { ClientUrl, ExplorerUrl, ExplorerUrls, NodeInfoResponse, TxData } from './types'
 import { MsgNativeTx } from './types/messages'
-import types from './types/proto/MsgDeposit'
+import types from './types/proto/MsgCompiled'
 
 export const DECIMAL = 8
 export const DEFAULT_GAS_VALUE = '500000000'
@@ -127,17 +128,7 @@ export const getPrefix = (network: Network, isStagenet = false) => {
  * Register Codecs based on the prefix.
  */
 export const registerCodecs = async (): Promise<void> => {
-  // codec.registerCodec('thorchain/MsgSend', MsgSend, MsgSend.fromJSON)
-  // codec.registerCodec('thorchain/MsgMultiSend', MsgMultiSend, MsgMultiSend.fromJSON)
-
-  // AccAddress.setBech32Prefix(
-  //   prefix,
-  //   prefix + 'pub',
-  //   prefix + 'valoper',
-  //   prefix + 'valoperpub',
-  //   prefix + 'valcons',
-  //   prefix + 'valconspub',
-  // )
+  cosmosclient.codec.register('/types.MsgSend', types.types.MsgSend)
   cosmosclient.codec.register('/types.MsgDeposit', types.types.MsgDeposit)
 }
 
@@ -244,6 +235,70 @@ export const buildDepositTx = async ({
   return new proto.cosmos.tx.v1beta1.TxBody({
     messages: [cosmosclient.codec.packAny(depositMsg)],
     memo: msgNativeTx.memo,
+  })
+}
+
+/**
+ * Helper to get THORChain's chain id
+ * @param {string} nodeUrl THORNode url
+ */
+export const getChainId = async (nodeUrl: string): Promise<string> => {
+  const { data } = await axios.get<NodeInfoResponse>(`${nodeUrl}/cosmos/base/tendermint/v1beta1/node_info`)
+  return data?.default_node_info?.network || Promise.reject('Could not parse chain id')
+}
+
+/**
+ * Structure a MsgSend
+ *
+ * @param fromAddress - required, from address string
+ * @param toAddress - required, to address string
+ * @param assetAmount - required, asset amount string (e.g. "10000")
+ * @param assetDenom - required, asset denom string (e.g. "rune")
+ * @param memo - optional, memo string
+ *
+ * @returns
+ */
+export const buildTransferTx = async ({
+  fromAddress,
+  toAddress,
+  assetAmount,
+  assetDenom,
+  memo = '',
+  nodeUrl,
+  chainId,
+}: {
+  fromAddress: string
+  toAddress: string
+  assetAmount: string
+  assetDenom: string
+  memo: string | undefined
+  nodeUrl: string
+  chainId: string
+}): Promise<proto.cosmos.tx.v1beta1.TxBody> => {
+  const networkChainId = await getChainId(nodeUrl)
+  if (!networkChainId || chainId !== networkChainId) {
+    throw new Error(`Invalid network (asked: ${chainId} / returned: ${networkChainId}`)
+  }
+
+  const fromDecoded = bech32.decode(fromAddress)
+  const toDecoded = bech32.decode(toAddress)
+
+  const transferObj = {
+    fromAddress: fromDecoded.data,
+    toAddress: toDecoded.data,
+    amount: [
+      {
+        amount: assetAmount,
+        denom: assetDenom,
+      },
+    ],
+  }
+
+  const transferMsg = types.types.MsgSend.fromObject(transferObj)
+
+  return new proto.cosmos.tx.v1beta1.TxBody({
+    messages: [cosmosclient.codec.packAny(transferMsg)],
+    memo,
   })
 }
 
