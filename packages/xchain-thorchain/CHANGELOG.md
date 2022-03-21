@@ -1,3 +1,8 @@
+# 0.21.1 (2022-03-21)
+
+- update `setChainId`
+- fix stagenet chainId
+  
 # v0.21.0 (2022-03-18)
 
 ## Breaking Changes
