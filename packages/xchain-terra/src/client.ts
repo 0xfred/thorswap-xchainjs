@@ -241,6 +241,7 @@ class Client extends BaseXChainClient implements XChainClient {
         chain: Chain.Terra,
         symbol: standardDenom,
         ticker: standardDenom,
+        synth: false,
       }
     }
   }
@@ -278,6 +279,7 @@ class Client extends BaseXChainClient implements XChainClient {
         chain: Chain.Terra,
         symbol: '',
         ticker: '',
+        synth: false,
       },
       from,
       to,
@@ -311,6 +313,7 @@ class Client extends BaseXChainClient implements XChainClient {
         chain: Chain.Terra,
         symbol: '',
         ticker: '',
+        synth: false,
       },
       from,
       to,

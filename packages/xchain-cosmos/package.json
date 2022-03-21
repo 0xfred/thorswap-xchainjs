@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-cosmos",
-  "version": "0.15.1",
+  "version": "0.17.0",
   "description": "Custom Cosmos client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",
@@ -27,15 +27,16 @@
     "clean": "rimraf lib/**",
     "build": "yarn clean && rollup -c",
     "test": "jest",
+    "e2e": "jest --config jest.config.e2e.js",
     "lint": "eslint \"{src,__tests__}/**/*.ts\" --fix --max-warnings 0",
     "prepublishOnly": "yarn build"
   },
   "devDependencies": {
     "@thorswap-lib/xchain-client": "0.11.1",
     "@thorswap-lib/xchain-crypto": "^0.2.4",
-    "@thorswap-lib/xchain-util": "^0.3.0",
-    "axios": "^0.21.4",
-    "cosmos-client": "0.39.2",
+    "@thorswap-lib/xchain-util": "^0.4.2",
+    "@cosmos-client/core": "^0.45.1",
+    "axios": "^0.25.0",
     "nock": "^13.0.5"
   },
   "publishConfig": {
@@ -44,8 +45,8 @@
   "peerDependencies": {
     "@thorswap-lib/xchain-client": "^0.11.1",
     "@thorswap-lib/xchain-crypto": "^0.2.4",
-    "@thorswap-lib/xchain-util": "^0.3.0",
-    "axios": "^0.21.4",
-    "cosmos-client": "0.39.2"
+    "@thorswap-lib/xchain-util": "^0.4.2",
+    "@cosmos-client/core": "^0.45.1",
+    "axios": "^0.25.0"
   }
 }
