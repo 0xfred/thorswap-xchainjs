@@ -9,6 +9,7 @@ import { getQueryString } from '../util'
 import {
   APIQueryParam,
   CosmosSDKClientParams,
+  GetTxByHashResponse,
   RPCResponse,
   RPCTxSearchResult,
   SearchTxParams,
@@ -16,6 +17,7 @@ import {
   TransferParams,
   TxHistoryResponse,
   TxResponse,
+  UnsignedTxParams,
 } from './types'
 
 const DEFAULT_FEE = new proto.cosmos.tx.v1beta1.Fee({
@@ -34,8 +36,9 @@ export class CosmosSDKClient {
   constructor({ server, chainId, prefix = 'cosmos' }: CosmosSDKClientParams) {
     this.server = server
     this.chainId = chainId
-    this.prefix = prefix
     this.sdk = new cosmosclient.CosmosSDK(server, this.chainId)
+
+    this.updatePrefix(prefix)
   }
 
   updatePrefix(prefix: string) {
@@ -68,6 +71,7 @@ export class CosmosSDKClient {
   }
 
   getPrivKeyFromMnemonic(mnemonic: string, derivationPath: string): proto.cosmos.crypto.secp256k1.PrivKey {
+    this.setPrefix()
     const seed = xchainCrypto.getSeed(mnemonic)
     const node = BIP32.fromSeed(seed)
     const child = node.derivePath(derivationPath)
@@ -89,13 +93,13 @@ export class CosmosSDKClient {
     }
   }
 
-  getUnsignedTxBody({ from, to, amount, asset, memo = '' }: TransferParams): proto.cosmos.tx.v1beta1.TxBody {
+  getUnsignedTxBody({ from, to, amount, asset, memo = '' }: UnsignedTxParams): proto.cosmos.tx.v1beta1.TxBody {
     const msgSend = new proto.cosmos.bank.v1beta1.MsgSend({
       from_address: from,
       to_address: to,
       amount: [
         {
-          amount: amount.toString(),
+          amount: amount,
           denom: asset,
         },
       ],
@@ -210,7 +214,7 @@ export class CosmosSDKClient {
   async txsHashGet(hash: string): Promise<TxResponse> {
     this.setPrefix()
 
-    return (await axios.get<TxResponse>(`${this.server}/cosmos/tx/v1beta1/txs/${hash}`)).data
+    return (await axios.get<GetTxByHashResponse>(`${this.server}/cosmos/tx/v1beta1/txs/${hash}`)).data.tx_response
   }
 
   async transfer({ privkey, from, to, amount, asset, memo = '', fee = DEFAULT_FEE }: TransferParams): Promise<TxHash> {
@@ -221,7 +225,7 @@ export class CosmosSDKClient {
       to_address: to,
       amount: [
         {
-          amount: amount.toString(),
+          amount: amount,
           denom: asset,
         },
       ],
@@ -229,11 +233,14 @@ export class CosmosSDKClient {
 
     const pubKey = privkey.pubKey()
     const signer = cosmosclient.AccAddress.fromPublicKey(pubKey)
+
     const account = await this.getAccount(signer)
+
     const txBody = new proto.cosmos.tx.v1beta1.TxBody({
       messages: [cosmosclient.codec.packAny(msgSend)],
       memo,
     })
+
     const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
       signer_infos: [
         {
@@ -265,7 +272,7 @@ export class CosmosSDKClient {
     memo = '',
     fee = DEFAULT_FEE,
   }: TransferOfflineParams): Promise<string> {
-    const txBody = this.getUnsignedTxBody({ privkey, from, to, amount, asset, memo })
+    const txBody = this.getUnsignedTxBody({ from, to, amount, asset, memo })
 
     const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
       signer_infos: [
@@ -283,6 +290,7 @@ export class CosmosSDKClient {
     })
 
     const txBuilder = new cosmosclient.TxBuilder(this.sdk, txBody, authInfo)
+
     const signDocBytes = txBuilder.signDocBytes(cosmosclient.Long.fromString(from_account_number))
     txBuilder.addSignature(privkey.sign(signDocBytes))
     return txBuilder.txBytes()
@@ -311,7 +319,10 @@ export class CosmosSDKClient {
       throw new Error('Error broadcasting: ' + res?.data?.tx_response?.raw_log)
     }
 
-    if (!res.data.tx_response.txhash) throw new Error('TxHash is missing or invalid')
+    if (!res.data?.tx_response.txhash || res.data?.tx_response.txhash === '') {
+      throw new Error('Error broadcasting, txhash not present on response')
+    }
+
     return res.data.tx_response.txhash
   }
 }

@@ -98,7 +98,7 @@ export const getTxsFromHistory = (txs: TxResponse[], mainAsset: Asset): Tx[] => 
             amount,
           })
         } else {
-          from[from_index].amount = baseAmount(from[from_index].amount.amount().plus(amount.amount()), 6)
+          from[from_index].amount = baseAmount(from[from_index].amount.amount().plus(amount.amount()), DECIMAL)
         }
 
         let to_index = -1
@@ -113,7 +113,7 @@ export const getTxsFromHistory = (txs: TxResponse[], mainAsset: Asset): Tx[] => 
             amount,
           })
         } else {
-          to[to_index].amount = baseAmount(to[to_index].amount.amount().plus(amount.amount()), 6)
+          to[to_index].amount = baseAmount(to[to_index].amount.amount().plus(amount.amount()), DECIMAL)
         }
       } else if (isMsgMultiSend(msg)) {
         const msgMultiSend = msg
@@ -127,17 +127,13 @@ export const getTxsFromHistory = (txs: TxResponse[], mainAsset: Asset): Tx[] => 
             if (value.from === input.address) from_index = index
           })
 
-          if (!input.address) {
-            throw Error('Empty output address')
-          }
-
           if (from_index === -1) {
             from.push({
-              from: input.address,
+              from: input.address || '',
               amount,
             })
           } else {
-            from[from_index].amount = baseAmount(from[from_index].amount.amount().plus(amount.amount()), 6)
+            from[from_index].amount = baseAmount(from[from_index].amount.amount().plus(amount.amount()), DECIMAL)
           }
         })
 
@@ -150,17 +146,13 @@ export const getTxsFromHistory = (txs: TxResponse[], mainAsset: Asset): Tx[] => 
             if (value.to === output.address) to_index = index
           })
 
-          if (!output.address) {
-            throw Error('Empty output address')
-          }
-
           if (to_index === -1) {
             to.push({
-              to: output.address,
+              to: output.address || '',
               amount,
             })
           } else {
-            to[to_index].amount = baseAmount(to[to_index].amount.amount().plus(amount.amount()), 6)
+            to[to_index].amount = baseAmount(to[to_index].amount.amount().plus(amount.amount()), DECIMAL)
           }
         })
       }

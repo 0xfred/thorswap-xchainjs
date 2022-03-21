@@ -2,10 +2,10 @@ import { cosmosclient, proto } from '@cosmos-client/core'
 import {
   Address,
   Balance,
+  BaseXChainClient,
   FeeType,
   Fees,
   Network,
-  RootDerivationPaths,
   Tx,
   TxFrom,
   TxHash,
@@ -19,11 +19,11 @@ import {
   singleFee,
 } from '@thorswap-lib/xchain-client'
 import { CosmosSDKClient, RPCTxResult } from '@thorswap-lib/xchain-cosmos'
-import * as xchainCrypto from '@thorswap-lib/xchain-crypto'
 import {
   Asset,
   AssetRuneNative,
   BaseAmount,
+  Chain,
   assetFromString,
   assetToString,
   baseAmount,
@@ -50,6 +50,7 @@ import {
   THORCHAIN_TESTNET_CHAIN_ID,
   buildDepositTx,
   buildTransferTx,
+  buildUnsignedTx,
   getBalance,
   getDefaultClientUrl,
   getDefaultExplorerUrls,
@@ -60,7 +61,8 @@ import {
   getExplorerTxUrl,
   getPrefix,
   isAssetRuneNative,
-  registerCodecs,
+  registerDespositCodecs,
+  registerSendCodecs,
 } from './util'
 
 /**
@@ -79,12 +81,9 @@ export interface ThorchainClient {
 /**
  * Custom Thorchain Client
  */
-class Client implements ThorchainClient, XChainClient {
-  private network: Network
+class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
   private clientUrl: ClientUrl
   private explorerUrls: ExplorerUrls
-  private phrase = ''
-  private rootDerivationPaths: RootDerivationPaths
   private cosmosClient: CosmosSDKClient
   private isStagenet = false
 
@@ -109,31 +108,23 @@ class Client implements ThorchainClient, XChainClient {
     },
     isStagenet = false,
   }: XChainClientParams & ThorchainClientParams) {
+    super(Chain.Cosmos, { network, rootDerivationPaths, phrase })
+
     this.network = network
     this.clientUrl = clientUrl || getDefaultClientUrl(isStagenet)
     this.explorerUrls = explorerUrls || getDefaultExplorerUrls()
-    this.rootDerivationPaths = rootDerivationPaths
+
     this.isStagenet = isStagenet
     this.cosmosClient = new CosmosSDKClient({
       server: this.getClientUrl().node,
       chainId: this.getChainId(),
       prefix: getPrefix(this.network, this.isStagenet),
     })
-
-    if (phrase) this.setPhrase(phrase)
-  }
-
-  /**
-   * Purge client.
-   *
-   * @returns {void}
-   */
-  purgeClient(): void {
-    this.phrase = ''
   }
 
   /**
    * get chain id per network
+   * NOTE: Use hardcoded chain id
    */
   getChainId(): string {
     if (this.isStagenet) return THORCHAIN_STAGENET_CHAIN_ID
@@ -156,21 +147,8 @@ class Client implements ThorchainClient, XChainClient {
    * Thrown if network has not been set before.
    */
   setNetwork(network: Network): void {
-    if (!network) {
-      throw new Error('Network must be provided')
-    }
-
-    this.network = network
+    super.setNetwork(network)
     this.cosmosClient.updatePrefix(getPrefix(this.network, this.isStagenet))
-  }
-
-  /**
-   * Get the current network.
-   *
-   * @returns {Network}
-   */
-  getNetwork(): Network {
-    return this.network
   }
 
   /**
@@ -249,36 +227,6 @@ class Client implements ThorchainClient, XChainClient {
   }
 
   /**
-   * Set/update a new phrase
-   *
-   * @param {string} phrase A new phrase.
-   * @returns {Address} The address from the given phrase
-   *
-   * @throws {"Invalid phrase"}
-   * Thrown if the given phase is invalid.
-   */
-  setPhrase(phrase: string, walletIndex = 0): Address {
-    if (this.phrase !== phrase) {
-      if (!xchainCrypto.validatePhrase(phrase)) {
-        throw new Error('Invalid phrase')
-      }
-      this.phrase = phrase
-    }
-
-    return this.getAddress(walletIndex)
-  }
-
-  /**
-   * Get getFullDerivationPath
-   *
-   * @param {number} index the HD wallet index
-   * @returns {string} The bitcoin derivation path based on the network.
-   */
-  getFullDerivationPath(index: number): string {
-    return this.rootDerivationPaths[this.network] + `${index}`
-  }
-
-  /**
    * Get private key
    *
    * @param {number} index the HD wallet index (optional)
@@ -287,7 +235,7 @@ class Client implements ThorchainClient, XChainClient {
    * @throws {"Phrase not set"}
    * Throws an error if phrase has not been set before
    * */
-  getPrivKey(index = 0): proto.cosmos.crypto.secp256k1.PrivKey {
+  getPrivateKey(index = 0): proto.cosmos.crypto.secp256k1.PrivKey {
     return this.cosmosClient.getPrivKeyFromMnemonic(this.phrase, this.getFullDerivationPath(index))
   }
 
@@ -302,7 +250,8 @@ class Client implements ThorchainClient, XChainClient {
    * Throws an error if phrase has not been set before
    **/
   getPubKey(index = 0): cosmosclient.PubKey {
-    return this.getPrivKey(index).pubKey()
+    const privKey = this.getPrivateKey(index)
+    return privKey.pubKey()
   }
 
   /**
@@ -359,8 +308,6 @@ class Client implements ThorchainClient, XChainClient {
     const txMinHeight = undefined
     const txMaxHeight = undefined
 
-    registerCodecs()
-
     const txIncomingHistory = (
       await this.cosmosClient.searchTxFromRPC({
         rpcEndpoint: this.getClientUrl().rpc,
@@ -382,7 +329,8 @@ class Client implements ThorchainClient, XChainClient {
       })
     ).txs
 
-    let history: RPCTxResult[] = [...txIncomingHistory, ...txOutgoingHistory]
+    let history: RPCTxResult[] = txIncomingHistory
+      .concat(txOutgoingHistory)
       .sort((a, b) => {
         if (a.height !== b.height) return parseInt(b.height) > parseInt(a.height) ? 1 : -1
         if (a.hash !== b.hash) return a.hash > b.hash ? 1 : -1
@@ -416,8 +364,9 @@ class Client implements ThorchainClient, XChainClient {
    */
   async getTransactionData(txId: string, address: Address): Promise<Tx> {
     const txResult = await this.cosmosClient.txsHashGet(txId)
-    const txData: TxData | null = txResult.logs ? getDepositTxDataFromLogs(txResult.logs, address) : null
-    if (!txData) throw new Error(`Failed to get transaction data (tx-hash: ${txId})`)
+
+    const txData: TxData | null = txResult && txResult.logs ? getDepositTxDataFromLogs(txResult.logs, address) : null
+    if (!txResult || !txData) throw new Error(`Failed to get transaction data (tx-hash: ${txId})`)
 
     const { from, to, type } = txData
 
@@ -478,7 +427,8 @@ class Client implements ThorchainClient, XChainClient {
    * @throws {"failed to broadcast transaction"} Thrown if failed to broadcast transaction.
    */
   async deposit({ walletIndex = 0, asset = AssetRuneNative, amount, memo }: DepositParam): Promise<TxHash> {
-    await registerCodecs()
+    await registerDespositCodecs()
+
     const balances = await this.getBalance(this.getAddress(walletIndex))
     const runeBalance: BaseAmount =
       balances.filter(({ asset }) => isAssetRuneNative(asset))[0]?.amount ?? baseAmount(0, DECIMAL)
@@ -502,15 +452,16 @@ class Client implements ThorchainClient, XChainClient {
       }
     }
 
-    const privKey = this.getPrivKey(walletIndex)
-    const from = this.getAddress(walletIndex)
-    const signer = privKey.pubKey()
-    const accAddress = cosmosclient.AccAddress.fromString(from)
+    const privKey = this.getPrivateKey(walletIndex)
+    const signerPubkey = privKey.pubKey()
+
+    const fromAddress = this.getAddress(walletIndex)
+    const fromAddressAcc = cosmosclient.AccAddress.fromString(fromAddress)
 
     const depositTxBody = await buildDepositTx({
       msgNativeTx: {
-        memo,
-        signer: accAddress,
+        memo: memo,
+        signer: fromAddressAcc,
         coins: [
           {
             asset: asset,
@@ -518,34 +469,23 @@ class Client implements ThorchainClient, XChainClient {
           },
         ],
       },
+      nodeUrl: this.getClientUrl().node,
       chainId: this.getChainId(),
     })
 
-    const account = await this.getCosmosClient().getAccount(accAddress)
+    const account = await this.getCosmosClient().getAccount(fromAddressAcc)
 
-    const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
-      signer_infos: [
-        {
-          public_key: cosmosclient.codec.packAny(signer),
-          mode_info: {
-            single: {
-              mode: proto.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
-            },
-          },
-          sequence: account.sequence,
-        },
-      ],
-      fee: {
-        amount: null,
-        gas_limit: cosmosclient.Long.fromString('500000000'),
-      },
+    const txBuilder = buildUnsignedTx({
+      cosmosSdk: this.getCosmosClient().sdk,
+      txBody: depositTxBody,
+      signerPubkey: cosmosclient.codec.packAny(signerPubkey),
+      gasLimit: DEFAULT_GAS_VALUE,
+      sequence: account.sequence || cosmosclient.Long.ZERO,
     })
 
-    const txBuilder = new cosmosclient.TxBuilder(this.getCosmosClient().sdk, depositTxBody, authInfo)
     return (await this.getCosmosClient().signAndBroadcast(txBuilder, privKey, account)) || ''
-
-    // return (await this.cosmosClient.signAndBroadcast(unsignedStdTx, privateKey, accAddress))?.txhash ?? ''
   }
+
   /**
    * Builds final unsigned TX
    *
@@ -597,7 +537,8 @@ class Client implements ThorchainClient, XChainClient {
    * @returns {TxHash} The transaction hash.
    */
   async transfer({ walletIndex = 0, asset = AssetRuneNative, amount, recipient, memo }: TxParams): Promise<TxHash> {
-    await registerCodecs()
+    await registerSendCodecs()
+
     const balances = await this.getBalance(this.getAddress(walletIndex))
     const runeBalance: BaseAmount =
       balances.filter(({ asset }) => isAssetRuneNative(asset))[0]?.amount ?? baseAmount(0, DECIMAL)
@@ -619,7 +560,7 @@ class Client implements ThorchainClient, XChainClient {
       }
     }
 
-    const privKey = this.getPrivKey(walletIndex)
+    const privKey = this.getPrivateKey(walletIndex)
     const from = this.getAddress(walletIndex)
     const signerPubkey = privKey.pubKey()
     const accAddress = cosmosclient.AccAddress.fromString(from)
@@ -630,7 +571,7 @@ class Client implements ThorchainClient, XChainClient {
       fromAddress: from,
       toAddress: recipient,
       memo: memo,
-      assetAmount: amount.amount().toString(),
+      assetAmount: amount,
       assetDenom: denom,
       chainId: this.getChainId(),
       nodeUrl: this.getClientUrl().node,
@@ -647,28 +588,13 @@ class Client implements ThorchainClient, XChainClient {
     })
 
     return (await this.getCosmosClient().signAndBroadcast(txBuilder, privKey, account)) || ''
-
-    // const hash = await this.getCosmosClient().transfer({
-    //   privkey: this.getPrivKey(walletIndex),
-    //   from: this.getAddress(walletIndex),
-    //   to: recipient,
-    //   amount: amount.amount().toString(),
-    //   asset: getDenom(asset),
-    //   memo,
-    // })
-
-    // if (!hash) {
-    //   throw new Error(`failed to broadcast transaction`)
-    // }
-
-    // return hash || ''
   }
 
   /**
    * Transfer without broadcast balances with MsgSend
    *
    * @param {TxOfflineParams} params The transfer offline options.
-   * @returns {StdTx} The signed transaction.
+   * @returns {string} The signed transaction bytes.
    */
   async transferOffline({
     walletIndex = 0,
@@ -695,22 +621,29 @@ class Client implements ThorchainClient, XChainClient {
       }
     }
 
-    const result = await this.cosmosClient.transferSignedOffline({
-      privkey: this.getPrivKey(walletIndex),
-      from: this.getAddress(walletIndex),
-      from_account_number,
-      from_sequence,
-      to: recipient,
-      amount: amount.amount().toString(),
-      asset: getDenom(asset),
+    const txBody = await buildTransferTx({
+      fromAddress: this.getAddress(walletIndex),
+      toAddress: recipient,
       memo,
-      fee: new proto.cosmos.tx.v1beta1.Fee({
-        amount: [],
-        gas_limit: cosmosclient.Long.fromString(DEFAULT_GAS_VALUE),
-      }),
+      assetAmount: amount,
+      assetDenom: getDenom(asset),
+      chainId: this.getChainId(),
+      nodeUrl: this.getClientUrl().node,
     })
 
-    return result
+    const privKey = this.getPrivateKey(walletIndex)
+
+    const txBuilder = buildUnsignedTx({
+      cosmosSdk: this.getCosmosClient().sdk,
+      txBody: txBody,
+      gasLimit: DEFAULT_GAS_VALUE,
+      signerPubkey: cosmosclient.codec.packAny(privKey.pubKey()),
+      sequence: cosmosclient.Long.fromString(from_sequence) || cosmosclient.Long.ZERO,
+    })
+
+    const signDocBytes = txBuilder.signDocBytes(cosmosclient.Long.fromString(from_account_number))
+    txBuilder.addSignature(privKey.sign(signDocBytes))
+    return txBuilder.txBytes()
   }
 
   /**

@@ -1,11 +1,10 @@
 import { cosmosclient, proto } from '@cosmos-client/core'
-import { Coin } from '@cosmos-client/core/cjs/openapi/api'
 import { Network, TxsPage } from '@thorswap-lib/xchain-client'
 import { BaseAmount, baseAmount } from '@thorswap-lib/xchain-util'
 import nock from 'nock'
 
 import { Client } from '../src/client'
-import { TxHistoryResponse, TxResponse } from '../src/cosmos/types'
+import { GetTxByHashResponse, TxHistoryResponse } from '../src/cosmos/types'
 import { AssetMuon } from '../src/types'
 
 const getClientUrl = (client: Client): string => {
@@ -37,7 +36,7 @@ const mockAccountsBalance = (
   url: string,
   address: string,
   result: {
-    balances: Coin[]
+    balances: proto.cosmos.base.v1beta1.Coin[]
   },
 ) => {
   nock(url).get(`/cosmos/bank/v1beta1/balances/${address}`).reply(200, result)
@@ -64,7 +63,7 @@ const assertTxHstory = (url: string, address: string, result: TxHistoryResponse)
   nock(url).get(`/cosmos/tx/v1beta1/txs?events=message.sender='${address}'`).reply(200, result)
 }
 
-const assertTxHashGet = (url: string, hash: string, result: TxResponse): void => {
+const assertTxHashGet = (url: string, hash: string, result: GetTxByHashResponse): void => {
   nock(url).get(`/cosmos/tx/v1beta1/txs/${hash}`).reply(200, result)
 }
 
@@ -140,10 +139,10 @@ describe('Client Test', () => {
   it('has balances', async () => {
     mockAccountsBalance(getClientUrl(cosmosClient), 'cosmos1gehrq0pr5d79q8nxnaenvqh09g56jafm82thjv', {
       balances: [
-        {
+        new proto.cosmos.base.v1beta1.Coin({
           denom: 'muon',
           amount: '75000000',
-        },
+        }),
       ],
     })
     const balances = await cosmosClient.getBalance('cosmos1gehrq0pr5d79q8nxnaenvqh09g56jafm82thjv')
@@ -309,19 +308,21 @@ describe('Client Test', () => {
     const encodedMsg = cosmosclient.codec.packCosmosAny(msgSend)
 
     assertTxHashGet(getClientUrl(cosmosClient), '19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066', {
-      height: 1047,
-      txhash: '19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066',
-      data: '0A090A076465706F736974',
-      raw_log: 'transaction logs',
-      gas_wanted: '5000000000000000',
-      gas_used: '148996',
-      tx: {
-        body: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          messages: [encodedMsg as any],
+      tx_response: {
+        height: 1047,
+        txhash: '19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066',
+        data: '0A090A076465706F736974',
+        raw_log: 'transaction logs',
+        gas_wanted: '5000000000000000',
+        gas_used: '148996',
+        tx: {
+          body: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            messages: [encodedMsg as any],
+          },
         },
+        timestamp: '2020-09-25T06:09:15Z',
       },
-      timestamp: '2020-09-25T06:09:15Z',
     })
 
     const tx = await cosmosClient.getTransactionData('19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066')

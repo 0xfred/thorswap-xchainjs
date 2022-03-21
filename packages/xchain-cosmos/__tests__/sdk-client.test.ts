@@ -1,9 +1,8 @@
 import { cosmosclient, proto } from '@cosmos-client/core'
-import { Coin } from '@cosmos-client/core/cjs/openapi/api'
 import nock from 'nock'
 
 import { CosmosSDKClient } from '../src/cosmos/sdk-client'
-import { TxHistoryResponse, TxResponse } from '../src/cosmos/types'
+import { GetTxByHashResponse, TxHistoryResponse, TxResponse } from '../src/cosmos/types'
 
 const mockAccountsAddress = (
   url: string,
@@ -28,7 +27,7 @@ const mockAccountsBalance = (
   url: string,
   address: string,
   result: {
-    balances: Coin[]
+    balances: proto.cosmos.base.v1beta1.Coin[]
   },
 ) => {
   nock(url).get(`/cosmos/bank/v1beta1/balances/${address}`).reply(200, result)
@@ -56,7 +55,7 @@ const assertTxHstory = (url: string, address: string, result: TxHistoryResponse)
   nock(url).get(`/cosmos/tx/v1beta1/txs?events=message.sender='${address}'`).reply(200, result)
 }
 
-const assertTxHashGet = (url: string, hash: string, result: TxResponse): void => {
+const assertTxHashGet = (url: string, hash: string, result: GetTxByHashResponse): void => {
   nock(url).get(`/cosmos/tx/v1beta1/txs/${hash}`).reply(200, result)
 }
 
@@ -174,10 +173,10 @@ describe('SDK Client Test', () => {
 
     mockAccountsBalance(cosmosTestnetClient.server, cosmos_testnet_address0, {
       balances: [
-        {
+        new proto.cosmos.base.v1beta1.Coin({
           denom: 'umuon',
           amount: '75000000',
-        },
+        }),
       ],
     })
 
@@ -187,10 +186,10 @@ describe('SDK Client Test', () => {
 
     mockAccountsBalance(thorMainnetClient.server, thor_mainnet_address0, {
       balances: [
-        {
+        new proto.cosmos.base.v1beta1.Coin({
           denom: 'thor',
           amount: '100',
-        },
+        }),
       ],
     })
     balances = await thorMainnetClient.getBalance(thor_mainnet_address0)
@@ -373,18 +372,20 @@ describe('SDK Client Test', () => {
     })
     const encodedMsg = cosmosclient.codec.packAnyFromCosmosJSON(msgSend)
     assertTxHashGet(cosmosMainnetClient.server, '19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066', {
-      height: 45582,
-      txhash: '19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066',
-      data: '0A090A076465706F736974',
-      raw_log: 'transaction logs',
-      gas_wanted: '5000000000000000',
-      gas_used: '148996',
-      tx: {
-        body: {
-          messages: [encodedMsg],
+      tx_response: {
+        height: 45582,
+        txhash: '19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066',
+        data: '0A090A076465706F736974',
+        raw_log: 'transaction logs',
+        gas_wanted: '5000000000000000',
+        gas_used: '148996',
+        tx: {
+          body: {
+            messages: [encodedMsg],
+          },
         },
+        timestamp: '2020-09-25T06:09:15Z',
       },
-      timestamp: '2020-09-25T06:09:15Z',
     })
     const tx = await cosmosMainnetClient.txsHashGet('19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066')
     expect(tx.txhash).toEqual('19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066')
@@ -415,11 +416,9 @@ describe('SDK Client Test', () => {
       },
       timestamp: '2020-09-25T06:09:15Z',
     }
-    assertTxHashGet(
-      thorTestnetClient.server,
-      '19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066',
-      txHashData,
-    )
+    assertTxHashGet(thorTestnetClient.server, '19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066', {
+      tx_response: txHashData,
+    })
 
     const tx2 = await thorTestnetClient.txsHashGet('19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066')
     expect(tx2).toEqual(txHashData)
