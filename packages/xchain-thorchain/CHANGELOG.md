@@ -1,3 +1,8 @@
+# 0.21.3 (2022-03-21)
+
+- Fix `getAsset` for synth assets
+- use latest `xchain-util` package
+
 # 0.21.2 (2022-03-21)
 
 -Fix `setChainId`
