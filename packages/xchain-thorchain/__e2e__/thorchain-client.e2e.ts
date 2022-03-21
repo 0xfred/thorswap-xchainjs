@@ -9,16 +9,14 @@ export type Swap = {
 }
 
 // Mock chain ids
-const chainIds = {
-  [Network.Mainnet]: 'chain-id-mainnet',
-  [Network.Stagenet]: 'chain-id-stagenet',
-  [Network.Testnet]: 'thorchain-testnet-v2',
-}
+// const chainIds = {
+//   [Network.Mainnet]: 'chain-id-mainnet',
+//   [Network.Testnet]: 'thorchain-testnet-v2',
+// }
 
 const thorClient: XChainClient = new ThorClient({
   network: Network.Testnet,
   phrase: process.env.PHRASE,
-  chainIds: chainIds,
 })
 const thorchainClient = thorClient as unknown as ThorchainClient
 const bnbClient: XChainClient = new BnbClient({ network: Network.Testnet, phrase: process.env.PHRASE })
