@@ -1,3 +1,7 @@
+# 0.21.2 (2022-03-21)
+
+-Fix `setChainId`
+
 # 0.21.1 (2022-03-21)
 
 - update `setChainId`
