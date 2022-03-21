@@ -17,6 +17,14 @@ import { mockTendermintNodeInfo } from '../__mocks__/thornode-api'
 import { Client } from '../src/client'
 // import { ThorchainDepositResponse } from '../src/types'
 
+// TODO: add unit test for chain id
+// Mock chain ids
+// const chainIds = {
+//   [Network.Mainnet]: 'chain-id-mainnet',
+//   [Network.Stagenet]: 'chain-id-stagenet',
+//   [Network.Testnet]: 'chain-id-testnet',
+// }
+
 const mockAccountsAddress = (
   url: string,
   address: string,

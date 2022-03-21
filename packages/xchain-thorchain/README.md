@@ -43,8 +43,9 @@ Rate limits: No
 // import `xchain-thorchain`
 import { Client } from '@thorswap-lib/xchain-thorchain'
 
-// Create a `Client`
-const client = new Client({ network: Network.Testnet, phrase: 'my secret phrase' })
+// Note: `chainIds` are required
+const chainIds = getChainIds(getDefaultClientUrl()) // instead of `getDefaultClientUrl` you can pass custom API endpoints
+const client = new Client({ network: Network.Testnet, phrase: 'my secret phrase', chainIds })
 
 // get address
 const address = client.getAddress()

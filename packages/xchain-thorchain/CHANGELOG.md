@@ -2,6 +2,7 @@
 
 ## Breaking Changes
 
+- get chain id from Thornode endpoint
 - `buildDepositTx` now returns `proto.cosmos.tx.v1beta1.TxBody` from `@cosmos-client/core`
 
 # v.0.20.3

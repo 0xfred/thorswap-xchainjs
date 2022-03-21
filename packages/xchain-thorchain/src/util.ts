@@ -15,7 +15,7 @@ import {
 import axios from 'axios'
 import bech32 from 'bech32-buffer'
 
-import { ClientUrl, ExplorerUrl, ExplorerUrls, NodeInfoResponse, TxData } from './types'
+import { ChainIds, ClientUrl, ExplorerUrl, ExplorerUrls, NodeInfoResponse, TxData } from './types'
 import { MsgNativeTx } from './types/messages'
 import types from './types/proto/MsgCompiled'
 
@@ -245,6 +245,19 @@ export const buildDepositTx = async ({
 export const getChainId = async (nodeUrl: string): Promise<string> => {
   const { data } = await axios.get<NodeInfoResponse>(`${nodeUrl}/cosmos/base/tendermint/v1beta1/node_info`)
   return data?.default_node_info?.network || Promise.reject('Could not parse chain id')
+}
+
+/**
+ * Helper to get all THORChain's chain id
+ * @param {ClientUrl} client urls (use `getDefaultClientUrl()` if you don't need to use custom urls)
+ */
+export const getChainIds = async (client: ClientUrl): Promise<ChainIds> => {
+  return Promise.all([getChainId(client[Network.Testnet].node), getChainId(client[Network.Mainnet].node)]).then(
+    ([testnetId, mainnetId]) => ({
+      testnet: testnetId,
+      mainnet: mainnetId,
+    }),
+  )
 }
 
 /**
