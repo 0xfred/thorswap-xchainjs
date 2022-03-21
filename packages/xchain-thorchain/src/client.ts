@@ -31,6 +31,8 @@ import {
 import axios from 'axios'
 
 import {
+  ChainId,
+  ChainIds,
   ClientUrl,
   DepositParam,
   ExplorerUrls,
@@ -86,6 +88,10 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
   private explorerUrls: ExplorerUrls
   private cosmosClient: CosmosSDKClient
   private isStagenet = false
+  private chainIds: ChainIds = {
+    [Network.Mainnet]: THORCHAIN_MAINNET_CHAIN_ID,
+    [Network.Testnet]: THORCHAIN_TESTNET_CHAIN_ID,
+  }
 
   /**
    * Constructor
@@ -115,6 +121,9 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
     this.explorerUrls = explorerUrls || getDefaultExplorerUrls()
 
     this.isStagenet = isStagenet
+
+    this.setChainId()
+
     this.cosmosClient = new CosmosSDKClient({
       server: this.getClientUrl().node,
       chainId: this.getChainId(),
@@ -122,19 +131,26 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
     })
   }
 
+  setChainId() {
+    if (this.isStagenet) {
+      this.chainIds = {
+        [Network.Mainnet]: THORCHAIN_STAGENET_CHAIN_ID,
+        [Network.Testnet]: THORCHAIN_TESTNET_CHAIN_ID,
+      }
+    } else {
+      this.chainIds = {
+        [Network.Mainnet]: THORCHAIN_MAINNET_CHAIN_ID,
+        [Network.Testnet]: THORCHAIN_TESTNET_CHAIN_ID,
+      }
+    }
+  }
+
   /**
    * get chain id per network
    * NOTE: Use hardcoded chain id
    */
-  getChainId(): string {
-    if (this.isStagenet) return THORCHAIN_STAGENET_CHAIN_ID
-
-    if (this.network === Network.Mainnet) {
-      return THORCHAIN_MAINNET_CHAIN_ID
-    }
-
-    // testnet
-    return THORCHAIN_TESTNET_CHAIN_ID
+  getChainId(network?: Network): ChainId {
+    return this.chainIds[network || this.network]
   }
 
   /**
