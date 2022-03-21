@@ -131,12 +131,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
     })
   }
 
-  setChainId(
-    chainIds = {
-      [Network.Mainnet]: THORCHAIN_MAINNET_CHAIN_ID,
-      [Network.Testnet]: THORCHAIN_TESTNET_CHAIN_ID,
-    },
-  ) {
+  setChainId(chainIds?: ChainIds) {
     if (chainIds) {
       this.chainIds = chainIds
     } else if (this.isStagenet) {
