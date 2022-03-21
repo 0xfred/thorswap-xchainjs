@@ -66,7 +66,12 @@ export const getDenomWithChain = (asset: Asset): string => {
  */
 export const getAsset = (denom: string): Asset | null => {
   if (denom === getDenom(AssetRuneNative)) return AssetRuneNative
-  return assetFromString(denom.toUpperCase())
+
+  // use lowercase symbol for synth
+  if (denom.includes('/')) {
+    return assetFromString(`${Chain.THORChain}.${denom.toLowerCase()}`)
+  }
+  return assetFromString(`${Chain.THORChain}.${denom.toUpperCase()}`)
 }
 
 /**
@@ -366,11 +371,14 @@ export const getBalance = async ({
   cosmosClient: CosmosSDKClient
 }): Promise<Balance[]> => {
   const balances = await cosmosClient.getBalance(address)
+
   return balances
-    .map((balance) => ({
-      asset: (balance.denom && getAsset(balance.denom)) || AssetRuneNative,
-      amount: baseAmount(balance.amount, DECIMAL),
-    }))
+    .map((balance) => {
+      return {
+        asset: (balance.denom && getAsset(balance.denom)) || AssetRuneNative,
+        amount: baseAmount(balance.amount, DECIMAL),
+      }
+    })
     .filter(
       (balance) => !assets || assets.filter((asset) => assetToString(balance.asset) === assetToString(asset)).length,
     )

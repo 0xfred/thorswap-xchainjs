@@ -1,16 +1,7 @@
 import { proto } from '@cosmos-client/core'
 import { Network, TxsPage } from '@thorswap-lib/xchain-client'
 import { CosmosSDKClient, RPCResponse, RPCTxSearchResult, TxResponse } from '@thorswap-lib/xchain-cosmos'
-import {
-  Asset,
-  AssetBNB,
-  AssetRuneNative,
-  BNBChain,
-  BaseAmount,
-  assetAmount,
-  assetToBase,
-  baseAmount,
-} from '@thorswap-lib/xchain-util'
+import { AssetRuneNative, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
 import nock from 'nock'
 
 import { mockTendermintNodeInfo } from '../__mocks__/thornode-api'
@@ -254,65 +245,6 @@ describe('Client Test', () => {
     expect(balances.length).toEqual(1)
     expect(balances[0].asset).toEqual(AssetRuneNative)
     expect(balances[0].amount.amount().isEqualTo(baseAmount(100).amount())).toBeTruthy()
-  })
-
-  it('rune + synth balances', async () => {
-    thorClient.setNetwork(Network.Testnet)
-    mockAccountsBalance(thorClient.getClientUrl().node, 'tthor13gym97tmw3axj3hpewdggy2cr288d3qffr8skg', {
-      balances: [
-        new proto.cosmos.base.v1beta1.Coin({
-          denom: 'bnb/bnb',
-          amount: '100',
-        }),
-        new proto.cosmos.base.v1beta1.Coin({
-          denom: 'bnb/busd-74e',
-          amount: '200',
-        }),
-        new proto.cosmos.base.v1beta1.Coin({
-          denom: 'rune',
-          amount: '200',
-        }),
-      ],
-    })
-
-    const balances = await thorClient.getBalance('tthor13gym97tmw3axj3hpewdggy2cr288d3qffr8skg')
-    expect(balances.length).toEqual(3)
-    // BNB synth
-    expect(balances[0].asset).toEqual({ ...AssetBNB, synth: true })
-    expect(balances[0].amount.amount().isEqualTo(baseAmount(100).amount()))
-    // BUSD synth
-    expect(balances[1].asset).toEqual({ chain: 'BNB', symbol: 'BUSD-74E', ticker: 'BUSD', synth: true })
-    expect(balances[1].amount.amount().isEqualTo(baseAmount(200).amount()))
-    // RUNE
-    expect(balances[2].asset).toEqual(AssetRuneNative)
-    expect(balances[2].amount.amount().isEqualTo(baseAmount(300).amount()))
-  })
-
-  it('filter BUSD synth balances', async () => {
-    const BUSD_ASSET_SYNTH: Asset = { chain: BNBChain, symbol: 'BUSD-74E', ticker: 'BUSD', synth: true }
-    thorClient.setNetwork(Network.Testnet)
-    mockAccountsBalance(thorClient.getClientUrl().node, 'tthor13gym97tmw3axj3hpewdggy2cr288d3qffr8skg', {
-      balances: [
-        new proto.cosmos.base.v1beta1.Coin({
-          denom: 'bnb/bnb',
-          amount: '100',
-        }),
-        new proto.cosmos.base.v1beta1.Coin({
-          denom: 'bnb/busd-74e',
-          amount: '200',
-        }),
-        new proto.cosmos.base.v1beta1.Coin({
-          denom: 'rune',
-          amount: '200',
-        }),
-      ],
-    })
-
-    const balances = await thorClient.getBalance('tthor13gym97tmw3axj3hpewdggy2cr288d3qffr8skg', [BUSD_ASSET_SYNTH])
-    expect(balances.length).toEqual(1)
-    // BUSD synth
-    expect(balances[0].asset).toEqual(BUSD_ASSET_SYNTH)
-    expect(balances[0].amount.amount().isEqualTo(baseAmount(200).amount()))
   })
 
   it('has an empty tx history', async () => {

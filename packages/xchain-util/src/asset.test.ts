@@ -324,22 +324,22 @@ describe('asset', () => {
 
   describe('assetToString', () => {
     it('returns a string for RUNE asset', () => {
-      const asset: Asset = { chain: 'BNB' as Chain, symbol: 'RUNE-B1A', ticker: 'RUNE', synth: false }
+      const asset: Asset = { chain: 'BNB' as Chain, symbol: 'RUNE-B1A', ticker: 'RUNE' }
       expect(assetToString(asset)).toEqual('BNB.RUNE-B1A')
     })
     it('returns a string for ETH asset', () => {
-      const asset: Asset = { chain: 'ETH' as Chain, symbol: 'ETH', ticker: 'ETH', synth: false }
+      const asset: Asset = { chain: 'ETH' as Chain, symbol: 'ETH', ticker: 'ETH' }
       expect(assetToString(asset)).toEqual('ETH.ETH')
     })
   })
 
   describe('isValidAsset', () => {
     it('returns false invalid asset data', () => {
-      expect(isValidAsset({ chain: 'BNB' as Chain, symbol: '', ticker: 'RUNE', synth: true })).toBeFalsy()
-      expect(isValidAsset({ chain: 'BNB' as Chain, symbol: 'RUNE-B1A', ticker: '', synth: false })).toBeFalsy()
+      expect(isValidAsset({ chain: 'BNB' as Chain, symbol: '', ticker: 'RUNE' })).toBeFalsy()
+      expect(isValidAsset({ chain: 'BNB' as Chain, symbol: 'RUNE-B1A', ticker: '' })).toBeFalsy()
     })
     it('returns true for valid `Asset` data', () => {
-      const asset: Asset = { chain: 'BNB' as Chain, symbol: 'RUNE-B1A', ticker: 'RUNE', synth: false }
+      const asset: Asset = { chain: 'BNB' as Chain, symbol: 'RUNE-B1A', ticker: 'RUNE' }
       expect(isValidAsset(asset)).toBeTruthy()
     })
   })
@@ -363,9 +363,7 @@ describe('asset', () => {
     })
 
     it('returns currency symbol for USD', () => {
-      expect(
-        currencySymbolByAsset({ chain: 'BNB' as Chain, symbol: 'BUSD-BAF', ticker: 'BUSD', synth: false }),
-      ).toEqual('$')
+      expect(currencySymbolByAsset({ chain: 'BNB' as Chain, symbol: 'BUSD-BAF', ticker: 'BUSD' })).toEqual('$')
     })
     it('returns ticker as currency symbol for other assets', () => {
       expect(currencySymbolByAsset(AssetBNB)).toEqual('BNB')
@@ -404,7 +402,6 @@ describe('asset', () => {
             chain: ETHChain,
             symbol: 'XRUNE-0X69FA0FEE221AD11012BAB0FDB45D444D3D2CE71C',
             ticker: 'XRUNE',
-            synth: false,
           },
           decimal: 2,
         }),

@@ -1,3 +1,11 @@
+# v.0.4.3 (2022-03-21)
+
+- Remove `synth`
+
+### Update
+
+- `LUNAChain` -> `TERRAChain`
+
 # v.0.4.2 (2022-01-24)
 
 ### Update
