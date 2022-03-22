@@ -1,3 +1,7 @@
+# 0.21.4 (2022-03-22)
+
+- fix asset type for synth deposit
+
 # 0.21.3 (2022-03-21)
 
 - Fix `getAsset` for synth assets

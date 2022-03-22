@@ -476,13 +476,24 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
     const fromAddress = this.getAddress(walletIndex)
     const fromAddressAcc = cosmosclient.AccAddress.fromString(fromAddress)
 
+    // patch if asset is synth
+    const assetObj = asset.symbol.includes('/')
+      ? {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          chain: (asset.symbol.split('/')[0] as any).toLowerCase(),
+          symbol: asset.symbol.split('/')[1].toLowerCase(),
+          ticker: asset.symbol.split('/')[1].toLowerCase(),
+          synth: true,
+        }
+      : asset
+
     const depositTxBody = await buildDepositTx({
       msgNativeTx: {
         memo: memo,
         signer: fromAddressAcc,
         coins: [
           {
-            asset: asset,
+            asset: assetObj,
             amount: amount.amount().toString(),
           },
         ],
