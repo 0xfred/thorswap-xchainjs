@@ -106,7 +106,8 @@ export const getTokenAddress = (asset: Asset): string | null => {
  * @param {string|null|undefined} symbol
  * @returns {boolean} `true` or `false`.
  */
-export const validateSymbol = (symbol?: string | null): boolean => (symbol ? symbol.length >= 3 : false)
+export const validateSymbol = (symbol?: string | null): boolean =>
+  symbol ? symbol.length >= 3 && !symbol.includes('.') && !symbol.includes('-') : false
 
 /**
  * Get transactions from token tx

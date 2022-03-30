@@ -1,3 +1,8 @@
+# v.0.22.6 (2021-03-30)
+
+- updated `validateSymbol` for eth utils
+- export ethereum utils
+
 # v.0.22.5 (2021-09-09)
 
 - updated to the latest dependencies
