@@ -194,13 +194,6 @@ export const AssetBCH: Asset = { chain: Chain.BitcoinCash, symbol: 'BCH', ticker
  */
 export const AssetLTC: Asset = { chain: Chain.Litecoin, symbol: 'LTC', ticker: 'LTC' }
 
-/**
- * Dogecoin asset
- * Based on definition in Thorchain
- * @see https://gitlab.com/thorchain/thornode/-/blob/781-add-doge-chain/common/asset.go#L24
- */
-export const AssetDOGE: Asset = { chain: Chain.Doge, symbol: 'DOGE', ticker: 'DOGE' }
-
 export const RUNE_TICKER = 'RUNE'
 
 /**

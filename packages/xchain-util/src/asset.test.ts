@@ -398,7 +398,11 @@ describe('asset', () => {
       expect(
         formatAssetAmountCurrency({
           amount,
-          asset: { chain: ETHChain, symbol: 'XRUNE-0X69FA0FEE221AD11012BAB0FDB45D444D3D2CE71C', ticker: 'XRUNE' },
+          asset: {
+            chain: ETHChain,
+            symbol: 'XRUNE-0X69FA0FEE221AD11012BAB0FDB45D444D3D2CE71C',
+            ticker: 'XRUNE',
+          },
           decimal: 2,
         }),
       ).toEqual('10.00 XRUNE')

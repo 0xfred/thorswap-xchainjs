@@ -1,3 +1,28 @@
+# 0.21.4 (2022-03-22)
+
+- fix asset type for synth deposit
+
+# 0.21.3 (2022-03-21)
+
+- Fix `getAsset` for synth assets
+- use latest `xchain-util` package
+
+# 0.21.2 (2022-03-21)
+
+-Fix `setChainId`
+
+# 0.21.1 (2022-03-21)
+
+- update `setChainId`
+- fix stagenet chainId
+  
+# v0.21.0 (2022-03-18)
+
+## Breaking Changes
+
+- get chain id from Thornode endpoint
+- `buildDepositTx` now returns `proto.cosmos.tx.v1beta1.TxBody` from `@cosmos-client/core`
+
 # v.0.20.3
 
 - Update chainId for mainnet, stagenet and chaosnet after hardfork

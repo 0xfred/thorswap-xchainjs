@@ -347,6 +347,20 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@cosmos-client/core@^0.45.1":
+  version "0.45.1"
+  resolved "https://registry.yarnpkg.com/@cosmos-client/core/-/core-0.45.1.tgz#c57dbf861b7300203616362207fde24c58de6f32"
+  integrity sha512-AAf+UBwzcJvMpOFy6bBUGlF+wiGko32yekYtC/J3fxnC/NyAsOsqzPDLxgat6lveOfYESRdZslw78UMbKz7oQA==
+  dependencies:
+    axios "^0.23.0"
+    bech32 "^1.1.4"
+    bip32 "^2.0.6"
+    bip39 "^3.0.4"
+    protobufjs "^6.11.2"
+    rxjs "^7.4.0"
+    secp256k1 "^4.0.2"
+    tweetnacl "^1.0.3"
+
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz#9e42981ef035beb3dd49add17acb96e8ff6f394c"
@@ -2265,11 +2279,6 @@
   resolved "https://registry.yarnpkg.com/@thorswap-lib/xchain-client/-/xchain-client-0.10.3.tgz#d6c323014b767b5bd848972428c45b50e0acbfd6"
   integrity sha512-9SijOQyBnETlmclSBPYnNCJO6cOfiBGHC7z0xrzwSdJ2CLOXJWZoOckruqcdty2DhAgQM4ow3SQo61CxzuEOBg==
 
-"@thorswap-lib/xchain-cosmos@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@thorswap-lib/xchain-cosmos/-/xchain-cosmos-0.14.0.tgz#0633594588490124c2eca2bb95e749f01b3bf138"
-  integrity sha512-HKOS1iL0iW0yY5xzegewpCqyvyRaQ6xo5WAi/b0HGDUc9BmYTG8eywOmKFm/RxQVI0C5zpV8K2yQU2DUG15Wjg==
-
 "@thorswap-lib/xchain-util@^0.3.0", "@thorswap-lib/xchain-util@^0.3.1", "@thorswap-lib/xchain-util@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@thorswap-lib/xchain-util/-/xchain-util-0.3.2.tgz#f926868954dfb0c1cae7454ac8cd89d01b79b101"
@@ -3026,7 +3035,7 @@ axios-mock-adapter@^1.20.0:
     is-blob "^2.1.0"
     is-buffer "^2.0.5"
 
-axios@^0.19.0, axios@^0.19.2:
+axios@^0.19.0:
   version "0.19.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
   integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
@@ -3040,12 +3049,26 @@ axios@^0.21.0, axios@^0.21.1, axios@^0.21.3, axios@^0.21.4:
   dependencies:
     follow-redirects "^1.14.0"
 
+axios@^0.23.0:
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.23.0.tgz#b0fa5d0948a8d1d75e3d5635238b6c4625b05149"
+  integrity sha512-NmvAE4i0YAv5cKq8zlDoPd1VLKAqX5oLuZKs8xkJa4qi6RGn0uhCYFjWtHHC9EM/MwOwYWOs53W+V0aqEXq1sg==
+  dependencies:
+    follow-redirects "^1.14.4"
+
 axios@^0.24.0:
   version "0.24.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.24.0.tgz#804e6fa1e4b9c5288501dd9dff56a7a0940d20d6"
   integrity sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==
   dependencies:
     follow-redirects "^1.14.4"
+
+axios@^0.25.0:
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.25.0.tgz#349cfbb31331a9b4453190791760a8d35b093e0a"
+  integrity sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==
+  dependencies:
+    follow-redirects "^1.14.7"
 
 babel-jest@^26.6.3:
   version "26.6.3"
@@ -3155,12 +3178,17 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+bech32-buffer@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/bech32-buffer/-/bech32-buffer-0.2.0.tgz#c0565f0045eea0ffd510846680dda4e31a1d944e"
+  integrity sha512-Ez8s82a+Xnn/m3/ftGaQJUSFG4EwNIj9adIJBw8OrHASQsXgvwLSducbcJ9El0rsrwJYJ71yBhC/hZzz3FPSCQ==
+
 bech32@*, bech32@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/bech32/-/bech32-2.0.0.tgz#078d3686535075c8c79709f054b1b226a133b355"
   integrity sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==
 
-bech32@1.1.4, bech32@^1.1.2, bech32@^1.1.3:
+bech32@1.1.4, bech32@^1.1.2, bech32@^1.1.3, bech32@^1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/bech32/-/bech32-1.1.4.tgz#e38c9f37bf179b8eb16ae3a772b40c356d4832e9"
   integrity sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==
@@ -4055,19 +4083,6 @@ cosmiconfig@^7.0.0:
     parse-json "^5.0.0"
     path-type "^4.0.0"
     yaml "^1.10.0"
-
-cosmos-client@0.39.2:
-  version "0.39.2"
-  resolved "https://registry.yarnpkg.com/cosmos-client/-/cosmos-client-0.39.2.tgz#332da4a8b5935c5309afb03f2fd6de808a4e35f0"
-  integrity sha512-ISGmjrQA5dpJfRi289fQQIrrhcb7R79fPmvWGG1iOjjIaT++h5nMxE8upmVTsxYPSJZxLEntbQgKeeZ3HaY8PA==
-  dependencies:
-    axios "^0.19.2"
-    bech32 "^1.1.3"
-    bip32 "^2.0.5"
-    bip39 "^3.0.2"
-    sr25519 "^0.2.0"
-    tiny-secp256k1 "^1.1.3"
-    tweetnacl "^1.0.1"
 
 create-ecdh@^4.0.0:
   version "4.0.4"
@@ -5208,6 +5223,11 @@ follow-redirects@^1.14.0, follow-redirects@^1.14.4:
   version "1.14.7"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.7.tgz#2004c02eb9436eee9a21446a6477debf17e81685"
   integrity sha512-+hbxoLbFMbRKDwohX8GkTataGqO6Jb7jGwpAlwgy2bIz25XtRm7KEzJM76R1WiNT5SwZkX4Y75SwBolkpmE7iQ==
+
+follow-redirects@^1.14.7:
+  version "1.14.9"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.9.tgz#dd4ea157de7bfaf9ea9b3fbd85aa16951f78d8d7"
+  integrity sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -8534,7 +8554,7 @@ proto-list@~1.2.1:
   resolved "https://registry.yarnpkg.com/proto-list/-/proto-list-1.2.4.tgz#212d5bfe1318306a420f6402b8e26ff39647a849"
   integrity sha1-IS1b/hMYMGpCD2QCuOJv85ZHqEk=
 
-protobufjs@~6.11.2:
+protobufjs@^6.11.2, protobufjs@~6.11.2:
   version "6.11.2"
   resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.2.tgz#de39fabd4ed32beaa08e9bb1e30d08544c1edf8b"
   integrity sha512-4BQJoPooKJl2G9j3XftkIXjoC9C0Av2NOrWmbLWT1vH32GcSUHjM0Arra6UfTsVyfMAuFzaLucXn1sadxJydAw==
@@ -9162,6 +9182,13 @@ rxjs@6, rxjs@^6.4.0, rxjs@^6.6.6:
   dependencies:
     tslib "^1.9.0"
 
+rxjs@^7.4.0:
+  version "7.5.5"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.5.tgz#2ebad89af0f560f460ad5cc4213219e1f7dd4e9f"
+  integrity sha512-sy+H0pQofO95VDmFLzyaw9xNJU4KTRSwQIGM6+iG3SypAtCiLDzpeG8sJrNCWn2Up9km+KhkvTdbkrdy+yzZdw==
+  dependencies:
+    tslib "^2.1.0"
+
 rxjs@^7.5.1:
   version "7.5.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.2.tgz#11e4a3a1dfad85dbf7fb6e33cbba17668497490b"
@@ -9561,11 +9588,6 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
-
-sr25519@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/sr25519/-/sr25519-0.2.0.tgz#80e1632c1e7c07eae00cf5303dc804d87e76fb15"
-  integrity sha512-dRyJ09XOOl6tBRwQ3ZwkukyvhY3mHLC5k45aBBp+xjKEpjPPU4oL2JCQqisNhL96/gzwsI1PMxZ52svfQurNLw==
 
 sshpk@^1.7.0:
   version "1.17.0"
@@ -10146,7 +10168,7 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
   integrity sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=
 
-tweetnacl@^1.0.1, tweetnacl@^1.0.3:
+tweetnacl@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-1.0.3.tgz#ac0af71680458d8a6378d0d0d050ab1407d35596"
   integrity sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==

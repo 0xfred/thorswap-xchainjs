@@ -1,9 +1,5 @@
+import { proto } from '@cosmos-client/core'
 import { TxParams } from '@thorswap-lib/xchain-client'
-import { BaseAmount } from '@thorswap-lib/xchain-util'
-import { BigSource } from 'big.js'
-import { Msg, PrivKey, codec } from 'cosmos-client'
-import { StdTxFee } from 'cosmos-client/api'
-import { BaseAccount, StdTx } from 'cosmos-client/x/auth'
 
 export type CosmosSDKClientParams = {
   server: string
@@ -22,14 +18,22 @@ export type SearchTxParams = {
   txMaxHeight?: number
 }
 
-export type TransferParams = {
-  privkey: PrivKey
+export type UnsignedTxParams = {
   from: string
   to: string
-  amount: BigSource
+  amount: string
   asset: string
   memo?: string
-  fee?: StdTxFee
+}
+
+export type TransferParams = {
+  privkey: proto.cosmos.crypto.secp256k1.PrivKey
+  from: string
+  to: string
+  amount: string
+  asset: string
+  memo?: string
+  fee?: proto.cosmos.tx.v1beta1.Fee
 }
 
 export type TransferOfflineParams = TransferParams & {
@@ -38,19 +42,18 @@ export type TransferOfflineParams = TransferParams & {
 }
 
 export type TxOfflineParams = TxParams & {
-  from_balance: BaseAmount
   from_account_number: string
   from_sequence: string
 }
 
 export type BaseAccountResponse = {
   type?: string
-  value?: BaseAccount
+  value?: proto.cosmos.auth.v1beta1.BaseAccount
 }
 
 export type RawTxResponse = {
   body: {
-    messages: Msg[]
+    messages: proto.cosmos.bank.v1beta1.MsgSend[]
   }
 }
 
@@ -70,6 +73,10 @@ export type TxLog = {
   events: TxEvent[]
 }
 
+export type GetTxByHashResponse = {
+  tx_response: TxResponse
+}
+
 export type TxResponse = {
   height?: number
   txhash?: string
@@ -78,17 +85,18 @@ export type TxResponse = {
   logs?: TxLog[]
   gas_wanted?: string
   gas_used?: string
-  tx?: StdTx | RawTxResponse | codec.AminoWrapping
+  tx?: RawTxResponse
   timestamp: string
 }
 
 export type TxHistoryResponse = {
-  total_count?: number
-  count?: number
   page_number?: number
   page_total?: number
   limit?: number
-  txs?: TxResponse[]
+  pagination?: {
+    total: string
+  }
+  tx_responses?: TxResponse[]
 }
 
 export type APIQueryParam = {
