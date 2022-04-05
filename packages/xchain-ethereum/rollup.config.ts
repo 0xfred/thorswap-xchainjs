@@ -15,12 +15,6 @@ export default {
       exports: 'named',
       sourcemap: true,
     },
-    {
-      file: pkg.module,
-      format: 'es',
-      exports: 'named',
-      sourcemap: true,
-    },
   ],
   plugins: [
     // ignore(["@ethersproject/providers", "@ethersproject/abstract-provider", "@ethersproject/strings"]),

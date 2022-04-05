@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-thorchain",
-  "version": "0.21.4",
+  "version": "0.21.5",
   "description": "Custom Thorchain client and utilities used by XChainJS clients",
   "keywords": [
     "THORChain",
@@ -10,7 +10,6 @@
   "homepage": "https://github.com/thorswap/thorswap-xchainjs",
   "license": "MIT",
   "main": "lib/index.js",
-  "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
   "directories": {
     "lib": "lib",
@@ -34,10 +33,10 @@
     "generate:ThorchainMsgs": "./genMsgs.sh"
   },
   "devDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.1",
-    "@thorswap-lib/xchain-cosmos": "^0.17.0",
-    "@thorswap-lib/xchain-crypto": "^0.2.4",
-    "@thorswap-lib/xchain-util": "^0.4.3",
+    "@thorswap-lib/xchain-client": "^0.11.2",
+    "@thorswap-lib/xchain-cosmos": "^0.17.1",
+    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@thorswap-lib/xchain-util": "^0.4.4",
     "@types/big.js": "^6.0.0",
     "axios": "^0.21.0",
     "@cosmos-client/core": "^0.45.1",
@@ -48,10 +47,10 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.1",
-    "@thorswap-lib/xchain-cosmos": "^0.17.0",
-    "@thorswap-lib/xchain-crypto": "^0.2.4",
-    "@thorswap-lib/xchain-util": "^0.4.3",
+    "@thorswap-lib/xchain-client": "^0.11.2",
+    "@thorswap-lib/xchain-cosmos": "^0.17.1",
+    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@thorswap-lib/xchain-util": "^0.4.4",
     "axios": "^0.21.0",
     "bech32-buffer": "^0.2.0",
     "@cosmos-client/core": "^0.45.1"

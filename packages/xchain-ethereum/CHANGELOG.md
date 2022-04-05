@@ -1,3 +1,7 @@
+# v.0.22.7 (2022-04-05)
+
+- remove non existing `module` source
+
 # v.0.22.6 (2021-03-30)
 
 - updated `validateSymbol` for eth utils

@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-polkadot",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Custom Polkadot client and utilities used by XChainJS clients",
   "keywords": [
     "THORChain",
@@ -11,7 +11,6 @@
   "homepage": "https://github.com/thorswap/thorswap-xchainjs",
   "license": "MIT",
   "main": "lib/index.js",
-  "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
   "directories": {
     "lib": "lib",
@@ -35,9 +34,9 @@
   "devDependencies": {
     "@polkadot/api": "^3.1.1",
     "@polkadot/util": "^5.1.1",
-    "@thorswap-lib/xchain-client": "^0.11.1",
-    "@thorswap-lib/xchain-crypto": "^0.2.4",
-    "@thorswap-lib/xchain-util": "^0.3.0",
+    "@thorswap-lib/xchain-client": "^0.11.2",
+    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@thorswap-lib/xchain-util": "^0.4.4",
     "@types/big.js": "^4.0.5",
     "axios": "^0.21.4",
     "jest-websocket-mock": "^2.2.0",
@@ -50,9 +49,9 @@
   "peerDependencies": {
     "@polkadot/api": "^3.1.1",
     "@polkadot/util": "^5.1.1",
-    "@thorswap-lib/xchain-client": "^0.11.1",
-    "@thorswap-lib/xchain-crypto": "^0.2.4",
-    "@thorswap-lib/xchain-util": "^0.3.0",
+    "@thorswap-lib/xchain-client": "^0.11.2",
+    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@thorswap-lib/xchain-util": "^0.4.4",
     "axios": "^0.21.4"
   }
 }

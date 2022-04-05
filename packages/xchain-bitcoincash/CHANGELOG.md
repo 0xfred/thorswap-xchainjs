@@ -1,11 +1,15 @@
+# v.0.12.6 (2022-04-05)
+
+- remove non existing `module` source
+
 # v.0.12.5 (2022-02-11)
 
 - fix output address in the `buildTxPsbt`
-  
+
 # v.0.12.4 (2022-02-09)
 
 - buildTX using bitcoinjs psbt
-  
+
 # v.0.12.3 (2022-02-09)
 
 - fix haskoin base url

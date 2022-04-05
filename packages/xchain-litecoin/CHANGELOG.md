@@ -1,10 +1,15 @@
+# v.0.7.4 (2022-04-05)
+
+- remove non existing `module` source
+
 # v.0.7.3 (2022-02-09)
 
 - export `buildTx` utils
+
 # v.0.7.2 (2022-02-09)
 
 - fetch txHex UTXO
-  
+
 # v.0.7.1 (2022-01-10)
 
 - upgrade axios dependency to latest

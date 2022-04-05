@@ -1,3 +1,7 @@
+# 0.21.5 (2022-04-05)
+
+- remove non existing `module` source
+
 # 0.21.4 (2022-03-22)
 
 - fix asset type for synth deposit
@@ -15,7 +19,7 @@
 
 - update `setChainId`
 - fix stagenet chainId
-  
+
 # v0.21.0 (2022-03-18)
 
 ## Breaking Changes
@@ -39,8 +43,6 @@
 
 - Update `getChainId`
 - Update `buildDepositTx` with chainId param
-
-
 
 # v.0.20.0 (2022-01-25)
 
