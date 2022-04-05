@@ -1,3 +1,7 @@
+# v.0.2.7 (2022-04-05)
+
+- remove non existing `module` source
+
 # v.0.2.6 (2021-09-02)
 
 - updated to the latest dependencies

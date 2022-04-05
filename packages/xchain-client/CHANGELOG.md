@@ -1,3 +1,7 @@
+# v.0.11.2 (2022-04-05)
+
+- Bump peer dependencies
+
 # v.0.11.1 (2022-01-10)
 
 ### Update

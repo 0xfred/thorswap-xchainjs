@@ -1,10 +1,8 @@
 {
   "name": "@thorswap-lib/xchain-crypto",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "XChain Crypto is a crypto module needed by all XChain clients.",
   "main": "lib/index.js",
-  "module": "lib/index.es.js",
-  "jsnext:main": "lib/index.es.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib",

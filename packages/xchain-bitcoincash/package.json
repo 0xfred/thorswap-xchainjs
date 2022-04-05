@@ -37,12 +37,11 @@
   },
   "devDependencies": {
     "@psf/bitcoincashjs-lib": "^4.0.2",
-    "@thorswap-lib/xchain-client": "^0.11.1",
-    "@thorswap-lib/xchain-crypto": "^0.2.6",
-    "@thorswap-lib/xchain-util": "^0.3.1",
+    "@thorswap-lib/xchain-client": "^0.11.2",
+    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@thorswap-lib/xchain-util": "^0.4.4",
     "@types/bchaddrjs": "0.4.0",
     "@types/uniqid": "^5.3.1",
-    "axios": "^0.21.4",
     "axios": "^0.21.4",
     "axios-mock-adapter": "^1.20.0",
     "bchaddrjs": "^0.5.2",
@@ -50,9 +49,9 @@
   },
   "peerDependencies": {
     "@psf/bitcoincashjs-lib": "^4.0.2",
-    "@thorswap-lib/xchain-client": "^0.11.3",
-    "@thorswap-lib/xchain-crypto": "^0.2.6",
-    "@thorswap-lib/xchain-util": "^0.3.1",
+    "@thorswap-lib/xchain-client": "^0.11.2",
+    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@thorswap-lib/xchain-util": "^0.4.4",
     "axios": "^0.21.4",
     "bchaddrjs": "^0.5.2",
     "coinselect": "3.1.12"

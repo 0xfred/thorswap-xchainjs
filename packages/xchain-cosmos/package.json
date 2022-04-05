@@ -31,9 +31,9 @@
     "prepublishOnly": "yarn build"
   },
   "devDependencies": {
-    "@thorswap-lib/xchain-client": "0.11.1",
-    "@thorswap-lib/xchain-crypto": "^0.2.4",
-    "@thorswap-lib/xchain-util": "^0.4.2",
+    "@thorswap-lib/xchain-client": "^0.11.2",
+    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@thorswap-lib/xchain-util": "^0.4.4",
     "@cosmos-client/core": "^0.45.1",
     "axios": "^0.25.0",
     "nock": "^13.0.5"
@@ -42,9 +42,9 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.1",
-    "@thorswap-lib/xchain-crypto": "^0.2.4",
-    "@thorswap-lib/xchain-util": "^0.4.2",
+    "@thorswap-lib/xchain-client": "^0.11.2",
+    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@thorswap-lib/xchain-util": "^0.4.4",
     "@cosmos-client/core": "^0.45.1",
     "axios": "^0.25.0"
   }

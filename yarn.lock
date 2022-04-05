@@ -2274,16 +2274,6 @@
     long "^4.0.0"
     protobufjs "~6.11.2"
 
-"@thorswap-lib/xchain-client@^0.10.3":
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/@thorswap-lib/xchain-client/-/xchain-client-0.10.3.tgz#d6c323014b767b5bd848972428c45b50e0acbfd6"
-  integrity sha512-9SijOQyBnETlmclSBPYnNCJO6cOfiBGHC7z0xrzwSdJ2CLOXJWZoOckruqcdty2DhAgQM4ow3SQo61CxzuEOBg==
-
-"@thorswap-lib/xchain-util@^0.3.0", "@thorswap-lib/xchain-util@^0.3.1", "@thorswap-lib/xchain-util@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@thorswap-lib/xchain-util/-/xchain-util-0.3.2.tgz#f926868954dfb0c1cae7454ac8cd89d01b79b101"
-  integrity sha512-TFRzL7AOst4hUi0NIDyoUwbAhtuidJ3z14/BixRb31pBotxzpRmc/FUCzejQ66oUrOfdYPmILgsOwlZgZhb5Tg==
-
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
