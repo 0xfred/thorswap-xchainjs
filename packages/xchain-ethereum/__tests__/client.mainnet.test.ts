@@ -38,7 +38,7 @@ describe('Client Test', () => {
     expect(ethClient.getAddress(1)).toEqual(addrPath1.toLowerCase())
   })
 
-  it('estimateGasPrices', async () => {
+  it.skip('estimateGasPrices', async () => {
     mock_thornode_inbound_addresses_success(
       thornodeApiUrl,
       require('../__mocks__/responses/inbound_addresses_mainnet.json'),
