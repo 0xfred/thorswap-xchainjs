@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-bitcoincash",
-  "version": "0.12.5",
+  "version": "0.12.6",
   "description": "Custom bitcoincash client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",
@@ -11,7 +11,6 @@
   "homepage": "https://github.com/thorswap/thorswap-xchainjs",
   "license": "MIT",
   "main": "lib/index.js",
-  "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
   "directories": {
     "lib": "lib",

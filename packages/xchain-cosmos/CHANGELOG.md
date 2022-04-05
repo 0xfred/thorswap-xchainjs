@@ -1,3 +1,7 @@
+# v.0.17.1 (2022-04-05)
+
+- remove non existing `module` source
+
 # v.0.17.0 (2022-03-20)
 
 ## Breaking changes

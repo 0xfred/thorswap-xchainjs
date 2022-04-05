@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-litecoin",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Custom Litecoin client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",
@@ -10,7 +10,6 @@
   "homepage": "https://github.com/thorswap/thorswap-xchainjs",
   "license": "MIT",
   "main": "lib/index.js",
-  "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
   "directories": {
     "lib": "lib",

@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-terra",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Custom Terra client and utilities used by XChainJS clients",
   "keywords": [
     "THORChain",
@@ -10,7 +10,6 @@
   "homepage": "https://github.com/thorswap-lib/xchainjs-lib",
   "license": "MIT",
   "main": "lib/index.js",
-  "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
   "directories": {
     "lib": "lib",

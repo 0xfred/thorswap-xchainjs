@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-ethereum",
-  "version": "0.22.6",
+  "version": "0.22.7",
   "description": "Ethereum client for XChainJS",
   "keywords": [
     "XChain",
@@ -10,7 +10,6 @@
   "homepage": "https://github.com/thorswap/thorswap-xchainjs",
   "license": "MIT",
   "main": "lib/index.js",
-  "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
   "directories": {
     "lib": "lib",

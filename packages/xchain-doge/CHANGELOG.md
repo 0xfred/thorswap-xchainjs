@@ -1,6 +1,11 @@
+# v.0.1.8 (2022-04-05)
+
+- remove non existing `module` source
+
 # v.0.1.7 (2022-02-09)
 
 - export `buildTx` utils
+
 # v.0.1.6 (2022-02-09)
 
 - fetch txHex UTXO

@@ -1,3 +1,7 @@
+# v.0.9.2 (2022-04-05)
+
+- remove non existing `module` source
+
 # v.0.9.1 (2022-01-10)
 
 - upgrade axios dependency to latest

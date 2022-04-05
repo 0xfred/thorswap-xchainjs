@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-cosmos",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "description": "Custom Cosmos client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",
@@ -10,7 +10,6 @@
   "homepage": "https://github.com/thorswap/thorswap-xchainjs",
   "license": "MIT",
   "main": "lib/index.js",
-  "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
   "directories": {
     "lib": "lib",
