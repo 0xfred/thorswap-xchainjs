@@ -15,12 +15,6 @@ export default {
       exports: 'named',
       sourcemap: false,
     },
-    {
-      file: pkg.module,
-      format: 'es',
-      exports: 'named',
-      sourcemap: false,
-    },
   ],
   plugins: [
     json({}),
