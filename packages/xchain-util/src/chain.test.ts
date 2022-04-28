@@ -10,6 +10,7 @@ describe('chain', () => {
     expect(isChain('GAIA')).toBeTruthy()
     expect(isChain('POLKA')).toBeTruthy()
     expect(isChain('LTC')).toBeTruthy()
+    expect(isChain('SOL')).toBeTruthy()
     expect(isChain('')).toBeFalsy()
     expect(isChain('invalid')).toBeFalsy()
   })
@@ -43,6 +44,9 @@ describe('chain', () => {
     })
     it('returns string for LUNA', () => {
       expect(chainToString(Chain.Terra)).toEqual('Terra')
+    })
+    it('returns string for SOL', () => {
+      expect(chainToString(Chain.Solana)).toEqual('Solana')
     })
   })
 })
