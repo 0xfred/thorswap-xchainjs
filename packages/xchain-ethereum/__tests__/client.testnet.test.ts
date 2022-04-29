@@ -358,7 +358,7 @@ describe('Client Test', () => {
       ropstenInfuraUrl,
       ropstenAlchemyUrl,
       'eth_sendRawTransaction',
-      '0x5db775f690e45250e4e143fe3ba197f72b51192e88a87048bc52eb2e60f9c503',
+      '0x888ec70d55e431ceea033d3e69091fd0618040f81eb2321414df8a0d26eca718',
     )
     mock_thornode_inbound_addresses_fail(thornodeApiUrl)
     mock_gastracker_api(etherscanUrl, 'gasoracle', {
@@ -378,7 +378,7 @@ describe('Client Test', () => {
       gasLimit: gasFee.gasLimit,
       gasPrice: gasFee.gasPrices.fastest,
     })
-    expect(txResult).toEqual('0x5db775f690e45250e4e143fe3ba197f72b51192e88a87048bc52eb2e60f9c503')
+    expect(txResult).toEqual('0x888ec70d55e431ceea033d3e69091fd0618040f81eb2321414df8a0d26eca718')
   })
 
   it('ERC20 transfer', async () => {
@@ -404,7 +404,7 @@ describe('Client Test', () => {
       ropstenInfuraUrl,
       ropstenAlchemyUrl,
       'eth_sendRawTransaction',
-      '0x4479b2af29590d5ad1b591ddfbb479dba37a5857c2a250b41c16bb2cecb7d08c',
+      '0x9d3acb5dc9d9a1d54a583c74dfa4670c77da02caa2ed0d7f8b87b3541a6d8549',
     )
     mock_thornode_inbound_addresses_success(thornodeApiUrl, [
       {
@@ -436,7 +436,7 @@ describe('Client Test', () => {
       gasLimit: gasFee.gasLimit,
       gasPrice: gasFee.gasPrices.fastest,
     })
-    expect(txHash).toEqual('0x4479b2af29590d5ad1b591ddfbb479dba37a5857c2a250b41c16bb2cecb7d08c')
+    expect(txHash).toEqual('0x9d3acb5dc9d9a1d54a583c74dfa4670c77da02caa2ed0d7f8b87b3541a6d8549')
   })
 
   it('estimate gas for eth transfer', async () => {
@@ -572,7 +572,7 @@ describe('Client Test', () => {
       ropstenInfuraUrl,
       ropstenAlchemyUrl,
       'eth_sendRawTransaction',
-      '0x06784c7a4652148d55d83002d967c2d0dab9447425f60b69d53cc79e15a17c2f',
+      '0x7e9b9b351d6ce9baa5b89cbd5d0ef7c28af4fb1e39eab86b671b066f08b46e60',
     )
 
     const tx = await ethClient.approve({
@@ -582,7 +582,7 @@ describe('Client Test', () => {
       feeOptionKey: 'fastest' as FeeOption,
       amount: baseAmount(100, ETH_DECIMAL),
     })
-    expect(tx.hash).toEqual('0x06784c7a4652148d55d83002d967c2d0dab9447425f60b69d53cc79e15a17c2f')
+    expect(tx.hash).toEqual('0x7e9b9b351d6ce9baa5b89cbd5d0ef7c28af4fb1e39eab86b671b066f08b46e60')
   })
 
   it('estimate call', async () => {
