@@ -589,7 +589,7 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
       funcParams: [
         spenderAddress,
         txAmount,
-        { from: this.getAddress(walletIndex), gasPrice, gasLimit, maxPriorityFeePerGas },
+        { from: this.getAddress(walletIndex), maxFeePerGas: gasPrice, gasLimit, maxPriorityFeePerGas },
       ],
     })
   }
@@ -664,7 +664,7 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
 
     let overrides: TxOverrides = {
       gasLimit: gasLimit || defaultGasLimit,
-      gasPrice: gasPrice && BigNumber.from(gasPrice.amount().toFixed()),
+      maxFeePerGas: gasPrice && BigNumber.from(gasPrice.amount().toFixed()),
       maxPriorityFeePerGas: maxPriorityFeePerGas || getMaxPriorityFeePerGas(),
     }
 
@@ -677,7 +677,7 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
 
       overrides = {
         gasLimit,
-        gasPrice: BigNumber.from(gasPrice.amount().toFixed()),
+        maxFeePerGas: BigNumber.from(gasPrice.amount().toFixed()),
         maxPriorityFeePerGas: maxPriorityFeePerGas || getMaxPriorityFeePerGas(),
       }
     }
