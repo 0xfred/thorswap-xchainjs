@@ -1,16 +1,21 @@
-// import { Network } from '@thorswap-lib/xchain-client'
-// import { Chain } from '@thorswap-lib/xchain-util'
+import { Network } from '@thorswap-lib/xchain-client'
 
-// import { Client } from '../src/client'
+import { Client } from '../src/client'
 
 describe('Solana Client Test', () => {
-  //   let solanaClient: Client
-  //   const phrase = 'canyon throw labor waste awful century ugly they found post source draft'
+  let solanaClient: Client
+  const phrase = 'neither lonely flavor argue grass remind eye tag avocado spot unusual intact'
+
+  const addressPath0 = 'DsgX3wpzzaZwuEUAZVMtg52sgywkXf7mUCHodzX2YJef'
+  const addressPath1 = 'BwHaUs8x7mrbGuH5WbAJTDk1vZKzhewDy9TJzE381z3r'
 
   beforeEach(() => {
-    // solanaClient = new Client(Chain.Solana, { network: Network.Testnet, phrase })
+    solanaClient = new Client({ network: Network.Testnet, phrase })
   })
-  it('needs tests', () => {
-    expect(0).toEqual(0)
+  it('should output the correct address', () => {
+    const testAddress0 = solanaClient.getAddress(0)
+    expect(testAddress0).toEqual(addressPath0)
+    const testAddress1 = solanaClient.getAddress(1)
+    expect(testAddress1).toEqual(addressPath1)
   })
 })
