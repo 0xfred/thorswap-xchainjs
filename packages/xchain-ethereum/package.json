@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-ethereum",
-  "version": "0.22.7",
+  "version": "0.22.8",
   "description": "Ethereum client for XChainJS",
   "keywords": [
     "XChain",
