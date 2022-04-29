@@ -46,6 +46,7 @@ import {
   SIMPLE_GAS_COST,
   getDefaultGasPrices,
   getFee,
+  getMaxPriorityFeePerGas,
   getTokenAddress,
   getTokenBalances,
   getTxFromEthplorerEthTransaction,
@@ -577,13 +578,22 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
       amount,
     }).catch(() => BigNumber.from(gasLimitFallback))
 
+    // We may want to compute this more accurately in the future,
+    // using the formula "check if the base fee is correct".
+    // See: https://eips.ethereum.org/EIPS/eip-1559
+    const maxPriorityFeePerGas = getMaxPriorityFeePerGas()
+
     const txAmount = amount ? BigNumber.from(amount.amount().toFixed()) : MAX_APPROVAL
     return await this.call<TransactionResponse>({
       walletIndex,
       contractAddress,
       abi: erc20ABI,
       funcName: 'approve',
-      funcParams: [spenderAddress, txAmount, { from: this.getAddress(walletIndex), gasPrice, gasLimit }],
+      funcParams: [
+        spenderAddress,
+        txAmount,
+        { from: this.getAddress(walletIndex), gasPrice, gasLimit, maxPriorityFeePerGas },
+      ],
     })
   }
 
@@ -635,10 +645,12 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
     feeOptionKey: feeOption,
     gasPrice,
     gasLimit,
+    maxPriorityFeePerGas,
   }: TxParams & {
     feeOptionKey?: FeeOption
     gasPrice?: BaseAmount
     gasLimit?: BigNumber
+    maxPriorityFeePerGas?: BigNumber
   }): Promise<TxHash> {
     const txAmount = BigNumber.from(amount.amount().toFixed())
 
@@ -656,6 +668,7 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
     let overrides: TxOverrides = {
       gasLimit: gasLimit || defaultGasLimit,
       gasPrice: gasPrice && BigNumber.from(gasPrice.amount().toFixed()),
+      maxPriorityFeePerGas: maxPriorityFeePerGas || getMaxPriorityFeePerGas(),
     }
 
     // override `overrides` if `feeOption` is provided
@@ -668,6 +681,7 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
       overrides = {
         gasLimit,
         gasPrice: BigNumber.from(gasPrice.amount().toFixed()),
+        maxPriorityFeePerGas: maxPriorityFeePerGas || getMaxPriorityFeePerGas(),
       }
     }
 

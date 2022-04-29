@@ -297,6 +297,19 @@ export const getDefaultGasPrices = (asset?: Asset): GasPrices => {
 }
 
 /**
+ * Get maxPriorityFeePerGas
+ *
+ * @returns {BigNumber} Estimation for maxPriorityFeePerGas
+ */
+export const getMaxPriorityFeePerGas = (): BigNumber => {
+  // Ethers.js is using the hardcoded value for maxPriorityFeePerGas
+  // We can update this value once the new version of ethers.js is rolled out.
+  // See: https://github.com/ethers-io/ethers.js/blob/b1458989761c11bf626591706aa4ce98dae2d6a9/packages/abstract-provider/src.ts/index.ts#L249
+
+  return BigNumber.from('2500000000')
+}
+
+/**
  * Get address prefix based on the network.
  *
  * @returns {string} The address prefix based on the network.

@@ -20,6 +20,10 @@ export type TxOverrides = {
   gasPrice?: ethers.BigNumberish
   data?: ethers.BytesLike
   value?: ethers.BigNumberish
+
+  // EIP-1559
+  maxPriorityFeePerGas?: ethers.BigNumberish
+  maxFeePerGas?: ethers.BigNumberish
 }
 
 export type InfuraCreds = {
