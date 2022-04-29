@@ -1,4 +1,4 @@
-# v.0.22.7 (2022-04-05)
+# v.0.22.8 (2022-04-05)
 
 - update gas fee mechanism based on EIP-1559 (https://eips.ethereum.org/EIPS/eip-1559)
 

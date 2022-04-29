@@ -578,9 +578,6 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
       amount,
     }).catch(() => BigNumber.from(gasLimitFallback))
 
-    // We may want to compute this more accurately in the future,
-    // using the formula "check if the base fee is correct".
-    // See: https://eips.ethereum.org/EIPS/eip-1559
     const maxPriorityFeePerGas = getMaxPriorityFeePerGas()
 
     const txAmount = amount ? BigNumber.from(amount.amount().toFixed()) : MAX_APPROVAL
