@@ -76,8 +76,14 @@ class Client extends BaseXChainClient implements XChainClient {
     return this.isTestnet() ? this.appendTestnetClusterParam(explorerTxURL) : explorerTxURL
   }
 
-  validateAddress(): boolean {
-    throw new Error('Method not implemented.')
+  validateAddress(address: string): boolean {
+    try {
+      const pubkey = new PublicKey(address)
+      const isSolana = PublicKey.isOnCurve(pubkey.toBuffer())
+      return isSolana
+    } catch (error) {
+      return false
+    }
   }
 
   async getBalance(address: Address): Promise<Balance[]> {

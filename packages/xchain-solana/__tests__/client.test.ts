@@ -53,4 +53,10 @@ describe('Solana Client Test', () => {
     expect(testnetExplorerTxURL).toBe(`https://explorer.solana.com/tx/${txID}?cluster=testnet`)
     expect(mainnetExplorerTxURL).toBe(`https://explorer.solana.com/tx/${txID}`)
   })
+
+  it('Should properly validate a Solana address', () => {
+    const address = solanaTestnetClient.getAddress(0)
+    expect(solanaTestnetClient.validateAddress(address)).toBe(true)
+    expect(solanaTestnetClient.validateAddress('This is not an address')).toBe(false)
+  })
 })
