@@ -18,4 +18,11 @@ describe('Solana Client Test', () => {
     const testAddress1 = solanaClient.getAddress(1)
     expect(testAddress1).toEqual(addressPath1)
   })
+
+  it('should get the correct balance', async () => {
+    const address = solanaClient.getAddress(0)
+    await solanaClient.requestAirdrop(address)
+    const balance = await solanaClient.getBalance(address)
+    expect(balance[0].amount.amount().toNumber()).toBeGreaterThan(0)
+  })
 })
