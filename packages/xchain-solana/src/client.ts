@@ -14,11 +14,13 @@ import { getSeed } from '@thorswap-lib/xchain-crypto'
 import { AssetSolana, Chain, baseAmount } from '@thorswap-lib/xchain-util'
 import { derivePath } from 'ed25519-hd-key'
 
+const EXPLORER_URL = 'https://explorer.solana.com'
+
+export const SOLANA_DECIMAL = 9
+
 export type SolanaClientParams = XChainClientParams & {
   nodeUrl?: string
 }
-
-export const SOLANA_DECIMAL = 9
 
 /**
  * Solana Client
@@ -61,15 +63,17 @@ class Client extends BaseXChainClient implements XChainClient {
   }
 
   getExplorerUrl(): string {
-    throw new Error('Method not implemented.')
+    return this.isTestnet() ? this.appendTestnetClusterParam(EXPLORER_URL) : EXPLORER_URL
   }
 
-  getExplorerAddressUrl(): string {
-    throw new Error('Method not implemented.')
+  getExplorerAddressUrl(address: string): string {
+    const explorerAddressURL = `${EXPLORER_URL}/address/${address}`
+    return this.isTestnet() ? this.appendTestnetClusterParam(explorerAddressURL) : explorerAddressURL
   }
 
-  getExplorerTxUrl(): string {
-    throw new Error('Method not implemented.')
+  getExplorerTxUrl(txID: string): string {
+    const explorerTxURL = `${EXPLORER_URL}/tx/${txID}`
+    return this.isTestnet() ? this.appendTestnetClusterParam(explorerTxURL) : explorerTxURL
   }
 
   validateAddress(): boolean {
@@ -88,12 +92,15 @@ class Client extends BaseXChainClient implements XChainClient {
       },
     ]
   }
+
   getTransactions(): Promise<TxsPage> {
     throw new Error('Method not implemented.')
   }
+
   getTransactionData(): Promise<Tx> {
     throw new Error('Method not implemented.')
   }
+
   transfer(): Promise<string> {
     throw new Error('Method not implemented.')
   }
@@ -109,6 +116,14 @@ class Client extends BaseXChainClient implements XChainClient {
 
   protected getFullDerivationPath(walletIndex: number): string {
     return `${super.getFullDerivationPath(walletIndex)}'`
+  }
+
+  private appendTestnetClusterParam(url: string) {
+    return `${url}?cluster=testnet`
+  }
+
+  private isTestnet() {
+    return this.network === Network.Testnet
   }
 }
 
