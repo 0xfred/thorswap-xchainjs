@@ -1,4 +1,4 @@
-import { clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
+import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, clusterApiUrl } from '@solana/web3.js'
 import {
   Address,
   Balance,
@@ -11,7 +11,7 @@ import {
   XChainClientParams,
 } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
-import { AssetSolana, baseAmount, Chain } from '@thorswap-lib/xchain-util'
+import { AssetSolana, Chain, baseAmount } from '@thorswap-lib/xchain-util'
 import { derivePath } from 'ed25519-hd-key'
 
 export type SolanaClientParams = XChainClientParams & {
@@ -35,14 +35,16 @@ class Client extends BaseXChainClient implements XChainClient {
     },
   }: SolanaClientParams) {
     super(Chain.Solana, { network, phrase, rootDerivationPaths })
-    this.nodeUrl = nodeUrl ?? (() => {
-      switch (network) {
-        case Network.Mainnet:
-          return 'https://ssc-dao.genesysgo.net'
-        case Network.Testnet:
-          return clusterApiUrl('devnet')
-      }
-    })()
+    this.nodeUrl =
+      nodeUrl ??
+      (() => {
+        switch (network) {
+          case Network.Mainnet:
+            return 'https://ssc-dao.genesysgo.net'
+          case Network.Testnet:
+            return clusterApiUrl('devnet')
+        }
+      })()
   }
 
   getFees(): Promise<Fees> {
@@ -79,10 +81,12 @@ class Client extends BaseXChainClient implements XChainClient {
     const balance = await connection.getBalance(new PublicKey(address))
     const amount = baseAmount(balance / LAMPORTS_PER_SOL, SOLANA_DECIMAL)
 
-    return ([{
-      asset: AssetSolana,
-      amount,
-    }])
+    return [
+      {
+        asset: AssetSolana,
+        amount,
+      },
+    ]
   }
   getTransactions(): Promise<TxsPage> {
     throw new Error('Method not implemented.')

@@ -285,7 +285,7 @@ export const AssetUST: Asset = {
 /**
  * Base "chain" asset on Solana main net.
  *
-*/
+ */
 export const AssetSolana: Asset = {
   chain: Chain.Solana,
   symbol: 'SOL',
