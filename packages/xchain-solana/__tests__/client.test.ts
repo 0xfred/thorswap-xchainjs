@@ -1,4 +1,5 @@
 import { Network } from '@thorswap-lib/xchain-client'
+import { AssetSolana } from '@thorswap-lib/xchain-util'
 
 import { Client } from '../src/client'
 
@@ -58,5 +59,16 @@ describe('Solana Client Test', () => {
     const address = solanaTestnetClient.getAddress(0)
     expect(solanaTestnetClient.validateAddress(address)).toBe(true)
     expect(solanaTestnetClient.validateAddress('This is not an address')).toBe(false)
+  })
+
+  it('Should return the transaction history', async () => {
+    const transactions = await solanaTestnetClient.getTransactions({
+      address: 'DsgX3wpzzaZwuEUAZVMtg52sgywkXf7mUCHodzX2YJef',
+    })
+    expect(transactions.total).toBeGreaterThan(0)
+    expect(transactions.txs[0].asset).toEqual(AssetSolana)
+    expect(transactions.txs[0].type).toEqual('transfer')
+    expect(transactions.txs[0].to.length).toEqual(1)
+    expect(transactions.txs[0].from.length).toEqual(1)
   })
 })

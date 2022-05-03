@@ -1,4 +1,4 @@
-import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, clusterApiUrl } from '@solana/web3.js'
+import { Connection, Keypair, LAMPORTS_PER_SOL, ParsedInstruction, PublicKey, clusterApiUrl } from '@solana/web3.js'
 import {
   Address,
   Balance,
@@ -6,6 +6,8 @@ import {
   Fees,
   Network,
   Tx,
+  TxHistoryParams,
+  TxType,
   TxsPage,
   XChainClient,
   XChainClientParams,
@@ -44,7 +46,7 @@ class Client extends BaseXChainClient implements XChainClient {
           case Network.Mainnet:
             return 'https://ssc-dao.genesysgo.net'
           case Network.Testnet:
-            return clusterApiUrl('devnet')
+            return clusterApiUrl('testnet')
         }
       })()
   }
@@ -99,8 +101,45 @@ class Client extends BaseXChainClient implements XChainClient {
     ]
   }
 
-  getTransactions(): Promise<TxsPage> {
-    throw new Error('Method not implemented.')
+  async getTransactions(params?: TxHistoryParams): Promise<TxsPage> {
+    if (!params?.address) throw new Error('Address not provided')
+    const connection = new Connection(this.nodeUrl, 'confirmed')
+
+    const signatures = await connection.getSignaturesForAddress(new PublicKey(params.address), { limit: params.limit })
+    const parsedTransactions = await connection.getParsedTransactions(
+      signatures.map((signature) => signature.signature),
+    )
+
+    const transactions: Tx[] = []
+    parsedTransactions
+      .filter((parsedTransaction) => parsedTransaction !== null)
+      .forEach((parsedTransaction, i) => {
+        const date = parsedTransaction?.blockTime ? new Date(parsedTransaction.blockTime * 1000) : new Date()
+        parsedTransaction?.transaction.message.instructions
+          .filter((instruction) => (instruction as ParsedInstruction).parsed.type === 'transfer')
+          .forEach((instruction) => {
+            const parsedInstructionInformation = (instruction as ParsedInstruction).parsed.info
+            transactions.push({
+              asset: AssetSolana,
+              from: [
+                {
+                  from: parsedInstructionInformation.source,
+                  amount: baseAmount(parsedInstructionInformation.lamports / LAMPORTS_PER_SOL, SOLANA_DECIMAL),
+                },
+              ],
+              to: [
+                {
+                  to: parsedInstructionInformation.destination,
+                  amount: baseAmount(parsedInstructionInformation.lamports / LAMPORTS_PER_SOL, SOLANA_DECIMAL),
+                },
+              ],
+              date,
+              type: TxType.Transfer,
+              hash: signatures[i].signature,
+            })
+          })
+      })
+    return { total: transactions.length, txs: transactions }
   }
 
   getTransactionData(): Promise<Tx> {
