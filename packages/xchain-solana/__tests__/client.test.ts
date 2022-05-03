@@ -1,5 +1,5 @@
 import { Network } from '@thorswap-lib/xchain-client'
-import { AssetSolana } from '@thorswap-lib/xchain-util'
+import { AssetSolana, baseAmount } from '@thorswap-lib/xchain-util'
 
 import { Client } from '../src/client'
 
@@ -70,5 +70,13 @@ describe('Solana Client Test', () => {
     expect(transactions.txs[0].type).toEqual('transfer')
     expect(transactions.txs[0].to.length).toEqual(1)
     expect(transactions.txs[0].from.length).toEqual(1)
+  })
+
+  it('Should transfer SOL', async () => {
+    const recipient = solanaTestnetClient.getAddress(1)
+    const amount = baseAmount(1)
+    await solanaTestnetClient.transfer({ walletIndex: 0, amount, recipient })
+    const [recipientBalance] = await solanaTestnetClient.getBalance(recipient)
+    expect(recipientBalance.amount.amount().toNumber()).toBeGreaterThan(0)
   })
 })

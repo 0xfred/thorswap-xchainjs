@@ -1,4 +1,14 @@
-import { Connection, Keypair, LAMPORTS_PER_SOL, ParsedInstruction, PublicKey, clusterApiUrl } from '@solana/web3.js'
+import {
+  Connection,
+  Keypair,
+  LAMPORTS_PER_SOL,
+  ParsedInstruction,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  clusterApiUrl,
+  sendAndConfirmTransaction,
+} from '@solana/web3.js'
 import {
   Address,
   Balance,
@@ -7,6 +17,7 @@ import {
   Network,
   Tx,
   TxHistoryParams,
+  TxParams,
   TxType,
   TxsPage,
   XChainClient,
@@ -56,11 +67,7 @@ class Client extends BaseXChainClient implements XChainClient {
   }
 
   getAddress(index = 0): string {
-    if (index < 0) {
-      throw new Error('index must be greater than zero')
-    }
-    const seed = getSeed(this.phrase)
-    const keypair = Keypair.fromSeed(derivePath(this.getFullDerivationPath(index), seed.toString('hex')).key)
+    const keypair = this.getKeyPair(index)
     return keypair.publicKey.toBase58()
   }
 
@@ -146,8 +153,27 @@ class Client extends BaseXChainClient implements XChainClient {
     throw new Error('Method not implemented.')
   }
 
-  transfer(): Promise<string> {
-    throw new Error('Method not implemented.')
+  async transfer({ walletIndex = 0, amount, recipient }: TxParams): Promise<string> {
+    if (!this.validateAddress(recipient)) throw new Error(`${recipient} is not a valid Solana address`)
+
+    const fromKeypair = this.getKeyPair(walletIndex)
+    const lamportsToSend = amount.amount().toNumber() * LAMPORTS_PER_SOL
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: fromKeypair.publicKey,
+        toPubkey: new PublicKey(recipient),
+        lamports: lamportsToSend,
+      }),
+    )
+
+    const connection = new Connection(this.nodeUrl, 'confirmed')
+
+    const blockHash = await connection.getLatestBlockhash()
+
+    transaction.recentBlockhash = blockHash.blockhash
+    transaction.feePayer = fromKeypair.publicKey
+
+    return sendAndConfirmTransaction(connection, transaction, [fromKeypair])
   }
 
   async requestAirdrop(address: Address) {
@@ -169,6 +195,16 @@ class Client extends BaseXChainClient implements XChainClient {
 
   private isTestnet() {
     return this.network === Network.Testnet
+  }
+
+  private getKeyPair(index = 0) {
+    if (index < 0) {
+      throw new Error('index must be greater than zero')
+    }
+    const seed = getSeed(this.phrase)
+    const keypair = Keypair.fromSeed(derivePath(this.getFullDerivationPath(index), seed.toString('hex')).key)
+
+    return keypair
   }
 }
 
