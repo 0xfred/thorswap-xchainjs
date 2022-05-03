@@ -13,6 +13,7 @@ import {
   Address,
   Balance,
   BaseXChainClient,
+  FeeType,
   Fees,
   Network,
   Tx,
@@ -22,6 +23,7 @@ import {
   TxsPage,
   XChainClient,
   XChainClientParams,
+  singleFee,
 } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
 import { AssetSolana, Chain, baseAmount } from '@thorswap-lib/xchain-util'
@@ -62,8 +64,27 @@ class Client extends BaseXChainClient implements XChainClient {
       })()
   }
 
-  getFees(): Promise<Fees> {
-    throw new Error('Method not implemented.')
+  async getFees(): Promise<Fees> {
+    const connection = new Connection(this.nodeUrl, 'confirmed')
+    const fromKeypair = this.getKeyPair()
+    const to = this.getAddress(1)
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: fromKeypair.publicKey,
+        toPubkey: new PublicKey(to),
+        lamports: LAMPORTS_PER_SOL,
+      }),
+    )
+
+    const blockHash = await connection.getLatestBlockhash()
+
+    transaction.recentBlockhash = blockHash.blockhash
+    transaction.feePayer = fromKeypair.publicKey
+
+    const estimatedFee = await transaction.getEstimatedFee(connection)
+
+    const fee = baseAmount(estimatedFee, SOLANA_DECIMAL)
+    return singleFee(FeeType.FlatFee, fee)
   }
 
   getAddress(index = 0): string {
@@ -98,7 +119,7 @@ class Client extends BaseXChainClient implements XChainClient {
   async getBalance(address: Address): Promise<Balance[]> {
     const connection = new Connection(this.nodeUrl, 'confirmed')
     const balance = await connection.getBalance(new PublicKey(address))
-    const amount = baseAmount(balance / LAMPORTS_PER_SOL, SOLANA_DECIMAL)
+    const amount = baseAmount(balance, SOLANA_DECIMAL)
 
     return [
       {
@@ -131,13 +152,13 @@ class Client extends BaseXChainClient implements XChainClient {
               from: [
                 {
                   from: parsedInstructionInformation.source,
-                  amount: baseAmount(parsedInstructionInformation.lamports / LAMPORTS_PER_SOL, SOLANA_DECIMAL),
+                  amount: baseAmount(parsedInstructionInformation.lamports, SOLANA_DECIMAL),
                 },
               ],
               to: [
                 {
                   to: parsedInstructionInformation.destination,
-                  amount: baseAmount(parsedInstructionInformation.lamports / LAMPORTS_PER_SOL, SOLANA_DECIMAL),
+                  amount: baseAmount(parsedInstructionInformation.lamports, SOLANA_DECIMAL),
                 },
               ],
               date,

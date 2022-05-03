@@ -79,4 +79,10 @@ describe('Solana Client Test', () => {
     const [recipientBalance] = await solanaTestnetClient.getBalance(recipient)
     expect(recipientBalance.amount.amount().toNumber()).toBeGreaterThan(0)
   })
+
+  it('Should return estimated fees', async () => {
+    const fees = await solanaTestnetClient.getFees()
+    expect(fees.average.amount().toNumber()).toEqual(fees.fast.amount().toNumber())
+    expect(fees.fast.amount().toNumber()).toEqual(fees.fastest.amount().toNumber())
+  })
 })
