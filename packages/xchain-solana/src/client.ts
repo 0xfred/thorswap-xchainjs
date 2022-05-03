@@ -170,15 +170,32 @@ class Client extends BaseXChainClient implements XChainClient {
     return { total: transactions.length, txs: transactions }
   }
 
-  getTransactionData(): Promise<Tx> {
-    throw new Error('Method not implemented.')
+  async getTransactionData(hash: string): Promise<Tx> {
+    const connection = new Connection(this.nodeUrl, 'confirmed')
+
+    const parsedTransaction = await connection.getParsedTransaction(hash)
+
+    if (!parsedTransaction) throw new Error(`Failed to get transaction ${hash}`)
+
+    const date = parsedTransaction?.blockTime ? new Date(parsedTransaction.blockTime * 1000) : new Date()
+
+    const instruction = (parsedTransaction?.transaction.message.instructions[0] as ParsedInstruction).parsed
+
+    return {
+      hash,
+      asset: AssetSolana,
+      date,
+      from: instruction.info.source,
+      to: instruction.info.destination,
+      type: instruction.type,
+    }
   }
 
   async transfer({ walletIndex = 0, amount, recipient }: TxParams): Promise<string> {
     if (!this.validateAddress(recipient)) throw new Error(`${recipient} is not a valid Solana address`)
 
     const fromKeypair = this.getKeyPair(walletIndex)
-    const lamportsToSend = amount.amount().toNumber() * LAMPORTS_PER_SOL
+    const lamportsToSend = amount.amount().toNumber()
     const transaction = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: fromKeypair.publicKey,

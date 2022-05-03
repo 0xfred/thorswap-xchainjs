@@ -1,7 +1,7 @@
 import { Network } from '@thorswap-lib/xchain-client'
 import { AssetSolana, baseAmount } from '@thorswap-lib/xchain-util'
 
-import { Client } from '../src/client'
+import { Client, SOLANA_DECIMAL } from '../src/client'
 
 describe('Solana Client Test', () => {
   let solanaTestnetClient: Client
@@ -74,7 +74,7 @@ describe('Solana Client Test', () => {
 
   it('Should transfer SOL', async () => {
     const recipient = solanaTestnetClient.getAddress(1)
-    const amount = baseAmount(1)
+    const amount = baseAmount(1, SOLANA_DECIMAL)
     await solanaTestnetClient.transfer({ walletIndex: 0, amount, recipient })
     const [recipientBalance] = await solanaTestnetClient.getBalance(recipient)
     expect(recipientBalance.amount.amount().toNumber()).toBeGreaterThan(0)
@@ -84,5 +84,18 @@ describe('Solana Client Test', () => {
     const fees = await solanaTestnetClient.getFees()
     expect(fees.average.amount().toNumber()).toEqual(fees.fast.amount().toNumber())
     expect(fees.fast.amount().toNumber()).toEqual(fees.fastest.amount().toNumber())
+  })
+
+  it('Should return transaction data', async () => {
+    const toWalletIndex = 1
+    const recipient = solanaTestnetClient.getAddress(toWalletIndex)
+    const amount = baseAmount(1000, SOLANA_DECIMAL)
+    const transactionHash = await solanaTestnetClient.transfer({ walletIndex: 0, amount, recipient })
+    const transactionData = await solanaTestnetClient.getTransactionData(transactionHash)
+
+    expect(transactionData.from).toEqual('DsgX3wpzzaZwuEUAZVMtg52sgywkXf7mUCHodzX2YJef')
+    expect(transactionData.to).toEqual('BwHaUs8x7mrbGuH5WbAJTDk1vZKzhewDy9TJzE381z3r')
+    expect(transactionData.asset).toEqual(AssetSolana)
+    expect(transactionData.type).toEqual('transfer')
   })
 })
