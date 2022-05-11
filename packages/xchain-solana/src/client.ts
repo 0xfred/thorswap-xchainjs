@@ -17,6 +17,7 @@ import {
   Fees,
   Network,
   Tx,
+  TxHash,
   TxHistoryParams,
   TxParams,
   TxType,
@@ -191,7 +192,7 @@ class Client extends BaseXChainClient implements XChainClient {
     }
   }
 
-  async transfer({ walletIndex = 0, amount, recipient }: TxParams): Promise<string> {
+  async transfer({ walletIndex = 0, amount, recipient }: TxParams): Promise<TxHash> {
     if (!this.validateAddress(recipient)) throw new Error(`${recipient} is not a valid Solana address`)
 
     const fromKeypair = this.getKeyPair(walletIndex)
@@ -237,7 +238,7 @@ class Client extends BaseXChainClient implements XChainClient {
 
   private getKeyPair(index = 0) {
     if (index < 0) {
-      throw new Error('index must be greater than zero')
+      throw new Error('index must be equal or greater than zero')
     }
     const seed = getSeed(this.phrase)
     const keypair = Keypair.fromSeed(derivePath(this.getFullDerivationPath(index), seed.toString('hex')).key)
