@@ -1,3 +1,7 @@
+# 0.21.6 (2022-05-12)
+
+- update DEFAULT_GAS_VALUE = '5000000000'
+
 # 0.21.5 (2022-04-05)
 
 - remove non existing `module` source
