@@ -1,4 +1,10 @@
 import {
+  createAssociatedTokenAccountInstruction,
+  createTransferCheckedInstruction,
+  getAccount,
+  getAssociatedTokenAddress,
+} from '@solana/spl-token'
+import {
   Connection,
   Keypair,
   LAMPORTS_PER_SOL,
@@ -27,12 +33,20 @@ import {
   singleFee,
 } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
-import { AssetSolana, Chain, baseAmount } from '@thorswap-lib/xchain-util'
+import {
+  AssetSolana,
+  Chain,
+  USDC_SPL_MINT_ADDRESS,
+  USDC_SPL_TESTNET_MINT_ADDRESS,
+  baseAmount,
+} from '@thorswap-lib/xchain-util'
 import { derivePath } from 'ed25519-hd-key'
 
-const EXPLORER_URL = 'https://explorer.solana.com'
+import { SOLANA_DECIMAL, USDC_SPL_DECIMAL } from './const'
+import { SPLTokenTransferParams } from './types'
+import { getSOLBalance, getUSDCSPLBalance, isSOLAsset, isUSDCSPLAsset } from './utils'
 
-export const SOLANA_DECIMAL = 9
+const EXPLORER_URL = 'https://explorer.solana.com'
 
 export type SolanaClientParams = XChainClientParams & {
   nodeUrl?: string
@@ -119,15 +133,11 @@ class Client extends BaseXChainClient implements XChainClient {
 
   async getBalance(address: Address): Promise<Balance[]> {
     const connection = new Connection(this.nodeUrl, 'confirmed')
-    const balance = await connection.getBalance(new PublicKey(address))
-    const amount = baseAmount(balance, SOLANA_DECIMAL)
-
-    return [
-      {
-        asset: AssetSolana,
-        amount,
-      },
-    ]
+    // SOL balance
+    const SOLBalance = await getSOLBalance(connection, address)
+    // USDC balance
+    const USDCSPLBalance = await getUSDCSPLBalance(this.network, connection, address)
+    return [SOLBalance].concat(USDCSPLBalance || [])
   }
 
   async getTransactions(params?: TxHistoryParams): Promise<TxsPage> {
@@ -192,20 +202,35 @@ class Client extends BaseXChainClient implements XChainClient {
     }
   }
 
-  async transfer({ walletIndex = 0, amount, recipient }: TxParams): Promise<TxHash> {
+  async transfer({ walletIndex = 0, amount, recipient, asset = AssetSolana }: TxParams): Promise<TxHash> {
     if (!this.validateAddress(recipient)) throw new Error(`${recipient} is not a valid Solana address`)
 
     const fromKeypair = this.getKeyPair(walletIndex)
-    const lamportsToSend = amount.amount().toNumber()
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: fromKeypair.publicKey,
-        toPubkey: new PublicKey(recipient),
-        lamports: lamportsToSend,
-      }),
-    )
 
     const connection = new Connection(this.nodeUrl, 'confirmed')
+    let transaction: Transaction
+
+    if (isSOLAsset(asset)) {
+      const lamportsToSend = amount.amount().toNumber()
+      transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: fromKeypair.publicKey,
+          toPubkey: new PublicKey(recipient),
+          lamports: lamportsToSend,
+        }),
+      )
+    } else if (isUSDCSPLAsset(asset)) {
+      transaction = await this.createSPLTokenTransferTransaction({
+        connection,
+        tokenMintAddress: this.network === Network.Mainnet ? USDC_SPL_MINT_ADDRESS : USDC_SPL_TESTNET_MINT_ADDRESS,
+        decimals: USDC_SPL_DECIMAL,
+        amount,
+        from: fromKeypair.publicKey,
+        recipient,
+      })
+    } else {
+      throw new Error(`Asset ${asset.ticker} is currently unsupported`)
+    }
 
     const blockHash = await connection.getLatestBlockhash()
 
@@ -213,6 +238,48 @@ class Client extends BaseXChainClient implements XChainClient {
     transaction.feePayer = fromKeypair.publicKey
 
     return sendAndConfirmTransaction(connection, transaction, [fromKeypair])
+  }
+
+  async createSPLTokenTransferTransaction({
+    tokenMintAddress,
+    from,
+    recipient,
+    connection,
+    amount,
+    decimals,
+  }: SPLTokenTransferParams): Promise<Transaction> {
+    const tokenPublicKey = new PublicKey(tokenMintAddress)
+    const fromSPLAddress = await getAssociatedTokenAddress(tokenPublicKey, from)
+
+    const recipientPublicKey = new PublicKey(recipient)
+    const recipientSPLAddress = await getAssociatedTokenAddress(tokenPublicKey, recipientPublicKey)
+    let tokenAccountCreated = false
+    try {
+      await getAccount(connection, recipientSPLAddress)
+      tokenAccountCreated = true
+    } catch (e) {
+      console.warn('Token account does not exist for recipient address. Creating one')
+    }
+
+    const transaction = new Transaction()
+
+    if (!tokenAccountCreated) {
+      transaction.add(
+        createAssociatedTokenAccountInstruction(from, recipientSPLAddress, recipientPublicKey, tokenPublicKey),
+      )
+    }
+    transaction.add(
+      createTransferCheckedInstruction(
+        fromSPLAddress,
+        tokenPublicKey,
+        recipientSPLAddress,
+        from,
+        amount.amount().multipliedBy(Math.pow(10, decimals)).toNumber(),
+        decimals,
+      ),
+    )
+
+    return transaction
   }
 
   async requestAirdrop(address: Address) {

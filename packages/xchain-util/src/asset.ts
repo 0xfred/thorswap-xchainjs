@@ -292,6 +292,29 @@ export const AssetSolana: Asset = {
   ticker: 'SOL',
 }
 
+export const USDC_TICKER = 'USDC'
+export const USDC_SPL_MINT_ADDRESS = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+export const USDC_SPL_TESTNET_MINT_ADDRESS = '6TEqT62wq5mbKQPubX9eFeNJRYXRJd79Hk51pZk7nZrB'
+
+/**
+ * Main stablecoin asset on Solana.
+ *
+ */
+export const AssetUSDCSPL: Asset = {
+  chain: Chain.Solana,
+  symbol: `${USDC_TICKER}-${USDC_SPL_MINT_ADDRESS}`,
+  ticker: USDC_TICKER,
+}
+
+/**
+ * Custom SPL token created for development purposes
+ */
+export const AssetUSDCSPLTestnet: Asset = {
+  chain: Chain.Solana,
+  symbol: `${USDC_TICKER}-${USDC_SPL_TESTNET_MINT_ADDRESS}`,
+  ticker: USDC_TICKER,
+}
+
 /**
  * Helper to check whether asset is valid
  *

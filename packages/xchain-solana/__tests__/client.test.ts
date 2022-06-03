@@ -1,7 +1,8 @@
 import { Network } from '@thorswap-lib/xchain-client'
 import { AssetSolana, baseAmount } from '@thorswap-lib/xchain-util'
 
-import { Client, SOLANA_DECIMAL } from '../src/client'
+import { Client } from '../src/client'
+import { SOLANA_DECIMAL } from '../src/const'
 
 describe('Solana Client Test', () => {
   let solanaTestnetClient: Client
