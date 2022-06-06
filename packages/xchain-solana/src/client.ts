@@ -274,7 +274,7 @@ class Client extends BaseXChainClient implements XChainClient {
         tokenPublicKey,
         recipientSPLAddress,
         from,
-        amount.amount().multipliedBy(Math.pow(10, decimals)).toNumber(),
+        amount.amount().toNumber(),
         decimals,
       ),
     )

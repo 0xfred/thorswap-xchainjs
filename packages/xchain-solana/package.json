@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-solana",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Solana client for XChainJS",
   "keywords": [
     "XChain",
