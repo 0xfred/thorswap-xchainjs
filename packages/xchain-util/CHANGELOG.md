@@ -1,3 +1,7 @@
+# v.0.4.7 (2022-06-09)
+
+- moves COSMOS assets to util
+
 # v.0.4.4 (2022-04-05)
 
 - remove non existing `module` source

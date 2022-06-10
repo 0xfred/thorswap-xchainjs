@@ -1,3 +1,8 @@
+# v.0.18.0 (2022-06-09)
+
+- adds possibility to insert own MAINNET API url and adds working fees for mainnet
+- moves Assets to util package
+
 # v.0.17.1 (2022-04-05)
 
 - remove non existing `module` source

@@ -1,8 +1,7 @@
 import { cosmosclient, proto } from '@cosmos-client/core'
-import { baseAmount } from '@thorswap-lib/xchain-util'
+import { AssetAtom, AssetMuon, baseAmount } from '@thorswap-lib/xchain-util'
 
 import { APIQueryParam, RawTxResponse, TxResponse } from '../src/cosmos/types'
-import { AssetAtom, AssetMuon } from '../src/types'
 import { getAsset, getDenom, getQueryString, getTxsFromHistory, isMsgMultiSend, isMsgSend } from '../src/util'
 
 describe('cosmos/util', () => {

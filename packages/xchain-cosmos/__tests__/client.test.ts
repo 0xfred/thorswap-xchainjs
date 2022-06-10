@@ -1,11 +1,10 @@
 import { cosmosclient, proto } from '@cosmos-client/core'
 import { Network, TxsPage } from '@thorswap-lib/xchain-client'
-import { BaseAmount, baseAmount } from '@thorswap-lib/xchain-util'
+import { AssetMuon, BaseAmount, baseAmount } from '@thorswap-lib/xchain-util'
 import nock from 'nock'
 
 import { Client } from '../src/client'
 import { GetTxByHashResponse, TxHistoryResponse } from '../src/cosmos/types'
-import { AssetMuon } from '../src/types'
 
 const getClientUrl = (client: Client): string => {
   return client.getNetwork() === Network.Testnet

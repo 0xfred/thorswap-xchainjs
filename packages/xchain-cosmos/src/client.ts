@@ -14,11 +14,10 @@ import {
   XChainClient,
   XChainClientParams,
 } from '@thorswap-lib/xchain-client'
-import { Asset, Chain, assetToString, baseAmount } from '@thorswap-lib/xchain-util'
+import { Asset, AssetAtom, AssetMuon, Chain, assetToString, baseAmount } from '@thorswap-lib/xchain-util'
 
 import { CosmosSDKClient } from './cosmos/sdk-client'
 import { TxOfflineParams } from './cosmos/types'
-import { AssetAtom, AssetMuon } from './types'
 import { DECIMAL, getAsset, getDenom, getTxsFromHistory } from './util'
 
 /**
@@ -29,14 +28,20 @@ export interface CosmosClient {
   getSDKClient(): CosmosSDKClient
 }
 
-const MAINNET_SDK = new CosmosSDKClient({
-  server: 'https://api.cosmos.network',
-  chainId: 'cosmoshub-4',
-})
-const TESTNET_SDK = new CosmosSDKClient({
-  server: 'https://rest.sentry-02.theta-testnet.polypore.xyz',
-  chainId: 'theta-testnet-001',
-})
+export interface CosmosClientParams extends XChainClientParams {
+  serverUrl?: string
+}
+
+const MAINNET_SDK = (serverUrl: string | undefined) =>
+  new CosmosSDKClient({
+    server: serverUrl || 'https://api.cosmos.network',
+    chainId: 'cosmoshub-4',
+  })
+const TESTNET_SDK = () =>
+  new CosmosSDKClient({
+    server: 'https://rest.sentry-02.theta-testnet.polypore.xyz',
+    chainId: 'theta-testnet-001',
+  })
 
 /**
  * Custom Cosmos client
@@ -61,10 +66,11 @@ class Client extends BaseXChainClient implements CosmosClient, XChainClient {
       [Network.Mainnet]: `44'/118'/0'/0/`,
       [Network.Testnet]: `44'/118'/0'/0/`,
     },
-  }: XChainClientParams) {
+    serverUrl,
+  }: CosmosClientParams) {
     super(Chain.Cosmos, { network, rootDerivationPaths, phrase })
-    this.sdkClients.set(Network.Testnet, TESTNET_SDK)
-    this.sdkClients.set(Network.Mainnet, MAINNET_SDK)
+    this.sdkClients.set(Network.Testnet, TESTNET_SDK())
+    this.sdkClients.set(Network.Mainnet, MAINNET_SDK(serverUrl))
   }
 
   /**
@@ -117,7 +123,7 @@ class Client extends BaseXChainClient implements CosmosClient, XChainClient {
   }
 
   getSDKClient(): CosmosSDKClient {
-    return this.sdkClients.get(this.network) || TESTNET_SDK
+    return this.sdkClients.get(this.network) || TESTNET_SDK()
   }
 
   /**
@@ -146,7 +152,7 @@ class Client extends BaseXChainClient implements CosmosClient, XChainClient {
   /**
    * Get the main asset based on the network.
    *
-   * @returns {string} The main asset based on the network.
+   * @returns {Asset} The main asset based on the network.
    */
   getMainAsset(): Asset {
     switch (this.network) {
@@ -167,7 +173,6 @@ class Client extends BaseXChainClient implements CosmosClient, XChainClient {
   async getBalance(address: Address, assets?: Asset[]): Promise<Balance[]> {
     const balances = await this.getSDKClient().getBalance(address)
     const mainAsset = this.getMainAsset()
-
     return balances
       .map((balance) => {
         return {

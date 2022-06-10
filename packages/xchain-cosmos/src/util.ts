@@ -1,9 +1,8 @@
 import { cosmosclient, proto } from '@cosmos-client/core'
 import { FeeType, Fees, Tx, TxFrom, TxTo, TxType } from '@thorswap-lib/xchain-client'
-import { Asset, assetToString, baseAmount } from '@thorswap-lib/xchain-util'
+import { Asset, AssetAtom, AssetMuon, assetToString, baseAmount } from '@thorswap-lib/xchain-util'
 
 import { APIQueryParam, RawTxResponse, TxResponse } from './cosmos/types'
-import { AssetAtom, AssetMuon } from './types'
 
 /**
  * The decimal for cosmos chain.

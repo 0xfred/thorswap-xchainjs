@@ -20,10 +20,26 @@ import {
   UnsignedTxParams,
 } from './types'
 
-const DEFAULT_FEE = new proto.cosmos.tx.v1beta1.Fee({
-  amount: [],
-  gas_limit: cosmosclient.Long.fromString('300000'),
+const DEFAULT_FEE_MAINNET = new proto.cosmos.tx.v1beta1.Fee({
+  amount: [
+    {
+      denom: 'uatom',
+      amount: '20',
+    },
+  ],
+  gas_limit: cosmosclient.Long.fromString('200000'),
 })
+
+const DEFAULT_FEE_TESTNET = new proto.cosmos.tx.v1beta1.Fee({
+  amount: [
+    {
+      denom: 'umuon',
+      amount: '10',
+    },
+  ],
+  gas_limit: cosmosclient.Long.fromString('200000'),
+})
+
 export class CosmosSDKClient {
   sdk: cosmosclient.CosmosSDK
 
@@ -217,7 +233,15 @@ export class CosmosSDKClient {
     return (await axios.get<GetTxByHashResponse>(`${this.server}/cosmos/tx/v1beta1/txs/${hash}`)).data.tx_response
   }
 
-  async transfer({ privkey, from, to, amount, asset, memo = '', fee = DEFAULT_FEE }: TransferParams): Promise<TxHash> {
+  async transfer({
+    privkey,
+    from,
+    to,
+    amount,
+    asset,
+    memo = '',
+    fee = this.chainId === 'cosmoshub-4' ? DEFAULT_FEE_MAINNET : DEFAULT_FEE_TESTNET,
+  }: TransferParams): Promise<TxHash> {
     this.setPrefix()
 
     const msgSend = new proto.cosmos.bank.v1beta1.MsgSend({
@@ -270,7 +294,7 @@ export class CosmosSDKClient {
     amount,
     asset,
     memo = '',
-    fee = DEFAULT_FEE,
+    fee = this.chainId === 'cosmoshub-4' ? DEFAULT_FEE_MAINNET : DEFAULT_FEE_TESTNET,
   }: TransferOfflineParams): Promise<string> {
     const txBody = this.getUnsignedTxBody({ from, to, amount, asset, memo })
 
