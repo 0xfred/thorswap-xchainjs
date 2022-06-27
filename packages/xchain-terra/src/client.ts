@@ -33,9 +33,9 @@ import { isLunaAsset, isUSTAsset } from './utils'
 
 const DEFAULT_CONFIG = {
   [Network.Mainnet]: {
-    explorerURL: 'https://finder.terra.money/mainnet',
-    explorerAddressURL: 'https://finder.terra.money/mainnet/address',
-    explorerTxURL: 'https://finder.terra.money/mainnet/tx',
+    explorerURL: 'https://finder.terra.money/classic',
+    explorerAddressURL: 'https://finder.terra.money/classic/address',
+    explorerTxURL: 'https://finder.terra.money/classic/tx',
     cosmosAPIURL: 'https://fcd.terra.dev',
     ChainID: 'columbus-5',
   },
@@ -246,12 +246,12 @@ class Client extends BaseXChainClient implements XChainClient {
     }
   }
   private coinsToBalances(coins: Coins): Balance[] {
-    return coins.toArray().map((c: Coin) => {
+    return (coins.toArray().map((c: Coin) => {
       return {
         asset: this.getTerraNativeAsset(c.denom),
         amount: baseAmount(c.amount.toFixed(), 6),
       }
-    }) as unknown as Balance[]
+    }) as unknown) as Balance[]
   }
   private convertSearchResultTxToTx(tx: any): Tx {
     let from: TxFrom[] = []
