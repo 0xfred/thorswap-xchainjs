@@ -70,12 +70,18 @@ const getCoinAmount = (coins?: proto.cosmos.base.v1beta1.ICoin[]) => {
  */
 export const getTxsFromHistory = (txs: TxResponse[], mainAsset: Asset): Tx[] => {
   return txs.reduce((acc, tx) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!tx.tx) return acc
     let msgs: Array<proto.cosmos.bank.v1beta1.MsgSend | proto.cosmos.bank.v1beta1.MsgMultiSend>
     if ((tx.tx as RawTxResponse).body === undefined) {
-      msgs = cosmosclient.codec.packAnyFromCosmosJSON(tx.tx).msg
+      msgs = (cosmosclient.codec.instanceToProtoJSON(tx.tx) as any).msg
     } else {
-      msgs = cosmosclient.codec.packAnyFromCosmosJSON((tx.tx as RawTxResponse).body.messages)
+      msgs = (tx.tx as RawTxResponse).body.messages.map((message) => {
+        return cosmosclient.codec.instanceToProtoJSON(
+          message instanceof proto.cosmos.bank.v1beta1.MsgSend
+            ? cosmosclient.codec.instanceToProtoAny(message)
+            : message,
+        ) as proto.cosmos.bank.v1beta1.MsgSend | proto.cosmos.bank.v1beta1.MsgMultiSend
+      })
     }
 
     const from: TxFrom[] = []

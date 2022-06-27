@@ -1,0 +1,75 @@
+{
+  "body": {
+    "messages": [
+      {
+        "@type": "/types.MsgDeposit",
+        "coins": [
+          {
+            "asset": {
+              "chain": "THOR",
+              "symbol": "rune",
+              "ticker": "RUNE",
+              "synth": false
+            },
+            "amount": "100",
+            "decimals": "0"
+          }
+        ],
+        "memo": "",
+        "signer": "ejTyYPaC+hU0SngGYZsjXdX6c8Q="
+      }
+    ],
+    "memo": "",
+    "timeout_height": "0",
+    "extension_options": [],
+    "non_critical_extension_options": []
+  },
+  "auth_info": {
+    "signer_infos": [
+      {
+        "public_key": {
+          "@type": "/cosmos.crypto.multisig.LegacyAminoPubKey",
+          "threshold": 2,
+          "public_keys": [
+            {
+              "@type": "/cosmos.crypto.secp256k1.PubKey",
+              "key": "As0sZAU4jyAyRQKC1L8f2khHg4C5TWlVliJUHn7mFy/b"
+            },
+            {
+              "@type": "/cosmos.crypto.secp256k1.PubKey",
+              "key": "A8awiaIKpXTeedRu/ChRqWqF2tt8p0AAxKcupOgks2l8"
+            }
+          ]
+        },
+        "mode_info": {
+          "multi": {
+            "bitarray": {
+              "extra_bits_stored": 2,
+              "elems": "wA=="
+            },
+            "mode_infos": [
+              {
+                "single": {
+                  "mode": "SIGN_MODE_DIRECT"
+                }
+              },
+              {
+                "single": {
+                  "mode": "SIGN_MODE_DIRECT"
+                }
+              }
+            ]
+          }
+        },
+        "sequence": "6"
+      }
+    ],
+    "fee": {
+      "amount": [],
+      "gas_limit": "5000000000",
+      "payer": "",
+      "granter": ""
+    }
+  },
+  "signatures": []
+}

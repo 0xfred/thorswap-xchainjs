@@ -109,7 +109,7 @@ describe('cosmos/util', () => {
         },
       ],
     })
-    const encodedMsg = cosmosclient.codec.packAnyFromCosmosJSON(msgSend)
+    const encodedMsg = cosmosclient.codec.instanceToProtoAny(msgSend)
     const txs: TxResponse[] = [
       {
         height: 0,

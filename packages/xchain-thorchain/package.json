@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-thorchain",
-  "version": "0.21.6",
+  "version": "0.21.7",
   "description": "Custom Thorchain client and utilities used by XChainJS clients",
   "keywords": [
     "THORChain",
@@ -33,26 +33,30 @@
     "generate:ThorchainMsgs": "./genMsgs.sh"
   },
   "devDependencies": {
+    "@cosmjs/encoding": "^0.28.9",
+    "@cosmos-client/core": "0.45.13",
     "@thorswap-lib/xchain-client": "^0.11.2",
-    "@thorswap-lib/xchain-cosmos": "^0.17.1",
+    "@thorswap-lib/xchain-cosmos": "^0.18.1",
     "@thorswap-lib/xchain-crypto": "^0.2.7",
     "@thorswap-lib/xchain-util": "^0.4.4",
     "@types/big.js": "^6.0.0",
     "axios": "^0.21.0",
-    "@cosmos-client/core": "^0.45.1",
     "bech32-buffer": "^0.2.0",
+    "long": "^5.2.0",
     "nock": "^13.0.5"
   },
   "publishConfig": {
     "access": "public"
   },
   "peerDependencies": {
+    "@cosmjs/encoding": "^0.28.9",
+    "@cosmos-client/core": "0.45.13",
     "@thorswap-lib/xchain-client": "^0.11.2",
     "@thorswap-lib/xchain-cosmos": "^0.17.1",
     "@thorswap-lib/xchain-crypto": "^0.2.7",
     "@thorswap-lib/xchain-util": "^0.4.4",
     "axios": "^0.21.0",
     "bech32-buffer": "^0.2.0",
-    "@cosmos-client/core": "^0.45.1"
+    "long": "^5.2.0"
   }
 }

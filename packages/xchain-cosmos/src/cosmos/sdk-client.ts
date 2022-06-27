@@ -3,6 +3,7 @@ import { TxHash, TxHistoryParams } from '@thorswap-lib/xchain-client'
 import * as xchainCrypto from '@thorswap-lib/xchain-crypto'
 import axios from 'axios'
 import * as BIP32 from 'bip32'
+import Long from 'long'
 
 import { getQueryString } from '../util'
 
@@ -27,7 +28,7 @@ const DEFAULT_FEE_MAINNET = new proto.cosmos.tx.v1beta1.Fee({
       amount: '20',
     },
   ],
-  gas_limit: cosmosclient.Long.fromString('200000'),
+  gas_limit: Long.fromString('200000'),
 })
 
 const DEFAULT_FEE_TESTNET = new proto.cosmos.tx.v1beta1.Fee({
@@ -37,7 +38,7 @@ const DEFAULT_FEE_TESTNET = new proto.cosmos.tx.v1beta1.Fee({
       amount: '10',
     },
   ],
-  gas_limit: cosmosclient.Long.fromString('200000'),
+  gas_limit: Long.fromString('200000'),
 })
 
 export class CosmosSDKClient {
@@ -122,7 +123,7 @@ export class CosmosSDKClient {
     })
 
     return new proto.cosmos.tx.v1beta1.TxBody({
-      messages: [cosmosclient.codec.packAny(msgSend)],
+      messages: [cosmosclient.codec.instanceToProtoAny(msgSend)],
       memo,
     })
   }
@@ -138,7 +139,11 @@ export class CosmosSDKClient {
   async getAccount(address: cosmosclient.AccAddress): Promise<proto.cosmos.auth.v1beta1.IBaseAccount> {
     const account = await rest.auth
       .account(this.sdk, address)
-      .then((res) => res.data.account && cosmosclient.codec.unpackCosmosAny(res.data.account))
+      .then(
+        (res) =>
+          res.data.account &&
+          cosmosclient.codec.protoJSONToInstance(cosmosclient.codec.castProtoJSONOfProtoAny(res.data.account)),
+      )
       .catch((_) => undefined)
     if (!(account instanceof proto.cosmos.auth.v1beta1.BaseAccount)) {
       throw Error('could not get account')
@@ -261,14 +266,14 @@ export class CosmosSDKClient {
     const account = await this.getAccount(signer)
 
     const txBody = new proto.cosmos.tx.v1beta1.TxBody({
-      messages: [cosmosclient.codec.packAny(msgSend)],
+      messages: [cosmosclient.codec.instanceToProtoAny(msgSend)],
       memo,
     })
 
     const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
       signer_infos: [
         {
-          public_key: cosmosclient.codec.packAny(pubKey),
+          public_key: cosmosclient.codec.instanceToProtoAny(pubKey),
           mode_info: {
             single: {
               mode: proto.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
@@ -301,13 +306,13 @@ export class CosmosSDKClient {
     const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
       signer_infos: [
         {
-          public_key: cosmosclient.codec.packAny(privkey.pubKey()),
+          public_key: cosmosclient.codec.instanceToProtoAny(privkey.pubKey()),
           mode_info: {
             single: {
               mode: proto.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
             },
           },
-          sequence: cosmosclient.Long.fromString(from_sequence),
+          sequence: Long.fromString(from_sequence),
         },
       ],
       fee,
@@ -315,7 +320,7 @@ export class CosmosSDKClient {
 
     const txBuilder = new cosmosclient.TxBuilder(this.sdk, txBody, authInfo)
 
-    const signDocBytes = txBuilder.signDocBytes(cosmosclient.Long.fromString(from_account_number))
+    const signDocBytes = txBuilder.signDocBytes(Long.fromString(from_account_number))
     txBuilder.addSignature(privkey.sign(signDocBytes))
     return txBuilder.txBytes()
   }

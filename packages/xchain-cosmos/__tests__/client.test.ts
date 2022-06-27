@@ -182,7 +182,7 @@ describe('Client Test', () => {
         },
       ],
     })
-    const encodedMsg = cosmosclient.codec.packCosmosAny(msgSend)
+    const encodedMsg = cosmosclient.codec.instanceToProtoAny(msgSend)
 
     assertTxHstory(getClientUrl(cosmosClient), 'cosmos1xvt4e7xd0j9dwv2w83g50tpcltsl90h52003e2', {
       pagination: {
@@ -224,7 +224,7 @@ describe('Client Test', () => {
         },
       ],
     })
-    const encodedMsg2 = cosmosclient.codec.packCosmosAny(msgSend2)
+    const encodedMsg2 = cosmosclient.codec.instanceToProtoAny(msgSend2)
     assertTxHstory(getClientUrl(cosmosClient), 'cosmos1pjkpqxmvz47a5aw40l98fyktlg7k6hd9heq95z', {
       pagination: {
         total: '1',
@@ -304,7 +304,7 @@ describe('Client Test', () => {
         },
       ],
     })
-    const encodedMsg = cosmosclient.codec.packCosmosAny(msgSend)
+    const encodedMsg = cosmosclient.codec.instanceToProtoAny(msgSend)
 
     assertTxHashGet(getClientUrl(cosmosClient), '19BFC1E8EBB10AA1EC6B82E380C6F5FD349D367737EA8D55ADB4A24F0F7D1066', {
       tx_response: {
@@ -317,7 +317,7 @@ describe('Client Test', () => {
         tx: {
           body: {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            messages: [encodedMsg as any],
+            messages: [encodedMsg],
           },
         },
         timestamp: '2020-09-25T06:09:15Z',

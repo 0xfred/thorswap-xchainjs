@@ -1,3 +1,4 @@
+import { fromBase64, toBase64 } from '@cosmjs/encoding'
 import { cosmosclient, proto } from '@cosmos-client/core'
 import { Address, Balance, FeeType, Fees, Network, TxHash, TxType, singleFee } from '@thorswap-lib/xchain-client'
 import { CosmosSDKClient, TxLog } from '@thorswap-lib/xchain-cosmos'
@@ -14,6 +15,7 @@ import {
 } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 import * as bech32Buffer from 'bech32-buffer'
+import Long from 'long'
 
 import { ChainId, ChainIds, ClientUrl, ExplorerUrl, ExplorerUrls, NodeInfoResponse, TxData } from './types'
 import { MsgNativeTx } from './types/messages'
@@ -248,7 +250,7 @@ export const buildDepositTx = async ({
   const depositMsg = types.types.MsgDeposit.fromObject(msgDepositObj)
 
   return new proto.cosmos.tx.v1beta1.TxBody({
-    messages: [cosmosclient.codec.packAny(depositMsg)],
+    messages: [cosmosclient.codec.instanceToProtoAny(depositMsg)],
     memo: msgNativeTx.memo,
   })
 }
@@ -303,8 +305,61 @@ export const buildTransferTx = async ({
   const transferMsg = types.types.MsgSend.fromObject(transferObj)
 
   return new proto.cosmos.tx.v1beta1.TxBody({
-    messages: [cosmosclient.codec.packAny(transferMsg)],
+    messages: [cosmosclient.codec.instanceToProtoAny(transferMsg)],
     memo,
+  })
+}
+
+/**
+ * Builds auth info
+ *
+ * @param signerPubkey - signerPubkey string
+ * @param sequence - account sequence
+ * @param gasLimit - transaction gas limit
+ * @param signers - boolean array of the signers
+ * @returns
+ */
+export const buildAuthInfo = ({
+  signerPubkey,
+  sequence,
+  gasLimit,
+  signers = [],
+}: {
+  signerPubkey: proto.google.protobuf.Any
+  sequence: Long
+  gasLimit: string
+  signers?: boolean[]
+}) => {
+  const isMultisig = signers.length > 0
+  return new proto.cosmos.tx.v1beta1.AuthInfo({
+    signer_infos: [
+      {
+        public_key: signerPubkey,
+        mode_info: isMultisig
+          ? {
+              multi: {
+                bitarray: proto.cosmos.crypto.multisig.v1beta1.CompactBitArray.from(signers),
+                mode_infos: signers
+                  .filter((signer) => signer)
+                  .map(() => ({
+                    single: {
+                      mode: proto.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
+                    },
+                  })),
+              },
+            }
+          : {
+              single: {
+                mode: proto.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
+              },
+            },
+        sequence: sequence,
+      },
+    ],
+    fee: {
+      amount: null,
+      gas_limit: Long.fromString(gasLimit),
+    },
   })
 }
 
@@ -316,6 +371,7 @@ export const buildTransferTx = async ({
  * @param signerPubkey - signerPubkey string
  * @param sequence - account sequence
  * @param gasLimit - transaction gas limit
+ * @param signers - boolean array of the signers
  * @returns
  */
 export const buildUnsignedTx = ({
@@ -324,29 +380,20 @@ export const buildUnsignedTx = ({
   signerPubkey,
   sequence,
   gasLimit,
+  signers = [],
 }: {
   cosmosSdk: cosmosclient.CosmosSDK
   txBody: proto.cosmos.tx.v1beta1.TxBody
   signerPubkey: proto.google.protobuf.Any
-  sequence: cosmosclient.Long
+  sequence: Long
   gasLimit: string
+  signers?: boolean[]
 }): cosmosclient.TxBuilder => {
-  const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
-    signer_infos: [
-      {
-        public_key: signerPubkey,
-        mode_info: {
-          single: {
-            mode: proto.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
-          },
-        },
-        sequence: sequence,
-      },
-    ],
-    fee: {
-      amount: null,
-      gas_limit: cosmosclient.Long.fromString(gasLimit),
-    },
+  const authInfo = buildAuthInfo({
+    signerPubkey,
+    sequence,
+    gasLimit,
+    signers,
   })
 
   return new cosmosclient.TxBuilder(cosmosSdk, txBody, authInfo)
@@ -521,3 +568,90 @@ export const getExplorerTxUrl = ({
 }
 
 export const isAssetRuneNative = (asset: Asset): boolean => assetToString(asset) === assetToString(AssetRuneNative)
+
+export const createMultisig = (pubKeys: string[], threshold: number) => {
+  const pubKeyInstances = pubKeys.map(
+    (pubKey) =>
+      new proto.cosmos.crypto.secp256k1.PubKey({
+        key: Buffer.from(pubKey, 'base64'),
+      }),
+  )
+  return new proto.cosmos.crypto.multisig.LegacyAminoPubKey({
+    public_keys: pubKeyInstances.map((pubKeyInstance) => ({
+      ...cosmosclient.codec.instanceToProtoAny(pubKeyInstance),
+    })),
+    threshold,
+  })
+}
+
+export const getMultisigAddress = (multisigPubKey: proto.cosmos.crypto.multisig.LegacyAminoPubKey) =>
+  cosmosclient.AccAddress.fromPublicKey(multisigPubKey).toString()
+
+export const mergeSignatures = (signatures: Uint8Array[]) => {
+  const multisig = proto.cosmos.crypto.multisig.v1beta1.MultiSignature.fromObject({ signatures })
+  return proto.cosmos.crypto.multisig.v1beta1.MultiSignature.encode(multisig).finish()
+}
+
+export const exportSignature = (signature: Uint8Array) => toBase64(signature)
+
+export const importSignature = (signature: string) => fromBase64(signature)
+
+export const exportMultisigTx = (txBuilder: cosmosclient.TxBuilder) => txBuilder.toProtoJSON()
+
+export const importMultisigTx = (cosmosSdk: cosmosclient.CosmosSDK, tx: any) => {
+  try {
+    const messages = tx.body.messages.map((message: any) =>
+      (message['@type'] as string).endsWith('MsgSend')
+        ? types.types.MsgSend.fromObject(message)
+        : types.types.MsgDeposit.fromObject(message),
+    )
+
+    const txBody = new proto.cosmos.tx.v1beta1.TxBody({
+      messages: messages.map((message: any) => cosmosclient.codec.instanceToProtoAny(message)),
+      memo: tx.body.memo,
+    })
+
+    const signerInfo = tx.auth_info.signer_infos[0]
+
+    const multisig = new proto.cosmos.crypto.multisig.LegacyAminoPubKey({
+      public_keys: signerInfo.public_key.public_keys.map((publicKey: any) =>
+        cosmosclient.codec.instanceToProtoAny(
+          new proto.cosmos.crypto.secp256k1.PubKey({
+            key: Buffer.from(publicKey.key, 'base64'),
+          }),
+        ),
+      ),
+      threshold: signerInfo.public_key.threshold,
+    })
+
+    const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
+      signer_infos: [
+        {
+          public_key: cosmosclient.codec.instanceToProtoAny(multisig),
+          mode_info: {
+            multi: {
+              bitarray: proto.cosmos.crypto.multisig.v1beta1.CompactBitArray.fromObject({
+                extra_bits_stored: signerInfo.mode_info.multi.bitarray.extra_bits_stored,
+                elems: signerInfo.mode_info.multi.bitarray.elems,
+              }),
+              mode_infos: signerInfo.mode_info.multi.mode_infos.map(() => ({
+                single: {
+                  mode: proto.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
+                },
+              })),
+            },
+          },
+          sequence: Long.fromString(signerInfo.sequence),
+        },
+      ],
+      fee: {
+        ...tx.auth_info.fee,
+        gas_limit: Long.fromString(tx.auth_info.fee.gas_limit),
+      },
+    })
+
+    return new cosmosclient.TxBuilder(cosmosSdk, txBody, authInfo)
+  } catch (e) {
+    throw new Error(`Invalid transaction object: ${e}`)
+  }
+}

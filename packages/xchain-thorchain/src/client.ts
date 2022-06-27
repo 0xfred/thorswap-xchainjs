@@ -29,6 +29,7 @@ import {
   baseAmount,
 } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
+import Long from 'long'
 
 import {
   ChainId,
@@ -507,9 +508,9 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
     const txBuilder = buildUnsignedTx({
       cosmosSdk: this.getCosmosClient().sdk,
       txBody: depositTxBody,
-      signerPubkey: cosmosclient.codec.packAny(signerPubkey),
+      signerPubkey: cosmosclient.codec.instanceToProtoAny(signerPubkey),
       gasLimit: DEFAULT_GAS_VALUE,
-      sequence: account.sequence || cosmosclient.Long.ZERO,
+      sequence: (account.sequence as Long) || Long.ZERO,
     })
 
     return (await this.getCosmosClient().signAndBroadcast(txBuilder, privKey, account)) || ''
@@ -535,7 +536,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
     cosmosSdk: cosmosclient.CosmosSDK
     txBody: proto.cosmos.tx.v1beta1.TxBody
     signerPubkey: proto.google.protobuf.Any
-    sequence: cosmosclient.Long
+    sequence: Long
     gasLimit: string
   }): cosmosclient.TxBuilder => {
     const authInfo = new proto.cosmos.tx.v1beta1.AuthInfo({
@@ -552,7 +553,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
       ],
       fee: {
         amount: null,
-        gas_limit: cosmosclient.Long.fromString(gasLimit),
+        gas_limit: Long.fromString(gasLimit),
       },
     })
 
@@ -612,8 +613,8 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
       cosmosSdk: this.getCosmosClient().sdk,
       txBody: txBody,
       gasLimit: DEFAULT_GAS_VALUE,
-      signerPubkey: cosmosclient.codec.packAny(signerPubkey),
-      sequence: account.sequence || cosmosclient.Long.ZERO,
+      signerPubkey: cosmosclient.codec.instanceToProtoAny(signerPubkey),
+      sequence: (account.sequence as Long) || Long.ZERO,
     })
 
     return (await this.getCosmosClient().signAndBroadcast(txBuilder, privKey, account)) || ''
@@ -666,11 +667,11 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
       cosmosSdk: this.getCosmosClient().sdk,
       txBody: txBody,
       gasLimit: DEFAULT_GAS_VALUE,
-      signerPubkey: cosmosclient.codec.packAny(privKey.pubKey()),
-      sequence: cosmosclient.Long.fromString(from_sequence) || cosmosclient.Long.ZERO,
+      signerPubkey: cosmosclient.codec.instanceToProtoAny(privKey.pubKey()),
+      sequence: Long.fromString(from_sequence) || Long.ZERO,
     })
 
-    const signDocBytes = txBuilder.signDocBytes(cosmosclient.Long.fromString(from_account_number))
+    const signDocBytes = txBuilder.signDocBytes(Long.fromString(from_account_number))
     txBuilder.addSignature(privKey.sign(signDocBytes))
     return txBuilder.txBytes()
   }

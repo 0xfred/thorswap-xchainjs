@@ -17,7 +17,7 @@ import {
 import { Asset, AssetAtom, AssetMuon, Chain, assetToString, baseAmount } from '@thorswap-lib/xchain-util'
 
 import { CosmosSDKClient } from './cosmos/sdk-client'
-import { TxOfflineParams } from './cosmos/types'
+import { TxOfflineParams, TxResponse } from './cosmos/types'
 import { DECIMAL, getAsset, getDenom, getTxsFromHistory } from './util'
 
 /**
@@ -228,7 +228,17 @@ class Client extends BaseXChainClient implements CosmosClient, XChainClient {
       throw new Error('transaction not found')
     }
 
-    const txs = getTxsFromHistory([txResult], this.getMainAsset())
+    const txResult2: TxResponse = {
+      ...txResult,
+      tx: txResult.tx
+        ? {
+            body: {
+              messages: txResult.tx.body.messages.map((message) => proto.google.protobuf.Any.fromObject(message)),
+            },
+          }
+        : undefined,
+    }
+    const txs = getTxsFromHistory([txResult2], this.getMainAsset())
     if (txs.length === 0) throw new Error('transaction not found')
 
     return txs[0]
