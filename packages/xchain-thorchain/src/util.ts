@@ -573,7 +573,7 @@ export const createMultisig = (pubKeys: string[], threshold: number) => {
   const pubKeyInstances = pubKeys.map(
     (pubKey) =>
       new proto.cosmos.crypto.secp256k1.PubKey({
-        key: Buffer.from(pubKey, 'base64'),
+        key: fromBase64(pubKey),
       }),
   )
   return new proto.cosmos.crypto.multisig.LegacyAminoPubKey({
@@ -617,7 +617,7 @@ export const importMultisigTx = (cosmosSdk: cosmosclient.CosmosSDK, tx: any) => 
       public_keys: signerInfo.public_key.public_keys.map((publicKey: any) =>
         cosmosclient.codec.instanceToProtoAny(
           new proto.cosmos.crypto.secp256k1.PubKey({
-            key: Buffer.from(publicKey.key, 'base64'),
+            key: fromBase64(publicKey.key),
           }),
         ),
       ),

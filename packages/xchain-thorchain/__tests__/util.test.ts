@@ -208,8 +208,6 @@ describe('thorchain/util', () => {
         assetAmount: baseAmount(1000),
       })
 
-      const account = await cosmosClient.getAccount(cosmosclient.AccAddress.fromPublicKey(multisig))
-
       const unsignedTransferTx = buildUnsignedTx({
         cosmosSdk: cosmosClient.sdk,
         signerPubkey: cosmosclient.codec.instanceToProtoAny(multisig),
@@ -219,7 +217,7 @@ describe('thorchain/util', () => {
         signers: [true, true],
       })
 
-      const signDocBytes = unsignedTransferTx.signDocBytes(account.account_number as Long)
+      const signDocBytes = unsignedTransferTx.signDocBytes(Long.fromNumber(45781))
 
       const bobSignature = bobPrivateKey.sign(signDocBytes)
       const aliceSignature = alicePrivateKey.sign(signDocBytes)
