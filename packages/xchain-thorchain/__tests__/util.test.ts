@@ -4,6 +4,7 @@ import { Network } from '@thorswap-lib/xchain-client'
 import { CosmosSDKClient } from '@thorswap-lib/xchain-cosmos'
 import { AssetRuneNative, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
 import Long from 'long'
+import nock from 'nock'
 
 import {
   DEFAULT_GAS_VALUE,
@@ -30,6 +31,18 @@ import {
 
 import depositTx from './depositTx.json'
 import sendTx from './sendTx.json'
+
+const THORCHAIN_MAINNET_CHAIN_ID = 'thorchain-mainnet-v1'
+const THORCHAIN_MAINNET_URL = 'https://thornode.ninerealms.com'
+
+const mockGetChainId = (url: string, chainId: string) => {
+  const response = {
+    default_node_info: {
+      network: chainId,
+    },
+  }
+  nock(url).get('/cosmos/base/tendermint/v1beta1/node_info').reply(200, response)
+}
 
 describe('thorchain/util', () => {
   describe('Denom <-> Asset', () => {
@@ -168,11 +181,13 @@ describe('thorchain/util', () => {
         consAddr: `${prefix}valcons`,
         consPub: `${prefix}valconspub`,
       })
+
+      mockGetChainId(THORCHAIN_MAINNET_URL, THORCHAIN_MAINNET_CHAIN_ID)
     })
 
     const cosmosClient = new CosmosSDKClient({
-      server: 'https://thornode.ninerealms.com',
-      chainId: 'thorchain-mainnet-v1',
+      server: THORCHAIN_MAINNET_URL,
+      chainId: THORCHAIN_MAINNET_CHAIN_ID,
       prefix: 'thor',
     })
 
