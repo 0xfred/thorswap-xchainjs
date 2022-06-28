@@ -22,6 +22,7 @@ import {
   FeeType,
   Fees,
   Network,
+  PrivateKeyCache,
   Tx,
   TxHash,
   TxHistoryParams,
@@ -39,6 +40,7 @@ import {
   USDC_SPL_MINT_ADDRESS,
   USDC_SPL_TESTNET_MINT_ADDRESS,
   baseAmount,
+  deepEqual,
 } from '@thorswap-lib/xchain-util'
 import { derivePath } from 'ed25519-hd-key'
 
@@ -50,6 +52,7 @@ const EXPLORER_URL = 'https://explorer.solana.com'
 
 export type SolanaClientParams = XChainClientParams & {
   nodeUrl?: string
+  privateKeyInit?: PrivateKeyCache<Keypair>
 }
 
 /**
@@ -57,6 +60,8 @@ export type SolanaClientParams = XChainClientParams & {
  */
 class Client extends BaseXChainClient implements XChainClient {
   public nodeUrl: string
+  private privateKeyCache: PrivateKeyCache<Keypair> | undefined
+
   constructor({
     nodeUrl,
     network = Network.Testnet,
@@ -65,6 +70,7 @@ class Client extends BaseXChainClient implements XChainClient {
       [Network.Mainnet]: `m/44'/501'/0'/1'/`,
       [Network.Testnet]: `m/44'/501'/0'/1'/`,
     },
+    privateKeyInit,
   }: SolanaClientParams) {
     super(Chain.Solana, { network, phrase, rootDerivationPaths })
     this.nodeUrl =
@@ -77,6 +83,7 @@ class Client extends BaseXChainClient implements XChainClient {
             return clusterApiUrl('testnet')
         }
       })()
+    this.privateKeyCache = privateKeyInit
   }
 
   async getFees(): Promise<Fees> {
@@ -307,10 +314,37 @@ class Client extends BaseXChainClient implements XChainClient {
     if (index < 0) {
       throw new Error('index must be equal or greater than zero')
     }
-    const seed = getSeed(this.phrase)
-    const keypair = Keypair.fromSeed(derivePath(this.getFullDerivationPath(index), seed.toString('hex')).key)
 
-    return keypair
+    if (
+      this.privateKeyCache &&
+      deepEqual(this.privateKeyCache, {
+        index,
+        phrase: this.phrase,
+        network: this.network,
+        privateKey: this.privateKeyCache.privateKey,
+      })
+    )
+      return this.privateKeyCache.privateKey
+
+    const privateKey = this.createKeyPair(index)
+
+    this.privateKeyCache = {
+      phrase: this.phrase,
+      network: this.network,
+      index,
+      privateKey,
+    }
+
+    return privateKey
+  }
+
+  createKeyPair(index = 0) {
+    if (index < 0) {
+      throw new Error('index must be equal or greater than zero')
+    }
+
+    const seed = getSeed(this.phrase)
+    return Keypair.fromSeed(derivePath(this.getFullDerivationPath(index), seed.toString('hex')).key)
   }
 }
 

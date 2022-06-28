@@ -5,6 +5,7 @@ import {
   // FeeOption,
   FeeRate,
   Network,
+  PrivateKeyCache,
   Tx,
   TxHash,
   TxHistoryParams,
@@ -15,7 +16,7 @@ import {
   XChainClientParams,
 } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
-import { AssetDoge, Chain, assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
+import { AssetDoge, Chain, assetAmount, assetToBase, deepEqual } from '@thorswap-lib/xchain-util'
 import * as Dogecoin from 'bitcoinjs-lib'
 
 import * as sochain from './sochain-api'
@@ -28,6 +29,7 @@ export type DogecoinClientParams = XChainClientParams & {
   nodeUrl?: string
   nodeAuth?: NodeAuth | null
   apiKey?: string | null
+  privateKeyInit?: PrivateKeyCache<Dogecoin.ECPairInterface>
 }
 
 /**
@@ -38,6 +40,7 @@ class Client extends UTXOClient {
   public nodeUrl = ''
   public nodeAuth?: NodeAuth
   private apiKey: string | null = null
+  private privateKeyCache: PrivateKeyCache<Dogecoin.ECPairInterface> | undefined
 
   /**
    * Constructor
@@ -60,6 +63,7 @@ class Client extends UTXOClient {
       [Network.Testnet]: `m/44'/1'/0'/0/`,
     },
     apiKey = null,
+    privateKeyInit,
   }: DogecoinClientParams) {
     super(Chain.Doge, { network, rootDerivationPaths, phrase })
     this.nodeUrl =
@@ -83,6 +87,7 @@ class Client extends UTXOClient {
       nodeAuth === null ? undefined : nodeAuth
 
     this.setSochainUrl(sochainUrl)
+    this.privateKeyCache = privateKeyInit
   }
 
   /**
@@ -178,6 +183,39 @@ class Client extends UTXOClient {
    * @throws {"Could not get private key from phrase"} Throws an error if failed creating Doge keys from the given phrase
    * */
   private getDogeKeys(phrase: string, index = 0): Dogecoin.ECPairInterface {
+    if (
+      this.privateKeyCache &&
+      deepEqual(this.privateKeyCache, {
+        index,
+        phrase: phrase,
+        network: this.network,
+        privateKey: this.privateKeyCache.privateKey,
+      })
+    )
+      return this.privateKeyCache.privateKey
+
+    const privateKey = this.createBtcKeys(phrase, index)
+
+    this.privateKeyCache = {
+      network: this.network,
+      index,
+      phrase,
+      privateKey,
+    }
+
+    return privateKey
+  }
+
+  /**
+   * creates DOGE keys from phrase and index
+   *
+   * @param {string} phrase The phrase to be used for generating privkey
+   * @param {number} index The phrase to be used for generating privkey
+   * @returns {ECPairInterface} The privkey generated from the given phrase
+   *
+   * @throws {"Could not get private key from phrase"} Throws an error if failed creating BTC keys from the given phrase
+   */
+  createBtcKeys(phrase: string, index = 0): Dogecoin.ECPairInterface {
     const dogeNetwork = Utils.dogeNetwork(this.network)
 
     const seed = getSeed(phrase)

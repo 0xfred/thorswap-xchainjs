@@ -1,4 +1,5 @@
-import { Network, Tx, TxParams } from '@thorswap-lib/xchain-client'
+import { proto } from '@cosmos-client/core'
+import { Network, PrivateKeyCache, Tx, TxParams } from '@thorswap-lib/xchain-client'
 import { Asset, BaseAmount } from '@thorswap-lib/xchain-util'
 
 export type NodeUrl = {
@@ -23,6 +24,7 @@ export type ThorchainClientParams = {
   clientUrl?: ClientUrl
   explorerUrls?: ExplorerUrls
   isStagenet?: boolean
+  privateKeyInit?: PrivateKeyCache<proto.cosmos.crypto.secp256k1.PrivKey>
 }
 
 export type DepositParam = {

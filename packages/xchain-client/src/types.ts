@@ -88,6 +88,13 @@ export type XChainClientParams = {
   rootDerivationPaths?: RootDerivationPaths
 }
 
+export type PrivateKeyCache<T> = {
+  privateKey: T
+  network: Network
+  phrase: string
+  index: number
+}
+
 export interface XChainClient {
   setNetwork(net: Network): void
   getNetwork(): Network

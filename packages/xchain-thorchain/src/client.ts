@@ -6,6 +6,7 @@ import {
   FeeType,
   Fees,
   Network,
+  PrivateKeyCache,
   Tx,
   TxFrom,
   TxHash,
@@ -27,6 +28,7 @@ import {
   assetFromString,
   assetToString,
   baseAmount,
+  deepEqual,
 } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 import Long from 'long'
@@ -93,6 +95,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
     [Network.Mainnet]: THORCHAIN_MAINNET_CHAIN_ID,
     [Network.Testnet]: THORCHAIN_TESTNET_CHAIN_ID,
   }
+  private privateKeyCache: PrivateKeyCache<proto.cosmos.crypto.secp256k1.PrivKey> | undefined
 
   /**
    * Constructor
@@ -114,6 +117,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
       [Network.Testnet]: "44'/931'/0'/0/",
     },
     isStagenet = false,
+    privateKeyInit,
   }: XChainClientParams & ThorchainClientParams) {
     super(Chain.Cosmos, { network, rootDerivationPaths, phrase })
 
@@ -130,6 +134,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
       chainId: this.getChainId(),
       prefix: getPrefix(this.network, this.isStagenet),
     })
+    this.privateKeyCache = privateKeyInit
   }
 
   setChainId(chainIds?: ChainIds) {
@@ -246,6 +251,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
   }
 
   /**
+   * @private
    * Get private key
    *
    * @param {number} index the HD wallet index (optional)
@@ -254,8 +260,42 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
    * @throws {"Phrase not set"}
    * Throws an error if phrase has not been set before
    * */
-  getPrivateKey(index = 0): proto.cosmos.crypto.secp256k1.PrivKey {
-    return this.cosmosClient.getPrivKeyFromMnemonic(this.phrase, this.getFullDerivationPath(index))
+  private getPrivateKey(index = 0): proto.cosmos.crypto.secp256k1.PrivKey {
+    if (
+      this.privateKeyCache &&
+      deepEqual(this.privateKeyCache, {
+        index,
+        phrase: this.phrase,
+        network: this.network,
+        privateKey: this.privateKeyCache.privateKey,
+      })
+    )
+      return this.privateKeyCache.privateKey
+
+    const privateKey = this.createPrivateKey(this.phrase, index)
+
+    this.privateKeyCache = {
+      network: this.network,
+      phrase: this.phrase,
+      index,
+      privateKey,
+    }
+
+    return privateKey
+  }
+
+  /**
+   * Create private key
+   *
+   * @param {string} phrase the seed phrase
+   * @param {number} index the HD wallet index (optional)
+   * @returns {PrivKey} The private key generated from the given phrase
+   *
+   * @throws {"Phrase not set"}
+   * Throws an error if phrase has not been set before
+   * */
+  createPrivateKey(phrase: string, index = 0): proto.cosmos.crypto.secp256k1.PrivKey {
+    return this.cosmosClient.getPrivKeyFromMnemonic(phrase, this.getFullDerivationPath(index))
   }
 
   /**

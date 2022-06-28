@@ -5,6 +5,7 @@ import {
   FeeOption,
   FeeRate,
   Network,
+  PrivateKeyCache,
   Tx,
   TxHash,
   TxHistoryParams,
@@ -15,7 +16,7 @@ import {
   XChainClientParams,
 } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
-import { AssetLTC, Chain, assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
+import { AssetLTC, Chain, assetAmount, assetToBase, deepEqual } from '@thorswap-lib/xchain-util'
 import * as Litecoin from 'bitcoinjs-lib'
 
 import * as sochain from './sochain-api'
@@ -27,6 +28,7 @@ export type LitecoinClientParams = XChainClientParams & {
   sochainUrl?: string
   nodeUrl?: string
   nodeAuth?: NodeAuth | null
+  privateKeyInit?: PrivateKeyCache<Litecoin.ECPairInterface>
 }
 
 /**
@@ -36,6 +38,7 @@ class Client extends UTXOClient {
   private sochainUrl = ''
   private nodeUrl = ''
   private nodeAuth?: NodeAuth
+  private privateKeyCache: PrivateKeyCache<Litecoin.ECPairInterface> | undefined
 
   /**
    * Constructor
@@ -57,6 +60,7 @@ class Client extends UTXOClient {
       [Network.Mainnet]: `m/84'/2'/0'/0/`,
       [Network.Testnet]: `m/84'/1'/0'/0/`,
     },
+    privateKeyInit,
   }: LitecoinClientParams) {
     super(Chain.Litecoin, { network, rootDerivationPaths, phrase })
     this.nodeUrl =
@@ -76,6 +80,7 @@ class Client extends UTXOClient {
       nodeAuth === null ? undefined : nodeAuth
 
     this.setSochainUrl(sochainUrl)
+    this.privateKeyCache = privateKeyInit
   }
 
   /**
@@ -155,7 +160,6 @@ class Client extends UTXOClient {
   }
 
   /**
-   * @private
    * Get private key.
    *
    * Private function to get keyPair from the this.phrase
@@ -165,9 +169,42 @@ class Client extends UTXOClient {
    *
    * @throws {"Could not get private key from phrase"} Throws an error if failed creating LTC keys from the given phrase
    * */
-  private getLtcKeys(phrase: string, index = 0): Litecoin.ECPairInterface {
-    const ltcNetwork = Utils.ltcNetwork(this.network)
+  getLtcKeys(phrase: string, index = 0): Litecoin.ECPairInterface {
+    if (
+      this.privateKeyCache &&
+      deepEqual(this.privateKeyCache, {
+        index,
+        phrase: phrase,
+        network: this.network,
+        privateKey: this.privateKeyCache.privateKey,
+      })
+    )
+      return this.privateKeyCache.privateKey
 
+    const privateKey = this.createBtcKeys(phrase, index)
+
+    this.privateKeyCache = {
+      network: this.network,
+      index,
+      phrase,
+      privateKey,
+    }
+
+    return privateKey
+  }
+
+  /**
+   *
+   * creates LTC keys from phrase and index
+   *
+   * @param {string} phrase The phrase to be used for generating privkey
+   * @param {number} index The phrase to be used for generating privkey
+   * @returns {ECPairInterface} The privkey generated from the given phrase
+   *
+   * @throws {"Could not get private key from phrase"} Throws an error if failed creating BTC keys from the given phrase
+   */
+  createBtcKeys(phrase: string, index = 0): Litecoin.ECPairInterface {
+    const ltcNetwork = Utils.ltcNetwork(this.network)
     const seed = getSeed(phrase)
     const master = Litecoin.bip32.fromSeed(seed, ltcNetwork).derivePath(this.getFullDerivationPath(index))
 

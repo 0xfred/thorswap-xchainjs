@@ -5,6 +5,7 @@ import {
   FeeOption,
   FeeRate,
   Network,
+  PrivateKeyCache,
   Tx,
   TxHash,
   TxHistoryParams,
@@ -15,7 +16,7 @@ import {
   XChainClientParams,
 } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
-import { AssetBTC, Chain, assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
+import { AssetBTC, Chain, assetAmount, assetToBase, deepEqual } from '@thorswap-lib/xchain-util'
 import * as Bitcoin from 'bitcoinjs-lib'
 
 import { BTC_DECIMAL } from './const'
@@ -27,6 +28,7 @@ export type BitcoinClientParams = XChainClientParams & {
   sochainUrl?: string
   blockstreamUrl?: string
   haskoinUrl?: ClientUrl
+  privateKeyInit?: PrivateKeyCache<Bitcoin.ECPairInterface>
 }
 
 /**
@@ -36,6 +38,7 @@ class Client extends UTXOClient {
   private sochainUrl = ''
   private blockstreamUrl = ''
   private haskoinUrl: ClientUrl
+  private privateKeyCache: PrivateKeyCache<Bitcoin.ECPairInterface> | undefined
 
   /**
    * Constructor
@@ -56,11 +59,13 @@ class Client extends UTXOClient {
       [Network.Testnet]: `84'/1'/0'/0/`,
     },
     phrase = '',
+    privateKeyInit,
   }: BitcoinClientParams) {
     super(Chain.Bitcoin, { network, rootDerivationPaths, phrase })
     this.setSochainUrl(sochainUrl)
     this.setBlockstreamUrl(blockstreamUrl)
     this.haskoinUrl = haskoinUrl
+    this.privateKeyCache = privateKeyInit
   }
 
   /**
@@ -154,11 +159,45 @@ class Client extends UTXOClient {
    * Private function to get keyPair from the this.phrase
    *
    * @param {string} phrase The phrase to be used for generating privkey
+   * @param {number} index The phrase to be used for generating privkey
+   * @returns {ECPairInterface} The privkey generated from the given phrase
+   *
+   * */
+  private getBtcKeys(phrase: string, index = 0): Bitcoin.ECPairInterface {
+    if (
+      this.privateKeyCache &&
+      deepEqual(this.privateKeyCache, {
+        index,
+        phrase: phrase,
+        network: this.network,
+        privateKey: this.privateKeyCache.privateKey,
+      })
+    )
+      return this.privateKeyCache.privateKey
+
+    const ECPair = this.createBtcKeys(phrase, index)
+
+    this.privateKeyCache = {
+      network: this.network,
+      index,
+      phrase,
+      privateKey: ECPair,
+    }
+
+    return ECPair
+  }
+
+  /**
+   *
+   * creates BTC keys from phrase and index
+   *
+   * @param {string} phrase The phrase to be used for generating privkey
+   * @param {number} index The phrase to be used for generating privkey
    * @returns {ECPairInterface} The privkey generated from the given phrase
    *
    * @throws {"Could not get private key from phrase"} Throws an error if failed creating BTC keys from the given phrase
-   * */
-  private getBtcKeys(phrase: string, index = 0): Bitcoin.ECPairInterface {
+   */
+  createBtcKeys(phrase: string, index = 0): Bitcoin.ECPairInterface {
     const btcNetwork = Utils.btcNetwork(this.network)
 
     const seed = getSeed(phrase)
@@ -167,7 +206,6 @@ class Client extends UTXOClient {
     if (!master.privateKey) {
       throw new Error('Could not get private key from phrase')
     }
-
     return Bitcoin.ECPair.fromPrivateKey(master.privateKey, { network: btcNetwork })
   }
 

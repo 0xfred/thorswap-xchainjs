@@ -650,4 +650,10 @@ describe('BinanceClient Test', () => {
     bnbClient.setNetwork(Network.Testnet)
     expect(bnbClient.getExplorerTxUrl('testTxHere')).toEqual('https://testnet-explorer.binance.org/tx/testTxHere')
   })
+
+  it('should return the correct private key', () => {
+    expect(bnbClient.createPrivateKeyFromMnemonic(phrase, 0)).toEqual(
+      'f995100f54f43f8e7b5e4e64ccc797df7d05db16ee76a39df38d5d5f2c526226',
+    )
+  })
 })

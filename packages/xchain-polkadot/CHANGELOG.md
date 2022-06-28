@@ -1,3 +1,7 @@
+# v.0.10.0 (2022-06-01)
+
+- add KeyringPair as optional constructor param to improve mobile performance
+
 # v.0.9.2 (2022-04-05)
 
 - remove non existing `module` source

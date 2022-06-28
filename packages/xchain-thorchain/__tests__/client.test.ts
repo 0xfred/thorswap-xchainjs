@@ -210,7 +210,7 @@ describe('Client Test', () => {
   })
 
   it('returns private key', async () => {
-    const privKey = thorClient.getPrivateKey()
+    const privKey = thorClient.createPrivateKey(phrase)
     expect(Buffer.from(privKey.bytes()).toString('base64')).toEqual('CHCbyYWorMZVRFtfJzt72DigvZeRNi3jo2c3hGEQ46I=')
   })
 

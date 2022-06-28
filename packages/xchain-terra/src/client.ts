@@ -25,8 +25,9 @@ import {
   TxsPage,
   XChainClient,
   XChainClientParams,
+  PrivateKeyCache,
 } from '@thorswap-lib/xchain-client'
-import { Asset, AssetLUNA, Chain, baseAmount } from '@thorswap-lib/xchain-util'
+import { Asset, AssetLUNA, Chain, baseAmount, deepEqual } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 import { Denom } from './const'
 import { isLunaAsset, isUSTAsset } from './utils'
@@ -47,6 +48,7 @@ const DEFAULT_CONFIG = {
     ChainID: 'bombay-12',
   },
 }
+
 export type SearchTxParams = {
   messageAction?: string
   messageSender?: string
@@ -57,11 +59,17 @@ export type SearchTxParams = {
   txMinHeight?: number
   txMaxHeight?: number
 }
+
+export type TerraClientParams = XChainClientParams & {
+  privateKeyInit?: PrivateKeyCache<MnemonicKey>
+}
+
 /**
  * Terra Client
  */
 class Client extends BaseXChainClient implements XChainClient {
   private lcdClient: LCDClient
+  private privateKeyCache: PrivateKeyCache<MnemonicKey> | undefined
   constructor({
     network = Network.Testnet,
 
@@ -70,7 +78,8 @@ class Client extends BaseXChainClient implements XChainClient {
       [Network.Mainnet]: "44'/330'/0'/0/",
       [Network.Testnet]: "44'/330'/0'/0/",
     },
-  }: XChainClientParams) {
+    privateKeyInit,
+  }: TerraClientParams) {
     super(Chain.Terra, { network, rootDerivationPaths, phrase })
 
     //TODO add client variables to ctor to override DEFAULT_CONFIG
@@ -78,6 +87,8 @@ class Client extends BaseXChainClient implements XChainClient {
       URL: DEFAULT_CONFIG[this.network].cosmosAPIURL,
       chainID: DEFAULT_CONFIG[this.network].ChainID,
     })
+
+    this.privateKeyCache = privateKeyInit
   }
 
   async getFees(): Promise<Fees> {
@@ -102,7 +113,7 @@ class Client extends BaseXChainClient implements XChainClient {
     recipient,
     rates,
   }: TxParams & { rates: Coin }): Promise<Fee> {
-    const mnemonicKey = new MnemonicKey({ mnemonic: this.phrase, index: walletIndex })
+    const mnemonicKey = this.getMnemonicKey(walletIndex)
     const wallet = this.lcdClient.wallet(mnemonicKey)
 
     let amountToSend: Coins.Input = {}
@@ -134,7 +145,7 @@ class Client extends BaseXChainClient implements XChainClient {
   }
 
   getAddress(walletIndex = 0): string {
-    const mnemonicKey = new MnemonicKey({ mnemonic: this.phrase, index: walletIndex })
+    const mnemonicKey = this.getMnemonicKey(walletIndex)
     return mnemonicKey.accAddress
   }
   getExplorerUrl(): string {
@@ -209,7 +220,7 @@ class Client extends BaseXChainClient implements XChainClient {
   }: TxParams & { fee?: Fee }): Promise<string> {
     if (!this.validateAddress(recipient)) throw new Error(`${recipient} is not a valid terra address`)
 
-    const mnemonicKey = new MnemonicKey({ mnemonic: this.phrase, index: walletIndex })
+    const mnemonicKey = this.getMnemonicKey(walletIndex)
     const wallet = this.lcdClient.wallet(mnemonicKey)
 
     let amountToSend: Coins.Input = {}
@@ -384,6 +395,46 @@ class Client extends BaseXChainClient implements XChainClient {
     })
 
     return { from, to }
+  }
+
+  /**
+   * @private
+   * Gets MnemonicKey for wallet index
+   *
+   * @param {number} walletIndex
+   * @returns {MnemonicKey}
+   */
+  private getMnemonicKey(walletIndex = 0): MnemonicKey {
+    if (
+      this.privateKeyCache &&
+      deepEqual(this.privateKeyCache, {
+        index: walletIndex,
+        phrase: this.phrase,
+        network: this.network,
+        privateKey: this.privateKeyCache.privateKey,
+      })
+    )
+      return this.privateKeyCache?.privateKey
+
+    const privateKey = this.createMnemonicKey(walletIndex)
+
+    this.privateKeyCache = {
+      index: walletIndex,
+      phrase: this.phrase,
+      network: this.network,
+      privateKey,
+    }
+    return privateKey
+  }
+
+  /**
+   * Creates MnemonicKey for wallet index
+   *
+   * @param {number} walletIndex
+   * @returns {MnemonicKey}
+   */
+  createMnemonicKey(walletIndex = 0): MnemonicKey {
+    return new MnemonicKey({ mnemonic: this.phrase, index: walletIndex })
   }
 }
 

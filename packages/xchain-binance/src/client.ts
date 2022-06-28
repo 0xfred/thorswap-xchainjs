@@ -8,6 +8,7 @@ import {
   FeeType,
   Fees,
   Network,
+  PrivateKeyCache,
   Tx,
   TxHash,
   TxHistoryParams,
@@ -28,6 +29,7 @@ import {
   assetToString,
   baseAmount,
   baseToAsset,
+  deepEqual,
 } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 
@@ -79,6 +81,7 @@ export interface BinanceClient {
  */
 class Client extends BaseXChainClient implements BinanceClient, XChainClient {
   private bncClient: BncClient
+  private privateKeyCache: PrivateKeyCache<PrivKey> | undefined
 
   /**
    * Constructor
@@ -90,10 +93,11 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
    *
    * @throws {"Invalid phrase"} Thrown if the given phase is invalid.
    */
-  constructor(params: XChainClientParams) {
+  constructor(params: XChainClientParams, privateKeyInit?: PrivateKeyCache<PrivKey>) {
     super(Chain.Binance, params)
     this.bncClient = new BncClient(this.getClientUrl())
     this.bncClient.chooseNetwork(this.getNetwork())
+    this.privateKeyCache = privateKeyInit
   }
 
   /**
@@ -194,10 +198,47 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
    * @throws {"Phrase not set"}
    * Throws an error if phrase has not been set before
    * */
-  private getPrivateKey(index: number): PrivKey {
+  private getPrivateKey(index = 0): PrivKey {
     if (!this.phrase) throw new Error('Phrase not set')
 
-    return crypto.getPrivateKeyFromMnemonic(this.phrase, true, index)
+    if (
+      this.privateKeyCache &&
+      deepEqual(this.privateKeyCache, {
+        index,
+        phrase: this.phrase,
+        network: this.network,
+        privateKey: this.privateKeyCache.privateKey,
+      })
+    )
+      return this.privateKeyCache.privateKey
+
+    const privateKey = this.createPrivateKeyFromMnemonic(this.phrase, index)
+
+    this.privateKeyCache = {
+      phrase: this.phrase,
+      network: this.network,
+      index,
+      privateKey,
+    }
+
+    return privateKey
+  }
+
+  /**
+   *
+   * Public function to calculate PrivateKey.
+   *
+   * @param {string} phrase seed phrase
+   * @param {number} index account index for the derivation path
+   * @returns {PrivKey} The privkey generated from the given phrase
+   *
+   * @throws {"Phrase not set"}
+   * Throws an error if phrase has not been set before
+   * */
+  createPrivateKeyFromMnemonic(phrase: string, index = 0): PrivKey {
+    if (!this.phrase) throw new Error('Phrase not set')
+
+    return crypto.getPrivateKeyFromMnemonic(phrase, true, index)
   }
 
   /**
@@ -211,6 +252,7 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
   getAddress(index = 0): string {
     return crypto.getAddressFromPrivateKey(this.getPrivateKey(index), getPrefix(this.network))
   }
+
   /**
    * Validate the given address.
    *
@@ -348,13 +390,17 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
    * Broadcast multi-send transaction.
    *
    * @param {MultiSendParams} params The multi-send transfer options.
+   * @param {PrivKey} privateKey a private key that overwrites the walletIndex
    * @returns {TxHash} The transaction hash.
    */
-  async multiSend({ walletIndex = 0, transactions, memo = '' }: MultiSendParams): Promise<TxHash> {
+  async multiSend(
+    { walletIndex = 0, transactions, memo = '' }: MultiSendParams,
+    privateKey = this.getPrivateKey(walletIndex),
+  ): Promise<TxHash> {
     const derivedAddress = this.getAddress(walletIndex)
 
     await this.bncClient.initChain()
-    await this.bncClient.setPrivateKey(this.getPrivateKey(walletIndex))
+    await this.bncClient.setPrivateKey(privateKey)
 
     const transferResult = await this.bncClient.multiSend(
       derivedAddress,
@@ -379,11 +425,15 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
    * Transfer balances.
    *
    * @param {TxParams} params The transfer options.
+   * @param {PrivKey} privateKey A private key that overwrites the walletIndex.
    * @returns {TxHash} The transaction hash.
    */
-  async transfer({ walletIndex, asset, amount, recipient, memo }: TxParams): Promise<TxHash> {
+  async transfer(
+    { walletIndex, asset, amount, recipient, memo }: TxParams,
+    privateKey = this.getPrivateKey(walletIndex || 0),
+  ): Promise<TxHash> {
     await this.bncClient.initChain()
-    await this.bncClient.setPrivateKey(this.getPrivateKey(walletIndex || 0))
+    await this.bncClient.setPrivateKey(privateKey)
 
     const transferResult = await this.bncClient.transfer(
       this.getAddress(walletIndex),

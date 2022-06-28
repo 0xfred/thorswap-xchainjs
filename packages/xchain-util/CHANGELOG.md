@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 # v.0.4.7 (2022-06-09)
 
 - moves COSMOS assets to util
+=======
+# v.0.4.6 (2022-06-04)
+
+- adds deepEqual object comparison
+>>>>>>> 3216668 (Feat: reorders code and introduces generic for privateKeyCache)
 
 # v.0.4.4 (2022-04-05)
 

@@ -6,6 +6,7 @@ import {
   FeeOption,
   FeeRate,
   Network,
+  PrivateKeyCache,
   Tx,
   TxHash,
   TxHistoryParams,
@@ -15,7 +16,7 @@ import {
   XChainClientParams,
 } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
-import { Chain } from '@thorswap-lib/xchain-util'
+import { Chain, deepEqual } from '@thorswap-lib/xchain-util'
 
 import { getAccount, getSuggestedFee, getTransaction, getTransactions } from './haskoin-api'
 import { broadcastTx } from './node-api'
@@ -24,11 +25,15 @@ import { KeyPair } from './types/bitcoincashjs-types'
 import { ClientUrl } from './types/client-types'
 import * as utils from './utils'
 
+export type BitcoinCashPrivateKeyCache<T> = PrivateKeyCache<T> & {
+  derivationPath: string
+}
+
 export type BitcoinCashClientParams = XChainClientParams & {
   haskoinUrl?: ClientUrl
   nodeUrl?: ClientUrl
   nodeAuth?: NodeAuth
-  // index?: number
+  privateKeyInit?: BitcoinCashPrivateKeyCache<KeyPair>
 }
 
 /**
@@ -38,6 +43,7 @@ class Client extends UTXOClient {
   private haskoinUrl: ClientUrl
   private nodeUrl: ClientUrl
   private nodeAuth?: NodeAuth
+  private privateKeyCache: BitcoinCashPrivateKeyCache<KeyPair> | undefined
 
   /**
    * Constructor
@@ -64,6 +70,7 @@ class Client extends UTXOClient {
       [Network.Mainnet]: `m/44'/145'/0'/0/`,
       [Network.Testnet]: `m/44'/1'/0'/0/`,
     },
+    privateKeyInit,
   }: BitcoinCashClientParams) {
     super(Chain.BitcoinCash, { network, rootDerivationPaths, phrase })
     this.network = network
@@ -75,6 +82,8 @@ class Client extends UTXOClient {
       // Leave possibility to send requests without auth info for user
       // by strictly passing nodeAuth as null value
       nodeAuth === null ? undefined : nodeAuth
+
+    this.privateKeyCache = privateKeyInit
   }
 
   /**
@@ -153,15 +162,49 @@ class Client extends UTXOClient {
    * @private
    * Get private key.
    *
-   * Private function to get keyPair from the this.phrase
+   * Private function to get keyPair from phrase
    *
    * @param {string} phrase The phrase to be used for generating privkey
    * @param {string} derivationPath BIP44 derivation path
    * @returns {PrivateKey} The privkey generated from the given phrase
-   *
-   * @throws {"Invalid phrase"} Thrown if invalid phrase is provided.
+
    * */
   private getBCHKeys(phrase: string, derivationPath: string): KeyPair {
+    if (
+      this.privateKeyCache &&
+      deepEqual(this.privateKeyCache, {
+        derivationPath,
+        phrase: phrase,
+        index: this.privateKeyCache.index,
+        network: this.network,
+        privateKey: this.privateKeyCache.privateKey,
+      })
+    )
+      return this.privateKeyCache.privateKey
+
+    const keyPair = this.createBCHKeys(phrase, derivationPath)
+
+    this.privateKeyCache = {
+      index: 0,
+      derivationPath: derivationPath,
+      phrase,
+      network: this.network,
+      privateKey: keyPair,
+    }
+
+    return keyPair
+  }
+
+  /**
+   * creates BCH keys from phrase and index
+   *
+   * @param {string} phrase The phrase to be used for generating privkey
+   * @param {string} derivationPath BIP44 derivation path
+   * @returns {KeyPair} The privkey generated from the given phrase
+   *
+   * @throws {"Invalid phrase"} Thrown if invalid phrase is provided.
+   */
+  createBCHKeys(phrase: string, derivationPath: string): KeyPair {
     const rootSeed = getSeed(phrase)
     const masterHDNode = bitcash.HDNode.fromSeedBuffer(rootSeed, utils.bchNetwork(this.network))
 

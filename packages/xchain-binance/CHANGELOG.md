@@ -1,3 +1,7 @@
+# v.5.5.0 (2022-06-28)
+
+- Performance improvements for mobile applications
+
 # v.5.4.1 (2022-04-05)
 
 - remove non existing `module` source

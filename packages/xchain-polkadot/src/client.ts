@@ -7,6 +7,7 @@ import {
   FeeType,
   Fees,
   Network,
+  PrivateKeyCache,
   RootDerivationPaths,
   Tx,
   TxHash,
@@ -19,7 +20,7 @@ import {
   singleFee,
 } from '@thorswap-lib/xchain-client'
 import * as xchainCrypto from '@thorswap-lib/xchain-crypto'
-import { Asset, assetAmount, assetToBase, assetToString, baseAmount } from '@thorswap-lib/xchain-util'
+import { Asset, assetAmount, assetToBase, assetToString, baseAmount, deepEqual } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 
 import { Account, AssetDOT, Extrinsic, SubscanResponse, Transfer, TransfersResult } from './types'
@@ -34,6 +35,9 @@ export interface PolkadotClient {
   estimateFees(params: TxParams): Promise<Fees>
 }
 
+export type PolkadotClientParams = XChainClientParams & {
+  privateKeyInit?: PrivateKeyCache<KeyringPair>
+}
 /**
  * Custom Polkadot client
  */
@@ -41,12 +45,13 @@ class Client implements PolkadotClient, XChainClient {
   private network: Network
   private phrase = ''
   private rootDerivationPaths: RootDerivationPaths
+  private privateKeyCache: PrivateKeyCache<KeyringPair> | undefined
 
   /**
    * Constructor
    * Client is initialised with network type and phrase (optional)
    *
-   * @param {XChainClientParams} params
+   * @param {PolkadotClientParams} params
    */
   constructor({
     network = Network.Testnet,
@@ -55,11 +60,20 @@ class Client implements PolkadotClient, XChainClient {
       [Network.Mainnet]: "44//354//0//0//0'", //TODO IS the root path we want to use?
       [Network.Testnet]: "44//354//0//0//0'",
     },
-  }: XChainClientParams) {
+    privateKeyInit,
+  }: PolkadotClientParams) {
     this.network = network
     this.rootDerivationPaths = rootDerivationPaths
 
-    if (phrase) this.setPhrase(phrase)
+    if (phrase) {
+      this.setPhrase(phrase)
+      this.privateKeyCache = privateKeyInit || {
+        index: 0,
+        network,
+        phrase,
+        privateKey: this.getKeyringPair(0),
+      }
+    }
   }
   /**
    * Get getFullDerivationPath
@@ -217,6 +231,36 @@ class Client implements PolkadotClient, XChainClient {
    * @returns {KeyringPair} The keyring pair to be used to generate wallet address.
    * */
   private getKeyringPair(index: number): KeyringPair {
+    if (
+      this.privateKeyCache &&
+      deepEqual(this.privateKeyCache, {
+        index,
+        phrase: this.phrase,
+        network: this.network,
+        privateKey: this.privateKeyCache.privateKey,
+      })
+    )
+      return this.privateKeyCache.privateKey
+
+    const privateKey = this.createKeyringPair(index)
+
+    this.privateKeyCache = {
+      phrase: this.phrase,
+      network: this.network,
+      index,
+      privateKey,
+    }
+
+    return privateKey
+  }
+
+  /**
+   * Function to create Keyring pair for polkadotjs provider.
+   * @see https://polkadot.js.org/docs/api/start/keyring/#creating-a-keyring-instance
+   *
+   * @returns {KeyringPair} The keyring pair to be used to generate wallet address.
+   * */
+  createKeyringPair(index: number): KeyringPair {
     const key = new Keyring({ ss58Format: this.getSS58Format(), type: 'ed25519' })
 
     return key.createFromUri(`${this.phrase}//${this.getFullDerivationPath(index)}`)

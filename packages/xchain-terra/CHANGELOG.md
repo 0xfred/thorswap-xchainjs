@@ -1,3 +1,7 @@
+# v.0.2.0 (2022-06-01)
+
+- add MnemonicKey as optional constructor param to improve mobile performance
+
 # v.0.1.3 (2022-04-05)
 
 - remove non existing `module` source

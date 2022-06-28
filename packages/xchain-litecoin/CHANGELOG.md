@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 # v.0.7.6 (2022-06-27)
 
 - decreases build size and changes README
+=======
+# v.0.8.0 (2022-06-01)
+
+- changes client call signature to enable privkey hydration
+- adds privkey caching to improve performance
+>>>>>>> 933003a (Feature: adds optional constructor params to improve performance)
 
 # v.0.7.4 (2022-04-05)
 

@@ -1,3 +1,8 @@
+# v.0.3.0 (2022-06-28)
+
+- changes client call signature to enable privkey hydration
+- adds privkey caching to improve performance
+
 # v.0.2.0 (2022-06-27)
 
 - reduces build size and updates peerDependencies

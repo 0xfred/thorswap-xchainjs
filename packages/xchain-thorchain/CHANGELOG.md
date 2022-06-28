@@ -1,3 +1,7 @@
+# 0.22.0 (2022-06-01)
+
+- Adds PrivKey as optional param to constructor to improve mobile performance
+
 # 0.21.6 (2022-05-12)
 
 - update DEFAULT_GAS_VALUE = '5000000000'
