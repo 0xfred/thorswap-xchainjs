@@ -28,5 +28,14 @@ export default {
       browser: true,
     }),
   ],
-  external: ['readable-stream', 'buffer', 'stream', 'string_decoder', '@thorswap-lib/xchain-client', 'axios'],
+  external: [
+    '@thorswap-lib/xchain-client',
+    'axios',
+    '@thorswap-lib/xchain-crypto',
+    '@thorswap-lib/xchain-util',
+    'bitcoinjs-lib',
+    'coininfo',
+    'coinselect',
+    'wif',
+  ],
 }

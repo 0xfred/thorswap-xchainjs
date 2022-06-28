@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-litecoin",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "Custom Litecoin client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",

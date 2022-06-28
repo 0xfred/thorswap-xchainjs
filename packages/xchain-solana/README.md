@@ -13,7 +13,7 @@ yarn add @thorswap-lib/xchain-solana
 Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-solana`.
 
 ```
-yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util @solana/web3.js ed25519-hd-key
+yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util @solana/web3.js @solana/spl-token ed25519-hd-key
 ```
 
 ## Solana Client Testing

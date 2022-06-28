@@ -27,5 +27,13 @@ export default {
     }),
     commonjs(),
   ],
-  external: ['readable-stream', 'axios', 'buffer', 'cosmos-client', 'crypto', 'stream', 'string_decoder'],
+  external: [
+    'axios',
+    'cosmos-client',
+    '@thorswap-lib/xchain-client',
+    '@thorswap-lib/xchain-util',
+    '@thorswap-lib/xchain-crypto',
+    'bip32',
+    'long',
+  ],
 }

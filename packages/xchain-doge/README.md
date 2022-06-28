@@ -13,7 +13,7 @@ yarn add @thorswap-lib/xchain-client
 Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-doge`.
 
 ```
-yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios bitcoinjs-lib coininfo wif
+yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios bitcoinjs-lib coininfo wif coinselect
 ```
 
 ## Service Providers

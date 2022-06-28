@@ -1,3 +1,7 @@
+# v.0.19.0 (2022-06-27)
+
+- decreases build size and updates peerDependencies
+
 # v.0.18.0 (2022-06-09)
 
 - adds possibility to insert own MAINNET API url and adds working fees for mainnet

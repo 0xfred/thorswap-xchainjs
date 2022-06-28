@@ -1,3 +1,7 @@
+# v.0.2.8 (2022-06-27)
+
+- decrease build size
+
 # v.0.2.7 (2022-04-05)
 
 - remove non existing `module` source

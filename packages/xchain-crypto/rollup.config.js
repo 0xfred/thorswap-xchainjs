@@ -30,5 +30,5 @@ export default {
       exclude: '**/*.json',
     }),
   ],
-  external: ['buffer', 'crypto'],
+  external: ['buffer', 'crypto', 'bip39', 'foundry-primitives', 'uuid', 'bech32', 'crypto-js', 'hdkey'],
 }

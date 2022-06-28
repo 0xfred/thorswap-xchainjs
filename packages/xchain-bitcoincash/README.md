@@ -13,7 +13,7 @@ yarn add @thorswap-lib/xchain-bitcoincash
 Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-bitcoincash`.
 
 ```
-yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios @psf/bitcoincashjs-lib bchaddrjs
+yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios @psf/bitcoincashjs-lib bchaddrjs uniqid coinselect bitcoinjs-lib
 ```
 
 ## Service Providers

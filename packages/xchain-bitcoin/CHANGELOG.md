@@ -1,3 +1,7 @@
+# v.0.18.0 (2022-06-27)
+
+- decrease build size and updates peerDependecies
+
 # v.0.17.4 (2022-04-05)
 
 - remove non existing `module` source

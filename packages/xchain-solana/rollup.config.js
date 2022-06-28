@@ -28,5 +28,13 @@ export default {
       browser: true,
     }),
   ],
-  external: ['readable-stream', 'buffer', 'stream', 'string_decoder', '@thorswap-lib/xchain-client', 'axios'],
+  external: [
+    'buffer',
+    'ed25519-hd-key',
+    '@solana/spl-token',
+    '@solana/web3.js"',
+    '@thorswap-lib/xchain-client',
+    '@thorswap-lib/xchain-util',
+    '@thorswap-lib/xchain-crypto',
+  ],
 }
