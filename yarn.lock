@@ -2388,6 +2388,11 @@
     long "^4.0.0"
     protobufjs "~6.11.2"
 
+"@thorswap-lib/xchain-cosmos@^0.18.1":
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/@thorswap-lib/xchain-cosmos/-/xchain-cosmos-0.18.1.tgz#6f970b5f51a56ffc617f70f02bc990071d5e37e0"
+  integrity sha512-CuZNv0n5xVkq1KJLKrbSiDXAa7Qzcj2n9UVVDdntYZ0GRQyfwX7X67m3IDxNZtyq4D76FI87YNjHBMc029N+kw==
+
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
