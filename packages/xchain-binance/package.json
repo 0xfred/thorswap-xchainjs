@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-binance",
-  "version": "5.5.0",
+  "version": "5.5.1",
   "description": "Custom Binance client and utilities used by XChainJS clients",
   "keywords": [
     "BNB",

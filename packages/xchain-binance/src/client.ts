@@ -1,6 +1,4 @@
-import { BncClient } from '@binance-chain/javascript-sdk/lib/client'
-import * as crypto from '@binance-chain/javascript-sdk/lib/crypto'
-import { SignedSend } from '@binance-chain/javascript-sdk/lib/types'
+import { BncClient, crypto } from '@binance-chain/javascript-sdk'
 import {
   Address,
   Balance,
@@ -33,16 +31,6 @@ import {
 } from '@thorswap-lib/xchain-util'
 import axios from 'axios'
 
-import {
-  Account,
-  Balance as BinanceBalance,
-  Fees as BinanceFees,
-  TransactionResult,
-  TransferFee,
-  TxPage as BinanceTxPage,
-} from './types/binance'
-import { getPrefix, isAccount, isTransferFee, parseTx } from './util'
-
 type PrivKey = string
 
 export type Coin = {
@@ -60,6 +48,16 @@ export type MultiSendParams = {
   transactions: MultiTransfer[]
   memo?: string
 }
+
+import {
+  Account,
+  Balance as BinanceBalance,
+  Fees as BinanceFees,
+  TransactionResult,
+  TransferFee,
+  TxPage as BinanceTxPage,
+} from './types/binance'
+import { getPrefix, isAccount, isTransferFee, parseTx } from './util'
 
 /**
  * Interface for custom Binance client
@@ -368,7 +366,7 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
     let address = ''
     const msgs = txResult.tx.value.msg
     if (msgs.length) {
-      const msg = msgs[0].value as SignedSend
+      const msg = msgs[0].value as { inputs?: { address: string }[]; outputs?: { address: string }[] }
       if (msg.inputs && msg.inputs.length) {
         address = msg.inputs[0].address
       } else if (msg.outputs && msg.outputs.length) {

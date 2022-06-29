@@ -1,3 +1,7 @@
+# v.5.5.1 (2022-06-28)
+
+- Optimize @binance-chain/javascript-sdk imports.
+
 # v.5.5.0 (2022-06-28)
 
 - Performance improvements for mobile applications
