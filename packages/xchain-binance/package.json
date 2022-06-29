@@ -12,16 +12,16 @@
   "license": "MIT",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
   "files": [
-    "lib"
+    "lib/",
+    "src/"
   ],
   "repository": {
     "type": "git",
     "url": "git@github.com:thorswap/thorswap-xchainjs.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "clean": "rimraf lib/**",
@@ -32,17 +32,17 @@
     "prepublishOnly": "yarn build"
   },
   "devDependencies": {
-    "@thorswap-lib/binance-chain-sdk": "^0.1.33",
+    "@ledgerhq/hw-transport-web-ble": "^6.27.1",
+    "@ledgerhq/hw-transport-webusb": "^6.27.1",
+    "@thorswap-lib/binance-chain-sdk": "^0.1.36",
     "@thorswap-lib/xchain-client": "^0.11.2",
     "@thorswap-lib/xchain-crypto": "^0.2.7",
     "@thorswap-lib/xchain-util": "^0.4.6",
-    "@types/big.js": "^4.0.5"
-  },
-  "publishConfig": {
-    "access": "public"
+    "@types/big.js": "^4.0.5",
+    "buffer": "^6.0.3"
   },
   "peerDependencies": {
-    "@thorswap-lib/binance-chain-sdk": "^0.1.33",
+    "@thorswap-lib/binance-chain-sdk": "^0.1.36",
     "@thorswap-lib/xchain-client": "^0.11.2",
     "@thorswap-lib/xchain-crypto": "^0.2.7",
     "@thorswap-lib/xchain-util": "^0.4.6"

@@ -1,10 +1,22 @@
 {
   "extends": "./tsconfig.build.json",
-
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@thorswap-lib/*": ["packages/*"]
+      "@thorswap-lib/xchain-binance": ["packages/xchain-binance"],
+      "@thorswap-lib/xchain-bitcoin": ["packages/xchain-bitcoin"],
+      "@thorswap-lib/xchain-bitcoincash": ["packages/xchain-bitcoincash"],
+      "@thorswap-lib/xchain-client": ["packages/xchain-client"],
+      "@thorswap-lib/xchain-cosmos": ["packages/xchain-cosmos"],
+      "@thorswap-lib/xchain-crypto": ["packages/xchain-crypto"],
+      "@thorswap-lib/xchain-doge": ["packages/xchain-doge"],
+      "@thorswap-lib/xchain-ethereum": ["packages/xchain-ethereum"],
+      "@thorswap-lib/xchain-litecoin": ["packages/xchain-litecoin"],
+      "@thorswap-lib/xchain-polkadot": ["packages/xchain-polkadot"],
+      "@thorswap-lib/xchain-solana": ["packages/xchain-solana"],
+      "@thorswap-lib/xchain-terra": ["packages/xchain-terra"],
+      "@thorswap-lib/xchain-thorchain": ["packages/xchain-thorchain"],
+      "@thorswap-lib/xchain-util": ["packages/xchain-util"]
     },
     "jsx": "react",
     "types": ["jest", "node"],
