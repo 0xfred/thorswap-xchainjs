@@ -17,7 +17,7 @@ yarn add @thorswap-lib/xchain-binance
 Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-binance`.
 
 ```
-yarn add @binance-chain/javascript-sdk @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util
+yarn add @thorswap-lib/binance-chain-sdk @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util
 ```
 
 ## Service Providers
@@ -34,3 +34,4 @@ This package uses the following service providers:
 | Explorer                    | Binance Dex Explorer | https://explorer.binance.org                                                  |                               |
 
 This package gets the node information (`https://docs.binance.org/api-reference/dex-api/paths.html#apiv1node-info`) to transfer tokens.
+t

@@ -27,5 +27,13 @@ export default {
     }),
     commonjs(),
   ],
-  external: ['readable-stream', 'buffer', 'crypto', 'stream', 'string_decoder', 'axios'],
+  external: [
+    '@thorswap-lib/binance-chain-sdk',
+    'axios',
+    'buffer',
+    'crypto',
+    'readable-stream',
+    'stream',
+    'string_decoder',
+  ],
 }

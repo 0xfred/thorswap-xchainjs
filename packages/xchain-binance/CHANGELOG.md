@@ -1,3 +1,7 @@
+# v.5.6.0 (2022-06-29)
+
+- Migrate @binance-chain/javascript-sdk to @thorswap-lib/binance-chain-sdk
+
 # v.5.5.1 (2022-06-28)
 
 - Optimize @binance-chain/javascript-sdk imports.
