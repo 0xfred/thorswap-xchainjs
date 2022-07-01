@@ -1,4 +1,4 @@
-import { BncClient, getAddressFromPrivateKey, getPrivateKeyFromMnemonic } from '@thorswap-lib/binance-chain-sdk'
+import { BncClient, crypto } from '@binance-chain/javascript-sdk'
 import {
   Address,
   Balance,
@@ -101,7 +101,7 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
   /**
    * Get the BncClient interface.
    *
-   * @returns {BncClient} The BncClient from `@thorswap-lib/binance-chain-sdk`.
+   * @returns {BncClient} The BncClient from `@binance-chain/javascript-sdk`.
    */
   getBncClient(): BncClient {
     return this.bncClient
@@ -111,7 +111,7 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
    * Gets the current network, and enforces type limited to
    * 'mainnet' and 'testnet', which conflicts with `xchain-client`
    *
-   * Remove this once @thorswap-lib has stagenet support.
+   * Remove this once @binance-chain has stagenet support.
    * @returns {Network}
    */
   getNetwork(): Network.Mainnet | Network.Testnet {
@@ -236,7 +236,7 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
   createPrivateKeyFromMnemonic(phrase: string, index = 0): PrivKey {
     if (!this.phrase) throw new Error('Phrase not set')
 
-    return getPrivateKeyFromMnemonic(phrase, true, index)
+    return crypto.getPrivateKeyFromMnemonic(phrase, true, index)
   }
 
   /**
@@ -248,7 +248,7 @@ class Client extends BaseXChainClient implements BinanceClient, XChainClient {
    * @throws {Error} Thrown if phrase has not been set before. A phrase is needed to create a wallet and to derive an address from it.
    */
   getAddress(index = 0): string {
-    return getAddressFromPrivateKey(this.getPrivateKey(index), getPrefix(this.network))
+    return crypto.getAddressFromPrivateKey(this.getPrivateKey(index), getPrefix(this.network))
   }
 
   /**

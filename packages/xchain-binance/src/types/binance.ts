@@ -1,4 +1,4 @@
-import { Msg, StdSignature } from '@thorswap-lib/binance-chain-sdk'
+import { Msg, StdSignature } from '@binance-chain/javascript-sdk/lib/types'
 import { BigSource } from 'big.js'
 
 /**
