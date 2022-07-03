@@ -12,7 +12,15 @@ import {
   standardFeeRates,
 } from '@thorswap-lib/xchain-client'
 import { AssetBTC, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
-import * as Bitcoin from 'bitcoinjs-lib'
+import {
+  Network as BitcoinNetwork,
+  Psbt,
+  PsbtTxOutput,
+  address as bitcoinAddress,
+  networks,
+  opcodes,
+  script,
+} from 'bitcoinjs-lib'
 import accumulative from 'coinselect/accumulative'
 
 import * as blockStream from './blockstream-api'
@@ -40,7 +48,7 @@ const inputBytes = (input: UTXO): number => {
  */
 export const compileMemo = (memo: string): Buffer => {
   const data = Buffer.from(memo, 'utf8') // converts MEMO to buffer
-  return Bitcoin.script.compile([Bitcoin.opcodes.OP_RETURN, data]) // Compile OP_RETURN script
+  return script.compile([opcodes.OP_RETURN, data]) // Compile OP_RETURN script
 }
 
 /**
@@ -84,14 +92,14 @@ export const arrayAverage = (array: number[]): number => {
  * Get Bitcoin network to be used with bitcoinjs.
  *
  * @param {Network} network
- * @returns {Bitcoin.Network} The BTC network.
+ * @returns {BitcoinNetwork} The BTC network.
  */
-export const btcNetwork = (network: Network): Bitcoin.Network => {
+export const btcNetwork = (network: Network): BitcoinNetwork => {
   switch (network) {
     case Network.Mainnet:
-      return Bitcoin.networks.bitcoin
+      return networks.bitcoin
     case Network.Testnet:
-      return Bitcoin.networks.testnet
+      return networks.testnet
   }
 }
 
@@ -131,7 +139,7 @@ export const getBalance = async (params: AddressParams, haskoinUrl: string): Pro
  */
 export const validateAddress = (address: Address, network: Network): boolean => {
   try {
-    Bitcoin.address.toOutputScript(address, btcNetwork(network))
+    bitcoinAddress.toOutputScript(address, btcNetwork(network))
     return true
   } catch (error) {
     return false
@@ -252,7 +260,7 @@ export const buildTx = async ({
   haskoinUrl: string
   spendPendingUTXO?: boolean
   fetchTxHex?: boolean
-}): Promise<{ psbt: Bitcoin.Psbt; utxos: UTXO[]; inputs: UTXO[] }> => {
+}): Promise<{ psbt: Psbt; utxos: UTXO[]; inputs: UTXO[] }> => {
   // search only confirmed UTXOs if pending UTXO is not allowed
   const confirmedOnly = !spendPendingUTXO
   const utxos = await scanUTXOs({ sochainUrl, haskoinUrl, network, address: sender, confirmedOnly, fetchTxHex })
@@ -279,7 +287,7 @@ export const buildTx = async ({
   // .inputs and .outputs will be undefined if no solution was found
   if (!inputs || !outputs) throw new Error('Insufficient Balance for transaction')
 
-  const psbt = new Bitcoin.Psbt({ network: btcNetwork(network) }) // Network-specific
+  const psbt = new Psbt({ network: btcNetwork(network) }) // Network-specific
 
   // psbt add input from accumulative inputs
   inputs.forEach((utxo: UTXO) =>
@@ -291,7 +299,7 @@ export const buildTx = async ({
   )
 
   // psbt add outputs from accumulative outputs
-  outputs.forEach((output: Bitcoin.PsbtTxOutput) => {
+  outputs.forEach((output: PsbtTxOutput) => {
     if (!output.address) {
       //an empty address means this is the  change ddress
       output.address = sender

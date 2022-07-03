@@ -16,7 +16,7 @@ import {
 } from '@thorswap-lib/xchain-client'
 import { AssetBCH, BaseAmount, baseAmount } from '@thorswap-lib/xchain-util'
 import * as bchaddr from 'bchaddrjs'
-import * as Bitcoin from 'bitcoinjs-lib'
+import { Network as BitcoinNetwork, Psbt, PsbtTxOutput } from 'bitcoinjs-lib'
 import coininfo from 'coininfo'
 import accumulative from 'coinselect/accumulative'
 
@@ -95,7 +95,7 @@ export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
  * @param {Network} network
  * @returns {} The BCH network.
  */
-export const bchNetwork = (network: Network): Bitcoin.Network => {
+export const bchNetwork = (network: Network): BitcoinNetwork => {
   switch (network) {
     case Network.Mainnet:
       return coininfo.bitcoincash.main.toBitcoinJS()
@@ -323,7 +323,7 @@ export const buildTxPsbt = async ({
   network: Network
   haskoinUrl: string
 }): Promise<{
-  psbt: Bitcoin.Psbt
+  psbt: Psbt
   utxos: UTXO[]
   inputs: UTXO[]
 }> => {
@@ -353,7 +353,7 @@ export const buildTxPsbt = async ({
 
   // .inputs and .outputs will be undefined if no solution was found
   if (!inputs || !outputs) throw new Error('Balance insufficient for transaction')
-  const psbt = new Bitcoin.Psbt({ network: bchNetwork(network) }) // Network-specific
+  const psbt = new Psbt({ network: bchNetwork(network) }) // Network-specific
 
   //Inputs
   inputs.forEach((utxo: UTXO) =>
@@ -366,7 +366,7 @@ export const buildTxPsbt = async ({
 
   // Outputs
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  outputs.forEach((output: Bitcoin.PsbtTxOutput) => {
+  outputs.forEach((output: PsbtTxOutput) => {
     if (!output.address) {
       //an empty address means this is the  change ddress
       output.address = toLegacyAddress(sender)

@@ -17,7 +17,6 @@ export default {
     },
   ],
   plugins: [
-    // ignore(["@ethersproject/providers", "@ethersproject/abstract-provider", "@ethersproject/strings"]),
     external(),
     resolve({ preferBuiltins: true, browser: true }),
     typescript({
@@ -25,14 +24,7 @@ export default {
       exclude: '__tests__/**',
       clean: true,
     }),
-    commonjs({
-      // see: https://github.com/ethers-io/ethers.js/issues/839#issuecomment-630320675
-      namedExports: {
-        'node_modules/bn.js/lib/bn.js': ['BN'],
-        'node_modules/elliptic/lib/elliptic.js': ['ec'],
-        'node_modules/ethers/dist/ethers.esm.js': ['ethers'],
-      },
-    }),
+    commonjs(),
     json(),
   ],
   external: [

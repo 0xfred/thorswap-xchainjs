@@ -25,7 +25,9 @@ export default {
       exclude: '__tests__/**',
       clean: true,
     }),
-    commonjs(),
+    commonjs({
+      browser: true,
+    }),
   ],
   external: [
     'axios',

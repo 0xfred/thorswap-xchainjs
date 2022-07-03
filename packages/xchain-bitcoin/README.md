@@ -12,8 +12,8 @@ yarn add @thorswap-lib/xchain-bitcoin
 
 Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-bitcoin`.
 
-```
-yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios bitcoinjs-lib coinselect wif
+````
+yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios bip32 bitcoinjs-lib coinselect ecpair tiny-secp256k1
 ```
 
 ## Service Providers
@@ -37,7 +37,7 @@ Bitgo API rate limits: https://app.bitgo.com/docs/#section/Rate-Limiting (10 req
 
 Initialize client and use class methods:
 
-```
+````
 
 import { Client, Network } from '../src/client'
 
@@ -70,6 +70,8 @@ const transactions = await btcClient.getTransactions({ address: 'address here', 
 
 // Get a transaction with a given txId/hash
 const txData = await btcClient.getTransactionData('b660ee07167cfa32681e2623f3a29dc64a089cabd9a3a07dd17f9028ac956eb8')
+
+```
 
 ```
 

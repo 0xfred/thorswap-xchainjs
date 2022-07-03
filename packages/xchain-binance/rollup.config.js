@@ -25,7 +25,9 @@ export default {
       exclude: '__tests__/**',
       clean: true,
     }),
-    commonjs(),
+    commonjs({
+      browser: true,
+    }),
   ],
   external: ['readable-stream', 'buffer', 'crypto', 'stream', 'string_decoder', 'axios'],
 }

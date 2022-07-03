@@ -30,12 +30,13 @@ export default {
   ],
   external: [
     '@thorswap-lib/xchain-client',
-    'axios',
     '@thorswap-lib/xchain-crypto',
     '@thorswap-lib/xchain-util',
-    'bitcoinjs-lib',
+    'axios',
+    'bip32',
     'coininfo',
     'coinselect',
+    'ecpair',
     'wif',
   ],
 }

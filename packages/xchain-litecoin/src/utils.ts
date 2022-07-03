@@ -12,7 +12,14 @@ import {
   standardFeeRates,
 } from '@thorswap-lib/xchain-client'
 import { AssetLTC, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
-import * as Litecoin from 'bitcoinjs-lib'
+import {
+  Network as BitcoinNetwork,
+  Psbt,
+  PsbtTxOutput,
+  address as bitcoinAddress,
+  opcodes,
+  script,
+} from 'bitcoinjs-lib'
 import coininfo from 'coininfo'
 import accumulative from 'coinselect/accumulative'
 
@@ -42,7 +49,7 @@ function inputBytes(input: UTXO): number {
  */
 export const compileMemo = (memo: string): Buffer => {
   const data = Buffer.from(memo, 'utf8') // converts MEMO to buffer
-  return Litecoin.script.compile([Litecoin.opcodes.OP_RETURN, data]) // Compile OP_RETURN script
+  return script.compile([opcodes.OP_RETURN, data]) // Compile OP_RETURN script
 }
 
 /**
@@ -88,9 +95,9 @@ export function arrayAverage(array: number[]): number {
  * Get Litecoin network to be used with bitcoinjs.
  *
  * @param {Network} network
- * @returns {Litecoin.Network} The LTC network.
+ * @returns {Network} The LTC network.
  */
-export const ltcNetwork = (network: Network): Litecoin.Network => {
+export const ltcNetwork = (network: Network): BitcoinNetwork => {
   switch (network) {
     case Network.Mainnet:
       return coininfo.litecoin.main.toBitcoinJS()
@@ -128,7 +135,7 @@ export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
  */
 export const validateAddress = (address: Address, network: Network): boolean => {
   try {
-    Litecoin.address.toOutputScript(address, ltcNetwork(network))
+    bitcoinAddress.toOutputScript(address, ltcNetwork(network))
     return true
   } catch (error) {
     return false
@@ -190,7 +197,7 @@ export const buildTx = async ({
   network: Network
   sochainUrl: string
   fetchTxHex?: boolean
-}): Promise<{ psbt: Litecoin.Psbt; utxos: UTXO[]; inputs: UTXO[] }> => {
+}): Promise<{ psbt: Psbt; utxos: UTXO[]; inputs: UTXO[] }> => {
   if (!validateAddress(recipient, network)) throw new Error('Invalid address')
 
   const utxos = await scanUTXOs({ sochainUrl, network, address: sender, fetchTxHex })
@@ -214,7 +221,7 @@ export const buildTx = async ({
   // .inputs and .outputs will be undefined if no solution was found
   if (!inputs || !outputs) throw new Error('Balance insufficient for transaction')
 
-  const psbt = new Litecoin.Psbt({ network: ltcNetwork(network) }) // Network-specific
+  const psbt = new Psbt({ network: ltcNetwork(network) }) // Network-specific
   //Inputs
   inputs.forEach((utxo: UTXO) =>
     psbt.addInput({
@@ -225,7 +232,7 @@ export const buildTx = async ({
   )
 
   // Outputs
-  outputs.forEach((output: Litecoin.PsbtTxOutput) => {
+  outputs.forEach((output: PsbtTxOutput) => {
     if (!output.address) {
       //an empty address means this is the  change ddress
       output.address = sender

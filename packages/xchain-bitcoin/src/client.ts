@@ -17,7 +17,10 @@ import {
 } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
 import { AssetBTC, Chain, assetAmount, assetToBase, deepEqual } from '@thorswap-lib/xchain-util'
-import * as Bitcoin from 'bitcoinjs-lib'
+import { fromSeed } from 'bip32'
+import { payments } from 'bitcoinjs-lib'
+import { ECPairFactory, ECPairInterface } from 'ecpair'
+import * as tinySecp from 'tiny-secp256k1'
 
 import { BTC_DECIMAL } from './const'
 import * as sochain from './sochain-api'
@@ -28,7 +31,7 @@ export type BitcoinClientParams = XChainClientParams & {
   sochainUrl?: string
   blockstreamUrl?: string
   haskoinUrl?: ClientUrl
-  privateKeyInit?: PrivateKeyCache<Bitcoin.ECPairInterface>
+  privateKeyInit?: PrivateKeyCache<ECPairInterface>
 }
 
 /**
@@ -38,7 +41,7 @@ class Client extends UTXOClient {
   private sochainUrl = ''
   private blockstreamUrl = ''
   private haskoinUrl: ClientUrl
-  private privateKeyCache: PrivateKeyCache<Bitcoin.ECPairInterface> | undefined
+  private privateKeyCache: PrivateKeyCache<ECPairInterface> | undefined
 
   /**
    * Constructor
@@ -140,7 +143,7 @@ class Client extends UTXOClient {
       const btcNetwork = Utils.btcNetwork(this.network)
       const btcKeys = this.getBtcKeys(this.phrase, index)
 
-      const { address } = Bitcoin.payments.p2wpkh({
+      const { address } = payments.p2wpkh({
         pubkey: btcKeys.publicKey,
         network: btcNetwork,
       })
@@ -163,7 +166,7 @@ class Client extends UTXOClient {
    * @returns {ECPairInterface} The privkey generated from the given phrase
    *
    * */
-  private getBtcKeys(phrase: string, index = 0): Bitcoin.ECPairInterface {
+  private getBtcKeys(phrase: string, index = 0): ECPairInterface {
     if (
       this.privateKeyCache &&
       deepEqual(this.privateKeyCache, {
@@ -197,16 +200,16 @@ class Client extends UTXOClient {
    *
    * @throws {"Could not get private key from phrase"} Throws an error if failed creating BTC keys from the given phrase
    */
-  createBtcKeys(phrase: string, index = 0): Bitcoin.ECPairInterface {
+  createBtcKeys(phrase: string, index = 0): ECPairInterface {
     const btcNetwork = Utils.btcNetwork(this.network)
 
     const seed = getSeed(phrase)
-    const master = Bitcoin.bip32.fromSeed(seed, btcNetwork).derivePath(this.getFullDerivationPath(index))
+    const master = fromSeed(seed, btcNetwork).derivePath(this.getFullDerivationPath(index))
 
     if (!master.privateKey) {
       throw new Error('Could not get private key from phrase')
     }
-    return Bitcoin.ECPair.fromPrivateKey(master.privateKey, { network: btcNetwork })
+    return ECPairFactory(tinySecp).fromPrivateKey(master.privateKey, { network: btcNetwork })
   }
 
   /**

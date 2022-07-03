@@ -12,7 +12,14 @@ import {
   standardFeeRates,
 } from '@thorswap-lib/xchain-client'
 import { AssetDoge, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
-import * as Dogecoin from 'bitcoinjs-lib'
+import {
+  Network as BitcoinNetwork,
+  Psbt,
+  PsbtTxOutput,
+  address as bitcoinAddress,
+  opcodes,
+  script,
+} from 'bitcoinjs-lib'
 import coininfo from 'coininfo'
 import accumulative from 'coinselect/accumulative'
 
@@ -42,7 +49,7 @@ function inputBytes(): number {
  */
 export const compileMemo = (memo: string): Buffer => {
   const data = Buffer.from(memo, 'utf8') // converts MEMO to buffer
-  return Dogecoin.script.compile([Dogecoin.opcodes.OP_RETURN, data]) // Compile OP_RETURN script
+  return script.compile([opcodes.OP_RETURN, data]) // Compile OP_RETURN script
 }
 
 /**
@@ -89,9 +96,9 @@ export function arrayAverage(array: number[]): number {
  * Get Dogecoin network to be used with bitcoinjs.
  *
  * @param {Network} network
- * @returns {Dogecoin.Network} The Doge network.
+ * @returns {Network} The Doge network.
  */
-export const dogeNetwork = (network: Network): Dogecoin.Network => {
+export const dogeNetwork = (network: Network): BitcoinNetwork => {
   switch (network) {
     case Network.Mainnet:
       return coininfo.dogecoin.main.toBitcoinJS()
@@ -137,7 +144,7 @@ export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
  */
 export const validateAddress = (address: Address, network: Network): boolean => {
   try {
-    Dogecoin.address.toOutputScript(address, dogeNetwork(network))
+    bitcoinAddress.toOutputScript(address, dogeNetwork(network))
     return true
   } catch (error) {
     return false
@@ -194,7 +201,7 @@ export const buildTx = async ({
   network: Network
   sochainUrl: string
   fetchTxHex?: boolean
-}): Promise<{ psbt: Dogecoin.Psbt; utxos: UTXO[]; inputs: UTXO[] }> => {
+}): Promise<{ psbt: Psbt; utxos: UTXO[]; inputs: UTXO[] }> => {
   if (!validateAddress(recipient, network)) throw new Error('Invalid address')
 
   const utxos = await scanUTXOs({ sochainUrl, network, address: sender, fetchTxHex })
@@ -218,7 +225,7 @@ export const buildTx = async ({
   // .inputs and .outputs will be undefined if no solution was found
   if (!inputs || !outputs) throw new Error('Balance insufficient for transaction')
 
-  const psbt = new Dogecoin.Psbt({ network: dogeNetwork(network) }) // Network-specific
+  const psbt = new Psbt({ network: dogeNetwork(network) }) // Network-specific
   // TODO: Doge recommended fees is greater than the recommended by Bitcoinjs-lib, so we need to increase the maximum fee rate
   psbt.setMaximumFeeRate(650000000)
   const params = { sochainUrl, network, address: sender }
@@ -232,7 +239,7 @@ export const buildTx = async ({
   }
 
   // Outputs
-  outputs.forEach((output: Dogecoin.PsbtTxOutput) => {
+  outputs.forEach((output: PsbtTxOutput) => {
     if (!output.address) {
       //an empty address means this is the  change address
       output.address = sender

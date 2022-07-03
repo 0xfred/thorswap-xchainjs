@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-solana",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "Solana client for XChainJS",
   "keywords": [
     "XChain",
@@ -33,18 +33,18 @@
     "url": "https://github.com/thorswap/thorswap-xchainjs/issues"
   },
   "peerDependencies": {
-    "@solana/web3.js": "^1.41.1",
+    "@solana/web3.js": "^1.47.3",
     "@solana/spl-token": "^0.2.0",
-    "@thorswap-lib/xchain-client": "^0.11.2",
-    "@thorswap-lib/xchain-util": "^0.4.7",
-    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@thorswap-lib/xchain-client": "^0.11.5",
+    "@thorswap-lib/xchain-util": "^0.4.11",
+    "@thorswap-lib/xchain-crypto": "^0.2.10",
     "ed25519-hd-key": "^1.2.0"
   },
   "devDependencies": {
-    "@solana/web3.js": "^1.41.1",
-    "@thorswap-lib/xchain-client": "^0.11.2",
-    "@thorswap-lib/xchain-util": "^0.4.7",
-    "@thorswap-lib/xchain-crypto": "^0.2.7",
+    "@solana/web3.js": "^1.47.3",
+    "@thorswap-lib/xchain-client": "^0.11.5",
+    "@thorswap-lib/xchain-util": "^0.4.11",
+    "@thorswap-lib/xchain-crypto": "^0.2.10",
     "@solana/spl-token": "^0.2.0",
     "ed25519-hd-key": "^1.2.0"
   }

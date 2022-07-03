@@ -1,4 +1,4 @@
-import * as bitcash from '@psf/bitcoincashjs-lib'
+import { HDNode } from '@psf/bitcoincashjs-lib'
 import {
   Address,
   Balance,
@@ -206,7 +206,7 @@ class Client extends UTXOClient {
    */
   createBCHKeys(phrase: string, derivationPath: string): KeyPair {
     const rootSeed = getSeed(phrase)
-    const masterHDNode = bitcash.HDNode.fromSeedBuffer(rootSeed, utils.bchNetwork(this.network))
+    const masterHDNode = HDNode.fromSeedBuffer(rootSeed, utils.bchNetwork(this.network))
 
     return masterHDNode.derivePath(derivationPath).keyPair
   }
