@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-bitcoincash",
-  "version": "0.14.3",
+  "version": "0.14.4",
   "description": "Custom bitcoincash client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",
@@ -32,31 +32,32 @@
     "postversion": "git push --follow-tags"
   },
   "dependencies": {
-    "undefined": "https://github.com/cryptocoinjs/coininfo.git",
     "uniqid": "^5.4.0"
   },
   "devDependencies": {
     "@psf/bitcoincashjs-lib": "^4.0.2",
-    "@thorswap-lib/xchain-client": "^0.11.5",
-    "@thorswap-lib/xchain-crypto": "^0.2.10",
-    "@thorswap-lib/xchain-util": "^0.4.11",
+    "@thorswap-lib/xchain-client": "^0.11.6",
+    "@thorswap-lib/xchain-crypto": "^0.2.11",
+    "@thorswap-lib/xchain-util": "^0.4.12",
     "@types/bchaddrjs": "0.4.0",
     "@types/uniqid": "^5.3.2",
     "axios": "^0.27.2",
     "axios-mock-adapter": "^1.21.1",
     "bchaddrjs": "^0.5.2",
-    "coinselect": "3.1.13",
     "bitcoinjs-lib": "^6.0.1",
+    "coininfo": "^5.2.1",
+    "coinselect": "^3.1.13",
     "uniqid": "^5.4.0"
   },
   "peerDependencies": {
     "@psf/bitcoincashjs-lib": "^4.0.2",
-    "@thorswap-lib/xchain-client": "^0.11.5",
-    "@thorswap-lib/xchain-crypto": "^0.2.10",
-    "@thorswap-lib/xchain-util": "^0.4.11",
+    "@thorswap-lib/xchain-client": "^0.11.6",
+    "@thorswap-lib/xchain-crypto": "^0.2.11",
+    "@thorswap-lib/xchain-util": "^0.4.12",
     "axios": "^0.27.2",
     "bchaddrjs": "^0.5.2",
-    "coinselect": "3.1.13",
+    "coininfo": "^5.2.1",
+    "coinselect": "^3.1.13",
     "bitcoinjs-lib": "^6.0.1",
     "uniqid": "^5.4.0"
   },

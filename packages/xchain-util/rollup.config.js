@@ -1,3 +1,4 @@
+import { builtinModules } from 'module'
 import commonjs from 'rollup-plugin-commonjs'
 import resolve from 'rollup-plugin-node-resolve'
 import external from 'rollup-plugin-peer-deps-external'
@@ -23,6 +24,9 @@ export default {
       exclude: '__tests__/**',
       clean: true,
     }),
-    commonjs(),
+    commonjs({
+      browser: true,
+    }),
   ],
+  external: [...builtinModules],
 }

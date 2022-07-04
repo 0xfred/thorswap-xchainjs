@@ -1,3 +1,4 @@
+import { builtinModules } from 'module'
 import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
 import resolve from 'rollup-plugin-node-resolve'
@@ -29,7 +30,7 @@ export default {
     }),
   ],
   external: [
-    'buffer',
+    ...builtinModules,
     'ed25519-hd-key',
     '@solana/spl-token',
     '@solana/web3.js"',

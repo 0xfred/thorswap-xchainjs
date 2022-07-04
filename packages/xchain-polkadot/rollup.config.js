@@ -1,3 +1,4 @@
+import { builtinModules } from 'module'
 import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
 import resolve from 'rollup-plugin-node-resolve'
@@ -27,5 +28,13 @@ export default {
     }),
     commonjs(),
   ],
-  external: ['readable-stream', 'assert', 'axios', 'buffer', 'crypto', 'events', 'stream', 'string_decoder'],
+  external: [
+    ...builtinModules,
+    '@polkadot/api',
+    '@polkadot/util',
+    '@thorswap-lib/xchain-client',
+    '@thorswap-lib/xchain-crypto',
+    '@thorswap-lib/xchain-util',
+    'axios',
+  ],
 }

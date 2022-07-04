@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-binance",
-  "version": "5.5.4",
+  "version": "5.5.5",
   "description": "Custom Binance client and utilities used by XChainJS clients",
   "keywords": [
     "BNB",
@@ -33,18 +33,17 @@
   },
   "devDependencies": {
     "@binance-chain/javascript-sdk": "^4.2.0",
-    "@thorswap-lib/xchain-client": "^0.11.5",
-    "@thorswap-lib/xchain-crypto": "^0.2.10",
-    "@thorswap-lib/xchain-util": "^0.4.11",
-    "usb": "^2.4.3"
+    "@thorswap-lib/xchain-client": "^0.11.6",
+    "@thorswap-lib/xchain-crypto": "^0.2.11",
+    "@thorswap-lib/xchain-util": "^0.4.12"
   },
   "publishConfig": {
     "access": "public"
   },
   "peerDependencies": {
     "@binance-chain/javascript-sdk": "^4.2.0",
-    "@thorswap-lib/xchain-client": "^0.11.5",
-    "@thorswap-lib/xchain-crypto": "^0.2.10",
-    "@thorswap-lib/xchain-util": "^0.4.11"
+    "@thorswap-lib/xchain-client": "^0.11.6",
+    "@thorswap-lib/xchain-crypto": "^0.2.11",
+    "@thorswap-lib/xchain-util": "^0.4.12"
   }
 }

@@ -2763,11 +2763,6 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.4.tgz#bd86a43617df0594787d38b735f55c805becf1bc"
   integrity sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==
 
-"@types/w3c-web-usb@1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@types/w3c-web-usb/-/w3c-web-usb-1.0.6.tgz#5d8560d0d9f585ffc80865bc773db7bc975b680c"
-  integrity sha512-cSjhgrr8g4KbPnnijAr/KJDNKa/bBa+ixYkywFRvrhvi9n1WEl7yYbtRyzE6jqNQiSxxJxoAW3STaOQwJHndaw==
-
 "@types/websocket@^1.0.1":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@types/websocket/-/websocket-1.0.4.tgz#1dc497280d8049a5450854dd698ee7e6ea9e60b8"
@@ -4048,7 +4043,7 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
-coininfo@5.2.1:
+coininfo@5.2.1, coininfo@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/coininfo/-/coininfo-5.2.1.tgz#15c2526fe31fa616095538a0a63fa5d8760dbf99"
   integrity sha512-mqSQIhAMgeiySzS0Ei33qno0oN/JQt9X3I6J1zx4eIYUnObGPuoLOrpssoqU84ZQoIpJGt3mQdEd2dL3sZJADw==
@@ -10756,12 +10751,6 @@ unbox-primitive@^1.0.1:
     has-symbols "^1.0.2"
     which-boxed-primitive "^1.0.2"
 
-"undefined@https://github.com/cryptocoinjs/coininfo.git":
-  version "5.2.0"
-  resolved "https://github.com/cryptocoinjs/coininfo.git#4bb73a7c9efe36f7a9eb4122a75e7e7d9c191a56"
-  dependencies:
-    safe-buffer "^5.1.1"
-
 union-value@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/union-value/-/union-value-1.0.1.tgz#0b6fe7b835aecda61c6ea4d4f02c14221e109847"
@@ -10846,15 +10835,6 @@ usb@^1.7.0:
   resolved "https://registry.yarnpkg.com/usb/-/usb-1.9.2.tgz#fb6b36f744ecc707a196c45a6ec72442cb6f2b73"
   integrity sha512-dryNz030LWBPAf6gj8vyq0Iev3vPbCLHCT8dBw3gQRXRzVNsIdeuU+VjPp3ksmSPkeMAl1k+kQ14Ij0QHyeiAg==
   dependencies:
-    node-addon-api "^4.2.0"
-    node-gyp-build "^4.3.0"
-
-usb@^2.4.3:
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/usb/-/usb-2.4.3.tgz#fab8c1820276d0cb34f87a5ddba0152633d4a829"
-  integrity sha512-BmCjjxsriODcrb+TdXdzSDDys+MOUeRvo22ywmyIxYcuVW9YKrr2Wp2gQZUfHrQbvovKu87Po9mk5OPftJdDeQ==
-  dependencies:
-    "@types/w3c-web-usb" "1.0.6"
     node-addon-api "^4.2.0"
     node-gyp-build "^4.3.0"
 

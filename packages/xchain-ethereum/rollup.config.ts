@@ -1,3 +1,4 @@
+import { builtinModules } from 'module'
 import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
 import resolve from 'rollup-plugin-node-resolve'
@@ -28,23 +29,11 @@ export default {
     json(),
   ],
   external: [
-    'buffer',
-    'http',
-    'https',
-    'url',
-    'stream',
-    'string_decoder',
-    // Avoid to bundle following libraries which are already part of `ethers`.
-    // Also it avoids get Rollup warnings based on these libraries (something like this):
-    // ```
-    // (!) `this` has been rewritten to `undefined`
-    // https://rollupjs.org/guide/en/#error-this-is-undefined
-    // node_modules/@ethersproject/providers/lib.esm/base-provider.js
-    // ...
-    // ...and 8 other files
-    // ```
-    '@ethersproject/providers',
-    '@ethersproject/abstract-provider',
-    '@ethersproject/strings',
+    ...builtinModules,
+    '@thorswap-lib/xchain-client',
+    '@thorswap-lib/xchain-crypto',
+    '@thorswap-lib/xchain-util',
+    'axios',
+    'ethers',
   ],
 }

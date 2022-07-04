@@ -1,3 +1,4 @@
+import { builtinModules } from 'module'
 import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
 import resolve from 'rollup-plugin-node-resolve'
@@ -27,5 +28,11 @@ export default {
     }),
     commonjs(),
   ],
-  external: ['readable-stream', 'axios', 'buffer', 'crypto', 'stream', 'string_decoder', 'axios'],
+  external: [
+    ...builtinModules,
+    '@thorswap-lib/xchain-client',
+    '@thorswap-lib/xchain-util',
+    '@terra-money/terra.js',
+    'axios',
+  ],
 }

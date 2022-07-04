@@ -1,3 +1,4 @@
+import { builtinModules } from 'module'
 import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
 import resolve from 'rollup-plugin-node-resolve'
@@ -30,5 +31,5 @@ export default {
       exclude: '**/*.json',
     }),
   ],
-  external: ['buffer', 'crypto', 'bip39', 'foundry-primitives', 'uuid', 'bech32', 'crypto-js', 'hdkey'],
+  external: [...builtinModules, 'bech32', 'bip39', 'crypto-js', 'foundry-primitives', 'hdkey', 'uuid'],
 }

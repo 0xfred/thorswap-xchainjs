@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-litecoin",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "Custom Litecoin client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",
@@ -31,9 +31,9 @@
     "postversion": "git push --follow-tags"
   },
   "devDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.5",
-    "@thorswap-lib/xchain-crypto": "^0.2.10",
-    "@thorswap-lib/xchain-util": "^0.4.11",
+    "@thorswap-lib/xchain-client": "^0.11.6",
+    "@thorswap-lib/xchain-crypto": "^0.2.11",
+    "@thorswap-lib/xchain-util": "^0.4.12",
     "@types/wif": "^2.0.2",
     "axios": "^0.27.2",
     "axios-mock-adapter": "^1.21.1",
@@ -46,9 +46,9 @@
     "wif": "^2.0.6"
   },
   "peerDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.5",
-    "@thorswap-lib/xchain-crypto": "^0.2.10",
-    "@thorswap-lib/xchain-util": "^0.4.11",
+    "@thorswap-lib/xchain-client": "^0.11.6",
+    "@thorswap-lib/xchain-crypto": "^0.2.11",
+    "@thorswap-lib/xchain-util": "^0.4.12",
     "axios": "^0.27.2",
     "bitcoinjs-lib": "^6.0.1",
     "bip32": "^2.0.6",

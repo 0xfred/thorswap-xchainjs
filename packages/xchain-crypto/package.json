@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-crypto",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "XChain Crypto is a crypto module needed by all XChain clients.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -46,9 +46,15 @@
     "@types/crypto-js": "^4.1.1",
     "@types/hdkey": "^2.0.1",
     "@types/node": "^18.0.1",
-    "@types/uuid": "^8.3.4"
+    "@types/uuid": "^8.3.4",
+    "bech32": "^2.0.0",
+    "bip39": "^3.0.4",
+    "crypto-js": "^4.1.1",
+    "foundry-primitives": "^0.2.1",
+    "hdkey": "^2.0.1",
+    "uuid": "^8.3.2"
   },
-  "dependencies": {
+  "peerDependencies": {
     "bech32": "^2.0.0",
     "bip39": "^3.0.4",
     "crypto-js": "^4.1.1",

@@ -11,7 +11,7 @@ yarn add @thorswap-lib/xchain-thorchain
 Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-thorchain`.
 
 ```
-yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util @thorswap-lib/xchain-cosmos axios cosmos-client bech32-buffer long
+yarn add @cosmjs/encoding @cosmos-client/core @thorswap-lib/xchain-client @thorswap-lib/xchain-cosmos @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios bech32-buffer long
 ```
 
 Important note: Make sure to install same version of `cosmos-client` as `xchain-thorchain` is using (currently `cosmos-client@0.44.4` ). In other case things might break.

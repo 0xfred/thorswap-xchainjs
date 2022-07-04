@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-ethereum",
-  "version": "0.22.11",
+  "version": "0.22.12",
   "description": "Ethereum client for XChainJS",
   "keywords": [
     "XChain",
@@ -33,16 +33,16 @@
     "access": "public"
   },
   "devDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.5",
-    "@thorswap-lib/xchain-crypto": "^0.2.10",
-    "@thorswap-lib/xchain-util": "^0.4.11",
+    "@thorswap-lib/xchain-client": "^0.11.6",
+    "@thorswap-lib/xchain-crypto": "^0.2.11",
+    "@thorswap-lib/xchain-util": "^0.4.12",
     "axios": "^0.27.2",
     "ethers": "^5.6.9"
   },
   "peerDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.5",
-    "@thorswap-lib/xchain-crypto": "^0.2.10",
-    "@thorswap-lib/xchain-util": "^0.4.11",
+    "@thorswap-lib/xchain-client": "^0.11.6",
+    "@thorswap-lib/xchain-crypto": "^0.2.11",
+    "@thorswap-lib/xchain-util": "^0.4.12",
     "axios": "^0.27.2",
     "ethers": "^5.6.9"
   }
