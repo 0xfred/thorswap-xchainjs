@@ -17,7 +17,10 @@ import {
 } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
 import { AssetDoge, Chain, assetAmount, assetToBase, deepEqual } from '@thorswap-lib/xchain-util'
-import * as Dogecoin from 'bitcoinjs-lib'
+import { fromSeed } from 'bip32'
+import { payments } from 'bitcoinjs-lib'
+import { ECPairFactory, ECPairInterface } from 'ecpair'
+import * as tinySecp from 'tiny-secp256k1'
 
 import * as sochain from './sochain-api'
 import { NodeAuth } from './types'
@@ -29,7 +32,7 @@ export type DogecoinClientParams = XChainClientParams & {
   nodeUrl?: string
   nodeAuth?: NodeAuth | null
   apiKey?: string | null
-  privateKeyInit?: PrivateKeyCache<Dogecoin.ECPairInterface>
+  privateKeyInit?: PrivateKeyCache<ECPairInterface>
 }
 
 /**
@@ -40,7 +43,7 @@ class Client extends UTXOClient {
   public nodeUrl = ''
   public nodeAuth?: NodeAuth
   private apiKey: string | null = null
-  private privateKeyCache: PrivateKeyCache<Dogecoin.ECPairInterface> | undefined
+  private privateKeyCache: PrivateKeyCache<ECPairInterface> | undefined
 
   /**
    * Constructor
@@ -158,7 +161,7 @@ class Client extends UTXOClient {
       const dogeNetwork = Utils.dogeNetwork(this.network)
       const dogeKeys = this.getDogeKeys(this.phrase, index)
 
-      const { address } = Dogecoin.payments.p2pkh({
+      const { address } = payments.p2pkh({
         pubkey: dogeKeys.publicKey,
         network: dogeNetwork,
       })
@@ -182,7 +185,7 @@ class Client extends UTXOClient {
    *
    * @throws {"Could not get private key from phrase"} Throws an error if failed creating Doge keys from the given phrase
    * */
-  private getDogeKeys(phrase: string, index = 0): Dogecoin.ECPairInterface {
+  private getDogeKeys(phrase: string, index = 0): ECPairInterface {
     if (
       this.privateKeyCache &&
       deepEqual(this.privateKeyCache, {
@@ -215,17 +218,16 @@ class Client extends UTXOClient {
    *
    * @throws {"Could not get private key from phrase"} Throws an error if failed creating BTC keys from the given phrase
    */
-  createBtcKeys(phrase: string, index = 0): Dogecoin.ECPairInterface {
+  createBtcKeys(phrase: string, index = 0): ECPairInterface {
     const dogeNetwork = Utils.dogeNetwork(this.network)
-
     const seed = getSeed(phrase)
-    const master = Dogecoin.bip32.fromSeed(seed, dogeNetwork).derivePath(this.getFullDerivationPath(index))
+    const master = fromSeed(seed, dogeNetwork).derivePath(this.getFullDerivationPath(index))
 
     if (!master.privateKey) {
       throw new Error('Could not get private key from phrase')
     }
 
-    return Dogecoin.ECPair.fromPrivateKey(master.privateKey, { network: dogeNetwork })
+    return ECPairFactory(tinySecp).fromPrivateKey(master.privateKey, { network: dogeNetwork })
   }
 
   /**

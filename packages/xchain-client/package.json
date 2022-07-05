@@ -12,7 +12,7 @@
     "clean": "rimraf -rf ./lib",
     "compile": "tsc -p tsconfig.build.json",
     "prepublishOnly": "yarn run build",
-    "test": "jest --passWithNoTests"
+    "test": "jest --detectOpenHandles --runInBand --forceExit --passWithNoTests"
   },
   "devDependencies": {
     "@thorswap-lib/xchain-util": "^0.4.12",

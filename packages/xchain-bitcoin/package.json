@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-bitcoin",
-  "version": "0.19.4",
+  "version": "0.19.5",
   "description": "Custom Bitcoin client and utilities used by XChainJS clients",
   "keywords": [
     "XChain",
@@ -25,7 +25,7 @@
   "scripts": {
     "clean": "rimraf lib/**",
     "build": "yarn clean && rollup -c",
-    "test": "jest",
+    "test": "jest --detectOpenHandles --runInBand --forceExit",
     "lint": "eslint \"{src,__tests__}/**/*.ts\" --fix --max-warnings 0",
     "prepublishOnly": "yarn build",
     "postversion": "git push --follow-tags"
@@ -41,7 +41,7 @@
     "bitcoinjs-lib": "^6.0.1",
     "coinselect": "^3.1.13",
     "ecpair": "^2.0.1",
-    "tiny-secp256k1": "^2.2.1",
+    "tiny-secp256k1": "^1.1.6",
     "wif": "^2.0.6"
   },
   "peerDependencies": {
@@ -53,7 +53,7 @@
     "bitcoinjs-lib": "^6.0.1",
     "coinselect": "^3.1.13",
     "ecpair": "^2.0.1",
-    "tiny-secp256k1": "^2.2.1",
+    "tiny-secp256k1": "^1.1.6",
     "wif": "^2.0.6"
   },
   "publishConfig": {

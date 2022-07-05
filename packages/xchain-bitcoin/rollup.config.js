@@ -40,5 +40,6 @@ export default {
     'coinselect',
     'ecpair',
     'tiny-secp256k1',
+    'wif',
   ],
 }

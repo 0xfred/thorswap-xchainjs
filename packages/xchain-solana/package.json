@@ -24,7 +24,7 @@
   "scripts": {
     "clean": "rimraf lib/**",
     "build": "yarn clean && rollup -c",
-    "test": "jest",
+    "test": "jest --detectOpenHandles --runInBand --forceExit",
     "lint": "eslint \"{src,__tests__}/**/*.ts\" --fix --max-warnings 0",
     "prepublishOnly": "yarn build",
     "postversion": "git push --follow-tags"

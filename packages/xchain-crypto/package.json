@@ -12,7 +12,7 @@
     "clean": "rimraf lib/**",
     "build": "yarn clean && rollup -c",
     "lint": "eslint \"{src,__tests__}/**/*.ts\" --fix --max-warnings 0",
-    "test": "jest --coverage",
+    "test": "jest --detectOpenHandles --runInBand --forceExit --coverage",
     "prepublishOnly": "yarn build"
   },
   "repository": {

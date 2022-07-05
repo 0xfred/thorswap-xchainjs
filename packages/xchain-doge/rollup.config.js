@@ -36,9 +36,11 @@ export default {
     '@thorswap-lib/xchain-util',
     'axios',
     'bip32',
+    'bitcoinjs-lib',
     'coininfo',
     'coinselect',
     'ecpair',
+    'tiny-secp256k1',
     'wif',
   ],
 }

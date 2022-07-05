@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-doge",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Custom Doge client and utilities used by Thorswap clients",
   "keywords": [
     "Xchain",
@@ -25,16 +25,10 @@
   "scripts": {
     "clean": "rimraf lib/**",
     "build": "yarn clean && rollup -c",
-    "test": "jest",
+    "test": "jest --detectOpenHandles --runInBand --forceExit",
     "lint": "eslint \"{src,__tests__}/**/*.ts\" --fix --max-warnings 0",
     "prepublishOnly": "yarn build",
     "postversion": "git push --follow-tags"
-  },
-  "dependencies": {
-    "bitcoinjs-lib": "^5.2.0"
-  },
-  "resolutions": {
-    "bitcoinjs-lib": "^5.2.0"
   },
   "devDependencies": {
     "@thorswap-lib/xchain-client": "^0.11.6",
@@ -44,10 +38,11 @@
     "axios": "^0.27.2",
     "axios-mock-adapter": "^1.21.1",
     "bip32": "^2.0.6",
+    "bitcoinjs-lib": "^6.0.1",
     "coininfo": "5.2.1",
     "coinselect": "3.1.13",
     "ecpair": "^2.0.1",
-    "tiny-secp256k1": "^2.2.1",
+    "tiny-secp256k1": "^1.1.6",
     "wif": "^2.0.6"
   },
   "peerDependencies": {
@@ -56,10 +51,11 @@
     "@thorswap-lib/xchain-util": "^0.4.12",
     "axios": "^0.27.2",
     "bip32": "^2.0.6",
+    "bitcoinjs-lib": "^6.0.1",
     "coininfo": "5.2.1",
     "coinselect": "3.1.13",
     "ecpair": "^2.0.1",
-    "tiny-secp256k1": "^2.2.1",
+    "tiny-secp256k1": "^1.1.6",
     "wif": "^2.0.6"
   },
   "publishConfig": {
