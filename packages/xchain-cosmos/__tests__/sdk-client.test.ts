@@ -335,7 +335,7 @@ describe('SDK Client Test', () => {
         from: cosmos_testnet_address0,
         to: 'cosmos1gehrq0pr5d79q8nxnaenvqh09g56jafm82thjv',
         amount: '10000',
-        asset: 'muon',
+        asset: 'umuon',
         memo: 'transfer',
       })
 

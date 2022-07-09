@@ -1,3 +1,7 @@
+# v.0.20.6 (2022-07-09)
+
+- fixes returned assets on balance request
+
 # v.0.20.0 (2022-06-28)
 
 - changes client call signature to enable privkey hydration

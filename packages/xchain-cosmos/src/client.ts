@@ -209,11 +209,11 @@ class Client extends BaseXChainClient implements CosmosClient, XChainClient {
    */
   async getBalance(address: Address, assets?: Asset[]): Promise<Balance[]> {
     const balances = await this.getSDKClient().getBalance(address)
-    const mainAsset = this.getMainAsset()
     return balances
+      .filter((balance) => balance.denom && getAsset(balance.denom))
       .map((balance) => {
         return {
-          asset: (balance.denom && getAsset(balance.denom)) || mainAsset,
+          asset: getAsset(balance.denom) as Asset,
           amount: baseAmount(balance.amount, DECIMAL),
         }
       })

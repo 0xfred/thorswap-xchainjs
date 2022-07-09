@@ -139,7 +139,7 @@ describe('Client Test', () => {
     mockAccountsBalance(getClientUrl(cosmosClient), 'cosmos1gehrq0pr5d79q8nxnaenvqh09g56jafm82thjv', {
       balances: [
         new proto.cosmos.base.v1beta1.Coin({
-          denom: 'muon',
+          denom: 'umuon',
           amount: '75000000',
         }),
       ],
