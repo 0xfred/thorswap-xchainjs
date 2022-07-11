@@ -1,3 +1,7 @@
+# 0.22.5 (2022-07-11)
+
+- Adds thorname validation to validateAddress
+
 # 0.22.0 (2022-06-01)
 
 - Adds PrivKey as optional param to constructor to improve mobile performance

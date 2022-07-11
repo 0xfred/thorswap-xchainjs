@@ -2,10 +2,11 @@ import { toBase64 } from '@cosmjs/encoding'
 import { cosmosclient } from '@cosmos-client/core'
 import { Network } from '@thorswap-lib/xchain-client'
 import { CosmosSDKClient } from '@thorswap-lib/xchain-cosmos'
-import { AssetRuneNative, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
+import { AssetRuneNative, Chain, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
 import Long from 'long'
 import nock from 'nock'
 
+import { mockThornameLookup } from '../__mocks__/midgard-api'
 import {
   DEFAULT_GAS_VALUE,
   buildTransferTx,
@@ -27,6 +28,7 @@ import {
   mergeSignatures,
   registerDespositCodecs,
   registerSendCodecs,
+  validateTHORNameAddress,
 } from '../src/util'
 
 import depositTx from './depositTx.json'
@@ -257,6 +259,20 @@ describe('thorchain/util', () => {
 
       expect(JSON.stringify(exportMultisigTx(sendTxBuilder))).toEqual(JSON.stringify(sendTxBuilder.toProtoJSON()))
       expect(JSON.stringify(exportMultisigTx(depositTxBuilder))).toEqual(JSON.stringify(depositTxBuilder.toProtoJSON()))
+    })
+  })
+
+  describe('thorname validation', () => {
+    it('should validate a valid thorname', async () => {
+      mockThornameLookup(
+        'https://stagenet-midgard.ninerealms.com/v2',
+        'ORION9RSTAGE',
+        require('../__mocks__/responses/thorname/ORION9RSTAGE.json'),
+      )
+      expect(await validateTHORNameAddress('ORION9RSTAGE', Network.Mainnet, Chain.THORChain, true)).toEqual(true)
+    })
+    it('should invalidate an invalid thorname', async () => {
+      expect(await validateTHORNameAddress('invalid', Network.Mainnet, Chain.THORChain, true)).toEqual(false)
     })
   })
 })

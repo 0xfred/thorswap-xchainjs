@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "address": "bnb1l0xncjcm6xk48rmgy6uqe9ms0vgf3dk4v9jayj",
+      "chain": "BNB"
+    },
+    {
+      "address": "bc1q6ptu8zayukjz3ag4d4pnjjhtxwd4jckh9gufwu",
+      "chain": "BTC"
+    },
+    {
+      "address": "sthor1q70geehv74xvpx087ev0kg9nfaglfndduhyu2a",
+      "chain": "THOR"
+    }
+  ],
+  "expire": "11427947",
+  "owner": "sthor1q70geehv74xvpx087ev0kg9nfaglfndduhyu2a"
+}

@@ -18,7 +18,7 @@ import * as bech32Buffer from 'bech32-buffer'
 import Long from 'long'
 
 import { ChainId, ChainIds, ClientUrl, ExplorerUrl, ExplorerUrls, NodeInfoResponse, TxData } from './types'
-import { MsgNativeTx } from './types/messages'
+import { MsgNativeTx, THORNameResultEntry } from './types/messages'
 import types from './types/proto/MsgCompiled'
 
 export const DECIMAL = 8
@@ -30,6 +30,8 @@ export const THORCHAIN_MAINNET_CHAIN_ID = 'thorchain-mainnet-v1'
 export const THORCHAIN_STAGENET_CHAIN_ID = 'thorchain-stagenet-v2'
 export const THORCHAIN_TESTNET_CHAIN_ID = 'thorchain-testnet-v2'
 
+export const STAGENET_MIDGARD_API_BASE = 'https://stagenet-midgard.ninerealms.com/v2'
+export const MAINNET_MIDGARD_API_BASE = 'https://midgard.ninerealms.com/v2'
 /**
  * Get denomination from Asset
  *
@@ -654,4 +656,30 @@ export const importMultisigTx = (cosmosSdk: cosmosclient.CosmosSDK, tx: any) => 
   } catch (e) {
     throw new Error(`Invalid transaction object: ${e}`)
   }
+}
+
+export const validateTHORNameAddress = async (
+  address: string,
+  network: Network,
+  chain: Chain,
+  isStagenet: boolean,
+): Promise<boolean> => {
+  if (isStagenet) {
+    const url = (() => {
+      switch (network) {
+        case Network.Mainnet:
+          return MAINNET_MIDGARD_API_BASE
+        default:
+          return STAGENET_MIDGARD_API_BASE
+      }
+    })()
+    try {
+      return !!(await axios.get(`${url}/thorname/lookup/${address}`)).data.entries?.find(
+        (entry: THORNameResultEntry) => entry.chain === chain,
+      )
+    } catch (error) {
+      return false
+    }
+  }
+  return false
 }

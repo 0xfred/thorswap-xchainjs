@@ -1,5 +1,5 @@
 import { cosmosclient, proto } from '@cosmos-client/core'
-import { Asset } from '@thorswap-lib/xchain-util'
+import { Asset, Chain } from '@thorswap-lib/xchain-util'
 
 export type MsgCoin = {
   asset: Asset
@@ -69,4 +69,15 @@ export type TxResult = {
     tx_id: string
     node_tss_times: null
   }
+}
+
+export type THORNameResult = {
+  entries: THORNameResultEntry[]
+  expire: string
+  owner: string
+}
+
+export type THORNameResultEntry = {
+  chain: Chain
+  address: string
 }

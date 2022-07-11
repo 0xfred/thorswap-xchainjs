@@ -68,6 +68,7 @@ import {
   isAssetRuneNative,
   registerDespositCodecs,
   registerSendCodecs,
+  validateTHORNameAddress,
 } from './util'
 
 /**
@@ -119,7 +120,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
     isStagenet = false,
     privateKeyInit,
   }: XChainClientParams & ThorchainClientParams) {
-    super(Chain.Cosmos, { network, rootDerivationPaths, phrase })
+    super(Chain.THORChain, { network, rootDerivationPaths, phrase })
 
     this.network = network
     this.clientUrl = clientUrl || getDefaultClientUrl(isStagenet)
@@ -337,6 +338,18 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
    */
   validateAddress(address: Address): boolean {
     return this.cosmosClient.checkAddress(address)
+  }
+
+  /**
+   * Validate the given address.
+   *
+   * @param {Address} address
+   * @returns {Promise<boolean>} `true` or `false`
+   */
+  async validateAddressAndThorname(address: Address): Promise<boolean> {
+    return (
+      this.validateAddress(address) || validateTHORNameAddress(address, this.network, Chain.THORChain, this.isStagenet)
+    )
   }
 
   /**
