@@ -252,7 +252,6 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
   }
 
   /**
-   * @private
    * Get private key
    *
    * @param {number} index the HD wallet index (optional)
@@ -261,7 +260,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
    * @throws {"Phrase not set"}
    * Throws an error if phrase has not been set before
    * */
-  private getPrivateKey(index = 0): proto.cosmos.crypto.secp256k1.PrivKey {
+  getPrivateKey(index = 0): proto.cosmos.crypto.secp256k1.PrivKey {
     if (
       this.privateKeyCache &&
       deepEqual(this.privateKeyCache, {
