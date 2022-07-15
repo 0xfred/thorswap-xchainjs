@@ -30,8 +30,8 @@ export const THORCHAIN_MAINNET_CHAIN_ID = 'thorchain-mainnet-v1'
 export const THORCHAIN_STAGENET_CHAIN_ID = 'thorchain-stagenet-v2'
 export const THORCHAIN_TESTNET_CHAIN_ID = 'thorchain-testnet-v2'
 
-export const STAGENET_MIDGARD_API_BASE = 'https://stagenet-midgard.ninerealms.com/v2'
-export const MAINNET_MIDGARD_API_BASE = 'https://midgard.ninerealms.com/v2'
+export const STAGENET_MIDGARD_API_BASE = 'https://stagenet-midgard.thorswap.net/v2'
+export const MAINNET_MIDGARD_API_BASE = 'https://midgard.thorswap.net/v2'
 /**
  * Get denomination from Asset
  *
@@ -658,28 +658,14 @@ export const importMultisigTx = (cosmosSdk: cosmosclient.CosmosSDK, tx: any) => 
   }
 }
 
-export const validateTHORNameAddress = async (
-  address: string,
-  network: Network,
-  chain: Chain,
-  isStagenet: boolean,
-): Promise<boolean> => {
-  if (isStagenet) {
-    const url = (() => {
-      switch (network) {
-        case Network.Mainnet:
-          return MAINNET_MIDGARD_API_BASE
-        default:
-          return STAGENET_MIDGARD_API_BASE
-      }
-    })()
-    try {
-      return !!(await axios.get(`${url}/thorname/lookup/${address}`)).data.entries?.find(
-        (entry: THORNameResultEntry) => entry.chain === chain,
-      )
-    } catch (error) {
-      return false
-    }
+export const validateTHORNameAddress = async (address: string, isStagenet: boolean, chain: Chain): Promise<boolean> => {
+  const url = isStagenet ? STAGENET_MIDGARD_API_BASE : MAINNET_MIDGARD_API_BASE
+
+  try {
+    const { data } = await axios.get(`${url}/thorname/lookup/${address}`)
+
+    return !!data.entries?.find((entry: THORNameResultEntry) => entry.chain === chain)
+  } catch (error) {
+    return false
   }
-  return false
 }

@@ -263,16 +263,18 @@ describe('thorchain/util', () => {
   })
 
   describe('thorname validation', () => {
-    it('should validate a valid thorname', async () => {
+    it('should return true for a valid thorname', async () => {
       mockThornameLookup(
-        'https://stagenet-midgard.ninerealms.com/v2',
+        'https://midgard.thorswap.net/v2',
         'ORION9RSTAGE',
         require('../__mocks__/responses/thorname/ORION9RSTAGE.json'),
       )
-      expect(await validateTHORNameAddress('ORION9RSTAGE', Network.Mainnet, Chain.THORChain, true)).toEqual(true)
+
+      expect(await validateTHORNameAddress('ORION9RSTAGE', false, Chain.THORChain)).toEqual(true)
     })
-    it('should invalidate an invalid thorname', async () => {
-      expect(await validateTHORNameAddress('invalid', Network.Mainnet, Chain.THORChain, true)).toEqual(false)
+
+    it('should return false for an invalid thorname', async () => {
+      expect(await validateTHORNameAddress('invalid', false, Chain.THORChain)).toEqual(false)
     })
   })
 })

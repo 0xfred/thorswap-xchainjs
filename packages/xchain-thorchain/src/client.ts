@@ -346,9 +346,7 @@ class Client extends BaseXChainClient implements ThorchainClient, XChainClient {
    * @returns {Promise<boolean>} `true` or `false`
    */
   async validateAddressAndThorname(address: Address): Promise<boolean> {
-    return (
-      this.validateAddress(address) || validateTHORNameAddress(address, this.network, Chain.THORChain, this.isStagenet)
-    )
+    return this.validateAddress(address) || validateTHORNameAddress(address, this.isStagenet, Chain.THORChain)
   }
 
   /**
