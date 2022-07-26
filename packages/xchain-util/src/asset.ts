@@ -318,6 +318,8 @@ export const AssetUSDCSPLTestnet: Asset = {
 export const AssetAtom: Asset = { chain: Chain.Cosmos, symbol: 'ATOM', ticker: 'ATOM', synth: false }
 export const AssetMuon: Asset = { chain: Chain.Cosmos, symbol: 'MUON', ticker: 'MUON', synth: false }
 
+export const AssetAVAX: Asset = { chain: Chain.Avalanche, symbol: 'AVAX', ticker: 'AVAX', synth: false }
+
 /**
  * Helper to check whether asset is valid
  *
