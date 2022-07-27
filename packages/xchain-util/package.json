@@ -1,6 +1,6 @@
 {
   "name": "@thorswap-lib/xchain-util",
-  "version": "0.4.14",
+  "version": "0.4.15",
   "description": "Helper utilities for XChain clients",
   "keywords": [
     "THORChain",

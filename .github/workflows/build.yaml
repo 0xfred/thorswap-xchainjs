@@ -1,0 +1,23 @@
+name: "Build and test package"
+
+on: pull_request
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install Deps
+        run: npx lerna bootstrap
+
+      - name: Build
+        run: npx lerna run build
+
+      - name: Test
+        run: npx lerna run test

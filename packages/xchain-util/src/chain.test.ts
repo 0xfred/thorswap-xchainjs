@@ -42,9 +42,6 @@ describe('chain', () => {
     it('returns string for DOGE', () => {
       expect(chainToString(Chain.Doge)).toEqual('Dogecoin')
     })
-    it('returns string for LUNA', () => {
-      expect(chainToString(Chain.Terra)).toEqual('Terra')
-    })
     it('returns string for SOL', () => {
       expect(chainToString(Chain.Solana)).toEqual('Solana')
     })

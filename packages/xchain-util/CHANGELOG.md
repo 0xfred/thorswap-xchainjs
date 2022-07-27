@@ -1,3 +1,7 @@
+# v.0.4.15 (2022-07-26)
+
+- removes TERRA assets and chain
+
 # v.0.4.7 (2022-06-09)
 
 - moves COSMOS assets to util
