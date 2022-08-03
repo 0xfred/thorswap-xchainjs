@@ -1,37 +1,6 @@
 {
-  "name": "@thorswap-lib/xchain-ethereum",
-  "version": "0.22.12",
-  "description": "Ethereum client for XChainJS",
-  "keywords": [
-    "XChain",
-    "Ethereum"
-  ],
   "author": "XChainJS",
-  "homepage": "https://github.com/thorswap/thorswap-xchainjs",
-  "license": "MIT",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:thorswap/thorswap-xchainjs.git"
-  },
-  "scripts": {
-    "clean": "rimraf lib/**",
-    "build": "yarn clean && rollup -c rollup.config.ts",
-    "test": "jest --detectOpenHandles --runInBand --forceExit",
-    "lint": "eslint \"{src,__tests__, __mocks__}/**/*.ts\" --fix --max-warnings 0",
-    "prepublishOnly": "yarn build"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
+  "description": "Ethereum client for XChainJS",
   "devDependencies": {
     "@thorswap-lib/xchain-client": "^0.11.6",
     "@thorswap-lib/xchain-crypto": "^0.2.11",
@@ -39,11 +8,42 @@
     "axios": "^0.27.2",
     "ethers": "^5.6.9"
   },
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "homepage": "https://github.com/thorswap/thorswap-xchainjs",
+  "keywords": [
+    "XChain",
+    "Ethereum"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "name": "@thorswap-lib/xchain-ethereum",
   "peerDependencies": {
     "@thorswap-lib/xchain-client": "^0.11.6",
     "@thorswap-lib/xchain-crypto": "^0.2.11",
     "@thorswap-lib/xchain-util": "^0.4.12",
     "axios": "^0.27.2",
     "ethers": "^5.6.9"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:thorswap/thorswap-xchainjs.git"
+  },
+  "scripts": {
+    "build": "yarn clean && rollup -c rollup.config.ts",
+    "clean": "rimraf lib/**",
+    "lint": "eslint \"{src,__tests__, __mocks__}/**/*.ts\" --fix --max-warnings 0",
+    "prepublishOnly": "yarn build",
+    "test": "jest --detectOpenHandles --runInBand --forceExit"
+  },
+  "typings": "lib/index.d.ts",
+  "version": "0.22.13"
 }

@@ -637,6 +637,7 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
     walletIndex = 0,
     asset,
     memo,
+    data,
     amount,
     recipient,
     feeOptionKey: feeOption,
@@ -648,6 +649,7 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
     gasPrice?: BaseAmount
     gasLimit?: BigNumber
     maxPriorityFeePerGas?: BigNumber
+    data?: string
   }): Promise<TxHash> {
     const txAmount = BigNumber.from(amount.amount().toFixed())
 
@@ -696,10 +698,7 @@ export default class Client extends BaseXChainClient implements XChainClient, Et
       // Transfer ETH
       const transactionRequest = Object.assign(
         { to: recipient, value: txAmount },
-        {
-          ...overrides,
-          data: memo ? toUtf8Bytes(memo) : undefined,
-        },
+        { ...overrides, data: data || (memo ? toUtf8Bytes(memo) : undefined) },
       )
 
       txResult = await this.getWallet().sendTransaction(transactionRequest)
