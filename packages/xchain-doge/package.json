@@ -1,16 +1,21 @@
 {
-  "name": "@thorswap-lib/xchain-doge",
-  "version": "0.2.10",
-  "description": "Custom Doge client and utilities used by Thorswap clients",
-  "keywords": [
-    "Xchain",
-    "Doge"
-  ],
   "author": "XChainJS",
-  "homepage": "https://github.com/thorswap/thorswap-xchainjs",
-  "license": "MIT",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "description": "Custom Doge client and utilities used by Thorswap clients",
+  "devDependencies": {
+    "@thorswap-lib/xchain-client": "^0.11.6",
+    "@thorswap-lib/xchain-crypto": "^0.2.11",
+    "@thorswap-lib/xchain-util": "^0.4.15",
+    "@types/wif": "^2.0.2",
+    "axios": "^0.27.2",
+    "axios-mock-adapter": "^1.21.2",
+    "bip32": "^2.0.6",
+    "bitcoinjs-lib": "^5.2.0",
+    "coininfo": "5.2.1",
+    "coinselect": "3.1.13",
+    "ecpair": "^2.0.1",
+    "tiny-secp256k1": "^1.1.6",
+    "wif": "^2.0.6"
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -18,40 +23,21 @@
   "files": [
     "lib"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:thorswap/thorswap-xchainjs.git"
-  },
-  "scripts": {
-    "clean": "rimraf lib/**",
-    "build": "yarn clean && rollup -c",
-    "test": "jest --detectOpenHandles --runInBand --forceExit",
-    "lint": "eslint \"{src,__tests__}/**/*.ts\" --fix --max-warnings 0",
-    "prepublishOnly": "yarn build",
-    "postversion": "git push --follow-tags"
-  },
-  "devDependencies": {
-    "@thorswap-lib/xchain-client": "^0.11.6",
-    "@thorswap-lib/xchain-crypto": "^0.2.11",
-    "@thorswap-lib/xchain-util": "^0.4.12",
-    "@types/wif": "^2.0.2",
-    "axios": "^0.27.2",
-    "axios-mock-adapter": "^1.21.1",
-    "bip32": "^2.0.6",
-    "bitcoinjs-lib": "^6.0.1",
-    "coininfo": "5.2.1",
-    "coinselect": "3.1.13",
-    "ecpair": "^2.0.1",
-    "tiny-secp256k1": "^1.1.6",
-    "wif": "^2.0.6"
-  },
+  "homepage": "https://github.com/thorswap/thorswap-xchainjs",
+  "keywords": [
+    "Xchain",
+    "Doge"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "name": "@thorswap-lib/xchain-doge",
   "peerDependencies": {
     "@thorswap-lib/xchain-client": "^0.11.6",
     "@thorswap-lib/xchain-crypto": "^0.2.11",
-    "@thorswap-lib/xchain-util": "^0.4.12",
+    "@thorswap-lib/xchain-util": "^0.4.15",
     "axios": "^0.27.2",
     "bip32": "^2.0.6",
-    "bitcoinjs-lib": "^6.0.1",
+    "bitcoinjs-lib": "^5.2.0",
     "coininfo": "5.2.1",
     "coinselect": "3.1.13",
     "ecpair": "^2.0.1",
@@ -60,5 +46,19 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:thorswap/thorswap-xchainjs.git"
+  },
+  "scripts": {
+    "build": "yarn clean && rollup -c",
+    "clean": "rimraf lib/**",
+    "lint": "eslint \"{src,__tests__}/**/*.ts\" --fix --max-warnings 0",
+    "postversion": "git push --follow-tags",
+    "prepublishOnly": "yarn build",
+    "test": "jest --detectOpenHandles --runInBand --forceExit"
+  },
+  "typings": "lib/index.d.ts",
+  "version": "0.2.12"
 }

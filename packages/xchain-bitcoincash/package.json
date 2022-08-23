@@ -1,39 +1,9 @@
 {
-  "name": "@thorswap-lib/xchain-bitcoincash",
-  "version": "0.14.4",
-  "description": "Custom bitcoincash client and utilities used by XChainJS clients",
-  "keywords": [
-    "XChain",
-    "Bitcoin",
-    "Cash"
-  ],
   "author": "XChainJS",
-  "homepage": "https://github.com/thorswap/thorswap-xchainjs",
-  "license": "MIT",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:thorswap/thorswap-xchainjs.git"
-  },
-  "scripts": {
-    "clean": "rimraf lib/**",
-    "build": "yarn clean && rollup -c",
-    "test": "jest --detectOpenHandles --runInBand --forceExit",
-    "lint": "eslint \"{src,__tests__,__mocks__}/**/*.ts\" --fix --max-warnings 0",
-    "prepublishOnly": "yarn build",
-    "postversion": "git push --follow-tags"
-  },
   "dependencies": {
     "uniqid": "^5.4.0"
   },
+  "description": "Custom bitcoincash client and utilities used by XChainJS clients",
   "devDependencies": {
     "@psf/bitcoincashjs-lib": "^4.0.2",
     "@thorswap-lib/xchain-client": "^0.11.6",
@@ -44,11 +14,27 @@
     "axios": "^0.27.2",
     "axios-mock-adapter": "^1.21.1",
     "bchaddrjs": "^0.5.2",
-    "bitcoinjs-lib": "^6.0.1",
+    "bitcoinjs-lib": "^5.2.0",
     "coininfo": "^5.2.1",
     "coinselect": "^3.1.13",
     "uniqid": "^5.4.0"
   },
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "homepage": "https://github.com/thorswap/thorswap-xchainjs",
+  "keywords": [
+    "XChain",
+    "Bitcoin",
+    "Cash"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "name": "@thorswap-lib/xchain-bitcoincash",
   "peerDependencies": {
     "@psf/bitcoincashjs-lib": "^4.0.2",
     "@thorswap-lib/xchain-client": "^0.11.6",
@@ -56,12 +42,26 @@
     "@thorswap-lib/xchain-util": "^0.4.12",
     "axios": "^0.27.2",
     "bchaddrjs": "^0.5.2",
+    "bitcoinjs-lib": "^5.2.0",
     "coininfo": "^5.2.1",
     "coinselect": "^3.1.13",
-    "bitcoinjs-lib": "^6.0.1",
     "uniqid": "^5.4.0"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:thorswap/thorswap-xchainjs.git"
+  },
+  "scripts": {
+    "build": "yarn clean && rollup -c",
+    "clean": "rimraf lib/**",
+    "lint": "eslint \"{src,__tests__,__mocks__}/**/*.ts\" --fix --max-warnings 0",
+    "postversion": "git push --follow-tags",
+    "prepublishOnly": "yarn build",
+    "test": "jest --detectOpenHandles --runInBand --forceExit"
+  },
+  "typings": "lib/index.d.ts",
+  "version": "0.14.5"
 }
