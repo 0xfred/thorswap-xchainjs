@@ -241,6 +241,10 @@ class Client extends UTXOClient {
    * @returns {boolean} `true` or `false`
    */
   validateAddress(address: string): boolean {
+    const startsWithBCH = address.startsWith('bitcoincash:')
+    if (startsWithBCH) {
+      return false
+    }
     return utils.validateAddress(address, this.network)
   }
 
