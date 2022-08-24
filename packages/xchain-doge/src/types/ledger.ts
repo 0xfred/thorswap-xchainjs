@@ -1,4 +1,4 @@
-import { Address, FeeRate, Network, TxParams } from '@thorswap-lib/xchain-client'
+import { ClientTxParams, Network } from '@thorswap-lib/types'
 
 import { UTXO } from './common'
 
@@ -7,9 +7,9 @@ export type LedgerTxInfo = {
   newTxHex: string
 }
 
-export type LedgerTxInfoParams = Pick<TxParams, 'amount' | 'recipient'> & {
-  feeRate: FeeRate
-  sender: Address
+export type LedgerTxInfoParams = Pick<ClientTxParams, 'amount' | 'recipient'> & {
+  feeRate: number
+  sender: string
   network: Network
   sochainUrl: string
   nodeApiKey: string

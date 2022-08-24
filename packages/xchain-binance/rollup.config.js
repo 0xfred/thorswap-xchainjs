@@ -34,7 +34,6 @@ export default {
     ...builtinModules,
     '@binance-chain/javascript-sdk',
     '@thorswap-lib/xchain-client',
-    '@thorswap-lib/xchain-crypto',
     '@thorswap-lib/xchain-util',
   ],
 }

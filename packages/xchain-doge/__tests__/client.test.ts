@@ -1,9 +1,9 @@
-import { Network } from '@thorswap-lib/xchain-client'
-import { AssetDoge, baseAmount } from '@thorswap-lib/xchain-util'
+import { baseAmount } from '@thorswap-lib/atlas'
+import { Network } from '@thorswap-lib/types'
 
 import mockSochainApi from '../__mocks__/sochain'
 import { Client } from '../src/client'
-import { MIN_TX_FEE } from '../src/const'
+import { AssetDoge, MIN_TX_FEE } from '../src/const'
 // import { MIN_TX_FEE } from '../src/const'
 
 mockSochainApi.init()

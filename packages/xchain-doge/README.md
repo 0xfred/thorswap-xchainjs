@@ -13,7 +13,7 @@ yarn add @thorswap-lib/xchain-client
 Following peer dependencies have to be installed into your project. These are not included in `@thorswap-lib/xchain-doge`.
 
 ```
-yarn add @thorswap-lib/xchain-client @thorswap-lib/xchain-crypto @thorswap-lib/xchain-util axios bitcoinjs-lib coininfo wif coinselect
+yarn add @thorswap-lib/xchain-client axios bitcoinjs-lib coininfo wif coinselect
 ```
 
 ## Service Providers
@@ -27,7 +27,7 @@ This package uses the following service providers:
 | Transaction details by hash | Sochain     | https://sochain.com/api#get-tx                                                   |
 | Transaction fees            | BlockCypher | https://api.blockcypher.com/v1/doge/main                                         |
 | Transaction broadcast       | BlockCypher | https://api.blockcypher.com/v1/doge/main/txs/push                                |
-| Explorer                    | Blockchair  | https://blockchair.com/dogecoin   
+| Explorer                    | Blockchair  | https://blockchair.com/dogecoin                                                  |
 
 Sochain API rate limits: https://sochain.com/api#rate-limits (300 requests/minute)
 

@@ -1,4 +1,4 @@
-import { Network, TxHash } from '@thorswap-lib/xchain-client'
+import { Network, TxHash } from '@thorswap-lib/types'
 
 export type AddressParams = {
   sochainUrl: string

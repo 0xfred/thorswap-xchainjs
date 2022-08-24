@@ -31,9 +31,9 @@ export default {
   ],
   external: [
     ...builtinModules,
+    '@thorswap-lib/atlas',
     '@thorswap-lib/xchain-client',
     '@thorswap-lib/xchain-crypto',
-    '@thorswap-lib/xchain-util',
     'axios',
     'bip32',
     'bitcoinjs-lib',

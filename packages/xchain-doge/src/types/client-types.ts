@@ -1,11 +1,11 @@
-import { Address, FeeRate, Network } from '@thorswap-lib/xchain-client'
+import { Network } from '@thorswap-lib/types'
 
-export type NormalTxParams = { addressTo: Address; amount: number; feeRate: FeeRate }
+export type NormalTxParams = { addressTo: string; amount: number; feeRate: number }
 export type VaultTxParams = NormalTxParams & { memo: string }
 
 export type GetChangeParams = {
   valueOut: number
   sochainUrl: string
   network: Network
-  address: Address
+  address: string
 }

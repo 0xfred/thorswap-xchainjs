@@ -10,4 +10,3 @@ export {
   scanUTXOs,
   buildTx,
 } from './utils'
-export { createTxInfo } from './ledger'

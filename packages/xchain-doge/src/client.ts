@@ -1,27 +1,25 @@
+import { assetAmount, assetToBase } from '@thorswap-lib/atlas'
 import {
-  Address,
+  AmountWithBaseDenom,
   Balance,
-  Fee,
-  // FeeOption,
-  FeeRate,
+  Chain,
+  ClientTxParams,
   Network,
-  PrivateKeyCache,
   Tx,
   TxHash,
   TxHistoryParams,
-  TxParams,
   TxType,
   TxsPage,
-  UTXOClient,
-  XChainClientParams,
-} from '@thorswap-lib/xchain-client'
+} from '@thorswap-lib/types'
+import { PrivateKeyCache, UTXOClient, XChainClientParams } from '@thorswap-lib/xchain-client'
 import { getSeed } from '@thorswap-lib/xchain-crypto'
-import { AssetDoge, Chain, assetAmount, assetToBase, deepEqual } from '@thorswap-lib/xchain-util'
 import { fromSeed } from 'bip32'
 import { payments } from 'bitcoinjs-lib'
 import { ECPairFactory, ECPairInterface } from 'ecpair'
+import deepEqual from 'fast-deep-equal'
 import * as tinySecp from 'tiny-secp256k1'
 
+import { AssetDoge } from './const'
 import * as sochain from './sochain-api'
 import { NodeAuth } from './types'
 import { TxIO } from './types/sochain-api-types'
@@ -70,16 +68,7 @@ class Client extends UTXOClient {
   }: DogecoinClientParams) {
     super(Chain.Doge, { network, rootDerivationPaths, phrase })
     this.nodeUrl =
-      nodeUrl ??
-      (() => {
-        // TODO: CHECK THIS
-        switch (network) {
-          case Network.Mainnet:
-            return 'https://doge.thorchain.info'
-          case Network.Testnet:
-            return 'https://testnet.doge.thorchain.info'
-        }
-      })()
+      nodeUrl || network === Network.Mainnet ? 'https://doge.thorchain.info' : 'https://testnet.doge.thorchain.info'
 
     // set apiKey
     this.apiKey = apiKey
@@ -110,10 +99,10 @@ class Client extends UTXOClient {
    */
   getExplorerUrl(): string {
     switch (this.network) {
-      case Network.Mainnet:
-        return 'https://blockchair.com/dogecoin'
       case Network.Testnet:
         return 'https://blockexplorer.one/dogecoin/testnet'
+      default:
+        return 'https://blockchair.com/dogecoin'
     }
   }
 
@@ -123,7 +112,7 @@ class Client extends UTXOClient {
    * @param {Address} address
    * @returns {string} The explorer url for the given address based on the network.
    */
-  getExplorerAddressUrl(address: Address): string {
+  getExplorerAddressUrl(address: string): string {
     return `${this.getExplorerUrl()}/address/${address}`
   }
 
@@ -135,10 +124,10 @@ class Client extends UTXOClient {
    */
   getExplorerTxUrl(txID: string): string {
     switch (this.network) {
-      case Network.Mainnet:
-        return `${this.getExplorerUrl()}/transaction/${txID}`
       case Network.Testnet:
         return `${this.getExplorerUrl()}/tx/${txID}`
+      default:
+        return `${this.getExplorerUrl()}/transaction/${txID}`
     }
   }
 
@@ -153,7 +142,7 @@ class Client extends UTXOClient {
    * @throws {"Phrase must be provided"} Thrown if phrase has not been set before.
    * @throws {"Address not defined"} Thrown if failed creating account from phrase.
    */
-  getAddress(index = 0): Address {
+  getAddress(index = 0): string {
     if (index < 0) {
       throw new Error('index must be greater than zero')
     }
@@ -246,7 +235,7 @@ class Client extends UTXOClient {
    * @param {Address} address By default, it will return the balance of the current wallet. (optional)
    * @returns {Balance[]} The Doge balance of the address.
    */
-  async getBalance(address: Address): Promise<Balance[]> {
+  async getBalance(address: string): Promise<Balance[]> {
     return Utils.getBalance({
       sochainUrl: this.sochainUrl,
       network: this.network,
@@ -329,11 +318,11 @@ class Client extends UTXOClient {
     }
   }
 
-  protected async getSuggestedFeeRate(): Promise<FeeRate> {
+  protected async getSuggestedFeeRate(): Promise<number> {
     return await sochain.getSuggestedTxFee()
   }
 
-  protected async calcFee(feeRate: FeeRate, memo?: string): Promise<Fee> {
+  protected async calcFee(feeRate: number, memo?: string): Promise<AmountWithBaseDenom> {
     return Utils.calcFee(feeRate, memo)
   }
 
@@ -343,7 +332,7 @@ class Client extends UTXOClient {
    * @param {TxParams&FeeRate} params The transfer options.
    * @returns {TxHash} The transaction hash.
    */
-  async transfer(params: TxParams & { feeRate?: FeeRate }): Promise<TxHash> {
+  async transfer(params: ClientTxParams & { feeRate?: number }): Promise<TxHash> {
     const fromAddressIndex = params?.walletIndex || 0
     const feeRate = params.feeRate || (await this.getSuggestedFeeRate())
     const { psbt } = await Utils.buildTx({

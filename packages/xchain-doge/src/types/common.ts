@@ -1,4 +1,4 @@
-import { Network } from '@thorswap-lib/xchain-client'
+import { FeeRates, Fees, Network } from '@thorswap-lib/types'
 
 export type UTXO = {
   hash: string
@@ -17,4 +17,9 @@ export type BroadcastTxParams = {
   txHex: string
   nodeUrl: string
   auth?: NodeAuth
+}
+
+export type FeesWithRates = {
+  rates: FeeRates
+  fees: Fees
 }

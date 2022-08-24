@@ -1,5 +1,5 @@
-import { Network } from '@thorswap-lib/xchain-client'
-import { BaseAmount, assetAmount, assetToBase } from '@thorswap-lib/xchain-util'
+import { assetAmount, assetToBase } from '@thorswap-lib/atlas'
+import { AmountWithBaseDenom, Network } from '@thorswap-lib/types'
 import axios from 'axios'
 
 import {
@@ -91,7 +91,7 @@ export const getTx = async ({ sochainUrl, network, hash }: TxHashParams): Promis
  * @param {string} address
  * @returns {number}
  */
-export const getBalance = async ({ sochainUrl, network, address }: AddressParams): Promise<BaseAmount> => {
+export const getBalance = async ({ sochainUrl, network, address }: AddressParams): Promise<AmountWithBaseDenom> => {
   const url = `${sochainUrl}/get_address_balance/${toSochainNetwork(network)}/${address}`
   const response = await axios.get(url)
   const balanceResponse: SochainResponse<DogeGetBalanceDTO> = response.data

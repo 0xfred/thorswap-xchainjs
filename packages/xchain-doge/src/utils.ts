@@ -1,17 +1,6 @@
-import {
-  Address,
-  Balance,
-  FeeOption,
-  FeeRate,
-  Fees,
-  FeesWithRates,
-  Network,
-  TxHash,
-  TxParams,
-  calcFees,
-  standardFeeRates,
-} from '@thorswap-lib/xchain-client'
-import { AssetDoge, BaseAmount, assetAmount, assetToBase, baseAmount } from '@thorswap-lib/xchain-util'
+import { assetAmount, assetToBase, baseAmount } from '@thorswap-lib/atlas'
+import { AmountWithBaseDenom, Balance, ClientTxParams, FeeOption, Fees, Network, TxHash } from '@thorswap-lib/types'
+import { calcFees, standardFeeRates } from '@thorswap-lib/xchain-client'
 import {
   Network as BitcoinNetwork,
   Psbt,
@@ -23,10 +12,10 @@ import {
 import coininfo from 'coininfo'
 import accumulative from 'coinselect/accumulative'
 
-import { MIN_TX_FEE } from './const'
+import { AssetDoge, MIN_TX_FEE } from './const'
 import * as nodeApi from './node-api'
 import * as sochain from './sochain-api'
-import { BroadcastTxParams, UTXO } from './types/common'
+import { BroadcastTxParams, FeesWithRates, UTXO } from './types/common'
 import { AddressParams, DogeAddressUTXO } from './types/sochain-api-types'
 
 export const DOGE_DECIMAL = 8
@@ -60,7 +49,7 @@ export const compileMemo = (memo: string): Buffer => {
  * @param {Buffer} data The compiled memo (Optional).
  * @returns {number} The fee amount.
  */
-export function getFee(inputs: UTXO[], feeRate: FeeRate, data: Buffer | null = null): number {
+export function getFee(inputs: UTXO[], feeRate: number, data: Buffer | null = null): number {
   // TODO: Check this
   let sum =
     TX_EMPTY_SIZE +
@@ -124,12 +113,7 @@ export const dogeNetwork = (network: Network): BitcoinNetwork => {
 export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
   try {
     const balance = await sochain.getBalance(params)
-    return [
-      {
-        asset: AssetDoge,
-        amount: balance,
-      },
-    ]
+    return [{ asset: AssetDoge, amount: balance }]
   } catch (error) {
     throw new Error(`Could not get balances for address ${params.address}`)
   }
@@ -142,7 +126,7 @@ export const getBalance = async (params: AddressParams): Promise<Balance[]> => {
  * @param {Network} network
  * @returns {boolean} `true` or `false`.
  */
-export const validateAddress = (address: Address, network: Network): boolean => {
+export const validateAddress = (address: string, network: Network): boolean => {
   try {
     bitcoinAddress.toOutputScript(address, dogeNetwork(network))
     return true
@@ -195,9 +179,9 @@ export const buildTx = async ({
   network,
   sochainUrl,
   fetchTxHex = false,
-}: TxParams & {
-  feeRate: FeeRate
-  sender: Address
+}: ClientTxParams & {
+  feeRate: number
+  sender: string
   network: Network
   sochainUrl: string
   fetchTxHex?: boolean
@@ -281,7 +265,7 @@ export const broadcastTx = async (params: BroadcastTxParams): Promise<TxHash> =>
  * @param {string} memo
  * @returns {BaseAmount} The calculated fees based on fee rate and the memo.
  */
-export const calcFee = (feeRate: FeeRate, memo?: string): BaseAmount => {
+export const calcFee = (feeRate: number, memo?: string): AmountWithBaseDenom => {
   const compiledMemo = memo ? compileMemo(memo) : null
   const fee = getFee([], feeRate, compiledMemo)
   return baseAmount(fee)

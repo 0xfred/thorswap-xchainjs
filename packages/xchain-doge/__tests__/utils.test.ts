@@ -1,5 +1,3 @@
-// import { Network } from '@thorswap-lib/xchain-client'
-
 import mockSochainApi from '../__mocks__/sochain'
 import { UTXO } from '../src/types/common'
 import * as Utils from '../src/utils'
